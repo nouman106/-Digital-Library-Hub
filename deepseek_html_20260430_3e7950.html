@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="admin-container">
+  <h1>📘 Admin Dashboard</h1>
+  <input type="text" id="title" placeholder="Book Title">
+  <input type="text" id="link" placeholder="PDF Link (Direct URL)">
+  <br>
+  <button onclick="addBook()">➕ Add Book</button>
+  <hr>
+  <h2>📖 All Books (Manage)</h2>
+  <div id="bookList"></div>
+  <br>
+  <button onclick="logout()">🚪 Logout</button>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>

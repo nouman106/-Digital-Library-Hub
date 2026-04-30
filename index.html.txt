@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Library Hub – Book Wallpaper Backgrounds</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', system-ui;
+  transition: background 0.3s;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0A0F2C, #1A1F4D);
+  color: white;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.logo {
+  font-size: 1.3rem;
+  font-weight: bold;
+  background: linear-gradient(90deg, #5B2EFF, #00E5FF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+button, .btn {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  padding: 6px 14px;
+  border-radius: 40px;
+  color: white;
+  cursor: pointer;
+}
+.admin-btn {
+  background: #5B2EFF;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  padding: 24px;
+}
+.book-card {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(8px);
+  border-radius: 18px;
+  padding: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.book-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255,255,255,0.15);
+}
+.cover {
+  aspect-ratio: 2/3;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  position: relative;
+  overflow: hidden;
+}
+.cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+}
+.book-card h4 {
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+.price {
+  color: #FFD966;
+  font-weight: bold;
+  margin-top: 4px;
+}
+.detail {
+  display: none;
+  max-width: 600px;
+  margin: 40px auto;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(20px);
+  border-radius: 28px;
+  padding: 28px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+.back {
+  display: inline-block;
+  background: rgba(255,255,255,0.2);
+  padding: 6px 16px;
+  border-radius: 40px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+.detail-cover {
+  width: 160px;
+  height: 220px;
+  margin: 0 auto 16px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+  overflow: hidden;
+}
+.detail-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.admin-panel {
+  background: rgba(0,0,0,0.85);
+  border-radius: 24px;
+  padding: 20px;
+  margin: 20px;
+  display: none;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.admin-panel input, .admin-panel textarea, .admin-panel select {
+  display: block;
+  width: 100%;
+  margin: 8px 0;
+  padding: 8px 12px;
+  border-radius: 40px;
+  border: none;
+  background: rgba(255,255,255,0.1);
+  color: white;
+}
+.admin-panel label {
+  font-size: 12px;
+  color: #ccc;
+  margin-top: 6px;
+  display: block;
+}
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #1e1e3a;
+  padding: 8px 18px;
+  border-radius: 40px;
+  opacity: 0;
+  transition: 0.3s;
+  z-index: 999;
+}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="logo">📘 Digital Library Hub</div>
+  <div>
+    <button id="adminBtn" class="admin-btn">Admin</button>
+  </div>
+</div>
+
+<!-- Admin Panel -->
+<div id="adminPanel" class="admin-panel">
+  <h3>Add / Edit Book</h3>
+  <input type="text" id="title" placeholder="Book Title (English/Urdu)">
+  <input type="text" id="author" placeholder="Author">
+  <input type="number" id="price" placeholder="Price (0 = Free)" value="0">
+  
+  <label>📸 Book Cover Image (upload)</label>
+  <input type="file" id="coverFile" accept="image/*">
+  <input type="text" id="imageUrl" placeholder="OR Image URL (optional)">
+  
+  <label>🖼️ Background Wallpaper (Full screen – related to book)</label>
+  <input type="file" id="bgFile" accept="image/*">
+  
+  <label>🎨 Fallback Gradient Colors (if no background image)</label>
+  <div style="display: flex; gap: 8px;">
+    <input type="color" id="color1" value="#1A1F4D">
+    <input type="color" id="color2" value="#5B2EFF">
+  </div>
+  
+  <input type="text" id="emoji" placeholder="Emoji (if no cover image)" value="📗">
+  <textarea id="description" rows="2" placeholder="Book description"></textarea>
+  <label>📄 Upload PDF (for reading)</label>
+  <input type="file" id="pdfFile" accept="application/pdf">
+  
+  <div style="display: flex; gap: 8px; margin-top: 12px;">
+    <button id="saveBook">Save Book</button>
+    <button id="cancelEdit">Cancel</button>
+  </div>
+  <hr style="margin: 16px 0;">
+  <div id="adminBookList"></div>
+</div>
+
+<!-- Book Store Grid -->
+<div id="store" class="grid"></div>
+
+<!-- Book Detail Page -->
+<div id="detail" class="detail">
+  <div class="back" id="backBtn">← Back to Store</div>
+  <div class="detail-cover" id="detailCover"></div>
+  <h2 id="detailTitle"></h2>
+  <p id="detailAuthor"></p>
+  <p id="detailDesc"></p>
+  <div id="detailPrice" style="font-size: 24px; font-weight: bold; margin: 16px 0;"></div>
+  <button id="readBtn" class="btn">Read Now</button>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+// ---------- INDEXEDDB ----------
+let db = null;
+const DB_NAME = 'LibraryDB';
+
+function openDB() {
+  return new Promise((resolve) => {
+    const req = indexedDB.open(DB_NAME, 2);
+    req.onupgradeneeded = (e) => {
+      const dbRef = e.target.result;
+      if (!dbRef.objectStoreNames.contains('books')) {
+        dbRef.createObjectStore('books', { keyPath: 'id', autoIncrement: true });
+      }
+      if (!dbRef.objectStoreNames.contains('purchases')) {
+        dbRef.createObjectStore('purchases', { keyPath: 'id', autoIncrement: true });
+      }
+    };
+    req.onsuccess = () => { db = req.result; resolve(); };
+    req.onerror = () => resolve();
+  });
+}
+
+async function getAllBooks() {
+  return new Promise(r => {
+    const tx = db.transaction('books', 'readonly');
+    tx.objectStore('books').getAll().onsuccess = e => r(e.target.result || []);
+  });
+}
+async function saveBook(book) {
+  return new Promise(r => {
+    const tx = db.transaction('books', 'readwrite');
+    tx.objectStore('books').put(book).onsuccess = () => r();
+  });
+}
+async function deleteBook(id) {
+  return new Promise(r => {
+    const tx = db.transaction('books', 'readwrite');
+    tx.objectStore('books').delete(id).onsuccess = () => r();
+  });
+}
+
+// ---------- STATE ----------
+let books = [];
+let purchasedIds = [];
+let editingId = null;
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.innerText = msg;
+  t.style.opacity = '1';
+  setTimeout(() => t.style.opacity = '0', 2500);
+}
+
+// Render Store
+async function renderStore() {
+  const grid = document.getElementById('store');
+  grid.innerHTML = '';
+  if (books.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:60px;">📭 No books yet. Add from Admin.</div>';
+    return;
+  }
+  for (let book of books) {
+    const priceText = parseFloat(book.price) === 0 ? 'Free' : 'Rs.' + book.price;
+    let coverHtml = '';
+    if (book.coverData) {
+      coverHtml = `<img src="${book.coverData}">`;
+    } else if (book.imageUrl) {
+      coverHtml = `<img src="${book.imageUrl}" onerror="this.style.display='none'">`;
+    } else {
+      coverHtml = `<span>${book.emoji || '📗'}</span>`;
+    }
+    const card = document.createElement('div');
+    card.className = 'book-card';
+    card.innerHTML = `
+      <div class="cover" style="background:linear-gradient(135deg, ${book.color1||'#1A1F4D'}, ${book.color2||'#5B2EFF'});">
+        ${coverHtml}
+      </div>
+      <h4>${escapeHtml(book.title)}</h4>
+      <div class="price">${priceText}</div>
+    `;
+    card.onclick = () => openBookDetail(book.id);
+    grid.appendChild(card);
+  }
+}
+
+// Open Book Detail with Background Image (Wallpaper) or Gradient
+async function openBookDetail(bookId) {
+  const book = books.find(b => b.id === bookId);
+  if (!book) return;
+  const isPurchased = purchasedIds.includes(book.id);
+  const isFree = parseFloat(book.price) === 0;
+  
+  document.getElementById('store').style.display = 'none';
+  document.getElementById('detail').style.display = 'block';
+  
+  // Apply background: if background image exists, use it; else fallback to gradient
+  if (book.backgroundData) {
+    document.body.style.background = `url("${book.backgroundData}") center center / cover no-repeat fixed`;
+  } else {
+    document.body.style.background = `linear-gradient(135deg, ${book.color1||'#1A1F4D'}, ${book.color2||'#5B2EFF'})`;
+  }
+  
+  // Cover image
+  const coverDiv = document.getElementById('detailCover');
+  if (book.coverData) coverDiv.innerHTML = `<img src="${book.coverData}">`;
+  else if (book.imageUrl) coverDiv.innerHTML = `<img src="${book.imageUrl}" onerror="this.style.display='none'">`;
+  else coverDiv.innerHTML = `<span>${book.emoji || '📗'}</span>`;
+  coverDiv.style.background = `linear-gradient(135deg, ${book.color1}, ${book.color2})`;
+  
+  document.getElementById('detailTitle').innerText = book.title;
+  document.getElementById('detailAuthor').innerText = '✍️ ' + (book.author || 'Unknown');
+  document.getElementById('detailDesc').innerText = book.desc || '';
+  document.getElementById('detailPrice').innerText = isFree ? 'Free' : `Rs. ${book.price}`;
+  
+  const readBtn = document.getElementById('readBtn');
+  if (isFree || isPurchased) {
+    readBtn.innerText = '📖 Read Now';
+    readBtn.onclick = () => openPDF(book.id);
+  } else {
+    readBtn.innerText = '💰 Buy Now (Demo)';
+    readBtn.onclick = () => {
+      if (confirm(`Demo payment for ${book.title}? (No actual charge)`)) {
+        purchasedIds.push(book.id);
+        showToast('Purchase successful! You can now read.');
+        openBookDetail(book.id);
+      }
+    };
+  }
+}
+
+// Open PDF
+function openPDF(bookId) {
+  const book = books.find(b => b.id === bookId);
+  if (!book || !book.pdfData) {
+    showToast('❌ No PDF uploaded for this book.');
+    return;
+  }
+  try {
+    const binary = atob(book.pdfData.split(',')[1]);
+    const arr = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
+    const blob = new Blob([arr], {type: 'application/pdf'});
+    const url = URL.createObjectURL(blob);
+    const win = window.open();
+    if (!win) {
+      showToast('⚠️ Popup blocked. Allow popups for this site.');
+      return;
+    }
+    win.document.write(`
+      <html><head><title>${escapeHtml(book.title)}</title></head>
+      <body style="margin:0;"><iframe src="${url}" width="100%" height="100%" style="border:none;"></iframe></body>
+    </html>
+    `);
+  } catch(e) {
+    showToast('PDF error');
+  }
+}
+
+// Back to store
+function goBack() {
+  document.getElementById('store').style.display = 'grid';
+  document.getElementById('detail').style.display = 'none';
+  document.body.style.background = 'linear-gradient(135deg, #0A0F2C, #1A1F4D)';
+}
+
+// ---------- ADMIN FUNCTIONS ----------
+let adminLoggedIn = false;
+function toggleAdmin() {
+  if (!adminLoggedIn) {
+    const pass = prompt('Enter admin password:');
+    if (pass === 'admin123') {
+      adminLoggedIn = true;
+      document.getElementById('adminPanel').style.display = 'block';
+      renderAdminList();
+    } else {
+      alert('Wrong password');
+    }
+  } else {
+    const panel = document.getElementById('adminPanel');
+    panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+    if (panel.style.display === 'block') renderAdminList();
+  }
+}
+
+async function renderAdminList() {
+  const listDiv = document.getElementById('adminBookList');
+  listDiv.innerHTML = '';
+  for (let book of books) {
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex; justify-content:space-between; background:rgba(255,255,255,0.05); padding:8px; margin:4px 0; border-radius:40px;';
+    div.innerHTML = `
+      <span>📘 ${escapeHtml(book.title)}</span>
+      <div>
+        <button onclick="editBook(${book.id})" style="margin-right:4px;">✏️</button>
+        <button onclick="deleteBookHandler(${book.id})">🗑️</button>
+      </div>
+    `;
+    listDiv.appendChild(div);
+  }
+}
+
+window.editBook = async (id) => {
+  const book = books.find(b => b.id === id);
+  if (!book) return;
+  editingId = id;
+  document.getElementById('title').value = book.title;
+  document.getElementById('author').value = book.author || '';
+  document.getElementById('price').value = book.price;
+  document.getElementById('imageUrl').value = book.imageUrl || '';
+  document.getElementById('emoji').value = book.emoji || '📗';
+  document.getElementById('color1').value = book.color1 || '#1A1F4D';
+  document.getElementById('color2').value = book.color2 || '#5B2EFF';
+  document.getElementById('description').value = book.desc || '';
+  // Clear file inputs (cannot preselect)
+  document.getElementById('coverFile').value = '';
+  document.getElementById('bgFile').value = '';
+  document.getElementById('pdfFile').value = '';
+  showToast('Edit mode: change data and click Save');
+};
+
+window.deleteBookHandler = async (id) => {
+  if (confirm('Delete this book?')) {
+    await deleteBook(id);
+    await loadBooks();
+    renderStore();
+    renderAdminList();
+    showToast('Book deleted');
+  }
+};
+
+async function saveBookHandler() {
+  const title = document.getElementById('title').value.trim();
+  if (!title) { showToast('Title required'); return; }
+  
+  let coverData = null;
+  const coverFile = document.getElementById('coverFile').files[0];
+  if (coverFile) {
+    coverData = await new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(coverFile); });
+  }
+  
+  let bgData = null;
+  const bgFile = document.getElementById('bgFile').files[0];
+  if (bgFile) {
+    bgData = await new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(bgFile); });
+  }
+  
+  let pdfData = null;
+  const pdfFile = document.getElementById('pdfFile').files[0];
+  if (pdfFile) {
+    pdfData = await new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(pdfFile); });
+  }
+  
+  const book = {
+    title: title,
+    author: document.getElementById('author').value.trim(),
+    price: document.getElementById('price').value || '0',
+    imageUrl: document.getElementById('imageUrl').value.trim(),
+    coverData: coverData,
+    backgroundData: bgData,
+    emoji: document.getElementById('emoji').value.trim() || '📗',
+    color1: document.getElementById('color1').value,
+    color2: document.getElementById('color2').value,
+    desc: document.getElementById('description').value.trim(),
+    pdfData: pdfData
+  };
+  
+  if (editingId) {
+    book.id = editingId;
+    const old = books.find(b => b.id === editingId);
+    if (!coverData && old && old.coverData) book.coverData = old.coverData;
+    if (!bgData && old && old.backgroundData) book.backgroundData = old.backgroundData;
+    if (!pdfData && old && old.pdfData) book.pdfData = old.pdfData;
+    editingId = null;
+  }
+  await saveBook(book);
+  await loadBooks();
+  renderStore();
+  renderAdminList();
+  showToast(book.id ? 'Book updated' : 'Book added');
+  
+  // Reset form (keep admin panel open)
+  document.getElementById('title').value = '';
+  document.getElementById('author').value = '';
+  document.getElementById('price').value = '0';
+  document.getElementById('imageUrl').value = '';
+  document.getElementById('emoji').value = '📗';
+  document.getElementById('color1').value = '#1A1F4D';
+  document.getElementById('color2').value = '#5B2EFF';
+  document.getElementById('description').value = '';
+  document.getElementById('coverFile').value = '';
+  document.getElementById('bgFile').value = '';
+  document.getElementById('pdfFile').value = '';
+}
+
+function cancelEdit() {
+  editingId = null;
+  document.getElementById('title').value = '';
+  document.getElementById('author').value = '';
+  document.getElementById('price').value = '0';
+  document.getElementById('imageUrl').value = '';
+  document.getElementById('emoji').value = '📗';
+  document.getElementById('color1').value = '#1A1F4D';
+  document.getElementById('color2').value = '#5B2EFF';
+  document.getElementById('description').value = '';
+  document.getElementById('coverFile').value = '';
+  document.getElementById('bgFile').value = '';
+  document.getElementById('pdfFile').value = '';
+  showToast('Form cleared');
+}
+
+async function loadBooks() {
+  books = await getAllBooks();
+  purchasedIds = []; // in real app, load from DB
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+}
+
+// ---------- INIT ----------
+window.onload = async () => {
+  await openDB();
+  await loadBooks();
+  renderStore();
+  document.getElementById('adminBtn').onclick = toggleAdmin;
+  document.getElementById('saveBook').onclick = saveBookHandler;
+  document.getElementById('cancelEdit').onclick = cancelEdit;
+  document.getElementById('backBtn').onclick = goBack;
+};
+</script>
+</body>
+</html>

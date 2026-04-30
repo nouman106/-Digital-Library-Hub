@@ -1,0 +1,99 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #0B0F1A;
+  color: white;
+  text-align: center;
+}
+
+header {
+  padding: 30px 20px;
+}
+
+.logo {
+  width: 120px;
+  border-radius: 20px;
+}
+
+h1 {
+  font-size: 2.8rem;
+  background: linear-gradient(45deg, #8A2BE2, #00E5FF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 10px 0;
+}
+
+.tagline {
+  color: #ccc;
+  margin-bottom: 30px;
+}
+
+button {
+  background: linear-gradient(45deg, #8A2BE2, #00E5FF);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 40px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(0,229,255,0.3);
+  transition: 0.2s;
+  margin: 8px;
+}
+
+button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 12px cyan;
+}
+
+input {
+  padding: 10px;
+  margin: 8px;
+  width: 80%;
+  max-width: 300px;
+  border-radius: 40px;
+  border: none;
+  background: #1e1e2e;
+  color: white;
+  outline: none;
+}
+
+.book {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(8px);
+  margin: 15px auto;
+  padding: 18px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
+  text-align: left;
+  transition: 0.2s;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.book:hover {
+  transform: translateY(-3px);
+  background: rgba(255,255,255,0.12);
+}
+
+.book h3 {
+  color: #00E5FF;
+  margin-bottom: 8px;
+}
+
+.book p {
+  color: #aaa;
+  font-size: 0.8rem;
+}
+
+.admin-container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+hr {
+  margin: 30px 0;
+  border-color: rgba(255,255,255,0.1);
+}

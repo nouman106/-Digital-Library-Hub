@@ -3,46 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digital Library Hub – Admin Mode (Secure)</title>
+<title>Digital Library Hub – Professional E-Book Platform</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 body {
-  font-family: 'Segoe UI', system-ui;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   background: linear-gradient(135deg, #0A0F2C, #1A1F4D);
   color: white;
   transition: background 0.3s;
   min-height: 100vh;
+  scroll-behavior: smooth;
 }
+/* Glass morphism navbar */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 24px;
-  background: rgba(0,0,0,0.4);
-  backdrop-filter: blur(10px);
+  padding: 12px 5%;
+  background: rgba(10,15,44,0.6);
+  backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 100;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 .logo {
-  font-size: 1.3rem;
+  font-size: 1.6rem;
   font-weight: bold;
   background: linear-gradient(90deg, #5B2EFF, #00E5FF);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  letter-spacing: -0.5px;
+}
+.nav-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.nav-links a {
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+.nav-links a:hover {
+  color: #00E5FF;
 }
 button, .btn {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.12);
   border: none;
-  padding: 6px 14px;
+  padding: 8px 18px;
   border-radius: 40px;
   color: white;
   cursor: pointer;
   transition: all 0.2s;
+  font-weight: 500;
 }
-button:hover, .btn:hover {
-  background: rgba(255,255,255,0.3);
+button:hover {
+  background: rgba(255,255,255,0.25);
   transform: translateY(-2px);
 }
 .admin-mode-btn {
@@ -52,33 +76,122 @@ button:hover, .btn:hover {
   background: #00C9A7;
   box-shadow: 0 0 8px #00C9A7;
 }
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 20px;
-  padding: 24px;
+/* Sections */
+section {
+  padding: 60px 5%;
 }
-.book-card {
-  background: rgba(255,255,255,0.08);
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.hero {
+  text-align: center;
+  padding: 80px 5% 60px;
+}
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  background: linear-gradient(90deg, #fff, #00E5FF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero p {
+  font-size: 1.2rem;
+  color: rgba(255,255,255,0.7);
+  max-width: 700px;
+  margin: 0 auto 30px;
+}
+.hero-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+.hero-buttons .btn-primary {
+  background: #5B2EFF;
+  box-shadow: 0 4px 15px rgba(91,46,255,0.4);
+}
+.hero-buttons .btn-outline {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+.feature-card {
+  background: rgba(255,255,255,0.05);
   backdrop-filter: blur(8px);
-  border-radius: 18px;
-  padding: 12px;
-  cursor: pointer;
+  border-radius: 24px;
+  padding: 30px 20px;
+  text-align: center;
   transition: 0.3s;
   border: 1px solid rgba(255,255,255,0.1);
 }
-.book-card:hover {
+.feature-card:hover {
   transform: translateY(-5px);
+  background: rgba(255,255,255,0.1);
+}
+.feature-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+.feature-card h3 {
+  margin-bottom: 10px;
+}
+.about-text {
+  background: rgba(0,0,0,0.3);
+  padding: 30px;
+  border-radius: 28px;
+  line-height: 1.8;
+}
+.rules-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+.rule-item {
+  background: rgba(255,255,255,0.05);
+  border-radius: 20px;
+  padding: 20px;
+  border-left: 4px solid #5B2EFF;
+}
+/* Store grid */
+.section-title {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  text-align: center;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 25px;
+  margin: 30px 0;
+}
+.book-card {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  padding: 15px;
+  cursor: pointer;
+  transition: 0.25s;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+.book-card:hover {
+  transform: translateY(-6px);
   background: rgba(255,255,255,0.15);
   box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 .cover {
   aspect-ratio: 2/3;
-  border-radius: 12px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 48px;
+  font-size: 52px;
   position: relative;
   overflow: hidden;
 }
@@ -89,19 +202,20 @@ button:hover, .btn:hover {
   position: absolute;
 }
 .book-card h4 {
-  margin-top: 8px;
-  font-size: 0.9rem;
+  margin-top: 12px;
+  font-size: 0.95rem;
 }
 .price {
   color: #FFD966;
   font-weight: bold;
   margin-top: 4px;
 }
+/* Detail modal same as before */
 .detail {
   display: none;
   max-width: 600px;
   margin: 40px auto;
-  background: rgba(0,0,0,0.65);
+  background: rgba(0,0,0,0.75);
   backdrop-filter: blur(20px);
   border-radius: 28px;
   padding: 28px;
@@ -114,10 +228,6 @@ button:hover, .btn:hover {
   border-radius: 40px;
   margin-bottom: 20px;
   cursor: pointer;
-  transition: all 0.2s;
-}
-.back:hover {
-  background: rgba(255,255,255,0.35);
 }
 .detail-cover {
   width: 160px;
@@ -130,26 +240,21 @@ button:hover, .btn:hover {
   font-size: 60px;
   overflow: hidden;
 }
-.detail-cover img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+/* Admin panel (hidden initially) */
 .admin-panel {
-  background: rgba(0,0,0,0.85);
-  border-radius: 24px;
-  padding: 20px;
+  background: rgba(0,0,0,0.9);
+  border-radius: 28px;
+  padding: 25px;
   margin: 20px;
   display: none;
   max-height: 80vh;
   overflow-y: auto;
-  z-index: 100;
 }
 .admin-panel input, .admin-panel textarea, .admin-panel select {
   display: block;
   width: 100%;
   margin: 8px 0;
-  padding: 8px 12px;
+  padding: 10px 14px;
   border-radius: 40px;
   border: none;
   background: rgba(255,255,255,0.1);
@@ -160,12 +265,11 @@ button:hover, .btn:hover {
   bottom: 20px;
   right: 20px;
   background: #1e1e3a;
-  padding: 8px 18px;
+  padding: 10px 20px;
   border-radius: 40px;
   opacity: 0;
   transition: 0.3s;
   z-index: 999;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 .admin-badge {
   position: fixed;
@@ -176,7 +280,17 @@ button:hover, .btn:hover {
   padding: 4px 10px;
   border-radius: 20px;
   color: #aaa;
-  z-index: 1000;
+}
+footer {
+  background: rgba(0,0,0,0.4);
+  text-align: center;
+  padding: 30px;
+  font-size: 0.8rem;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+@media (max-width: 768px) {
+  .hero h1 { font-size: 2rem; }
+  .nav-links { gap: 12px; }
 }
 </style>
 </head>
@@ -184,42 +298,98 @@ button:hover, .btn:hover {
 
 <div class="navbar">
   <div class="logo">📘 Digital Library Hub</div>
-  <div>
+  <div class="nav-links">
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#features">Features</a>
+    <a href="#rules">Rules</a>
+    <a href="#store">Library</a>
     <button id="adminModeBtn" class="admin-mode-btn">🔐 Admin Mode (Off)</button>
   </div>
 </div>
 
-<!-- Admin Panel (only visible in admin mode) -->
+<main id="home">
+  <section class="hero">
+    <h1>Welcome to Digital Library Hub</h1>
+    <p>Your gateway to thousands of e-books – Islamic, Educational, Self-Help, and more. Read anywhere, anytime, on any device.</p>
+    <div class="hero-buttons">
+      <button class="btn-primary" onclick="document.getElementById('store').scrollIntoView({behavior:'smooth'})">📚 Explore Books</button>
+      <button class="btn-outline" onclick="document.getElementById('about').scrollIntoView({behavior:'smooth'})">📖 Learn More</button>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="container">
+      <h2 class="section-title">Our Story</h2>
+      <div class="about-text">
+        <p>📖 Digital Library Hub was born from a simple idea: to make quality Urdu and English e-books accessible to everyone, everywhere. We believe that knowledge should be free of barriers – whether geographical, financial, or technological.</p><br>
+        <p>🌟 What started as a small personal collection has grown into a curated platform with hundreds of titles in Islamic studies, children's literature, history, self-development, and more. Our mission is to empower readers and support authors by providing a beautiful, easy-to-use digital space.</p><br>
+        <p>✨ Today, thousands of readers trust us to deliver high-quality content with a seamless reading experience. And we're just getting started.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="features">
+    <div class="container">
+      <h2 class="section-title">Why Choose Us?</h2>
+      <div class="features-grid">
+        <div class="feature-card"><div class="feature-icon">📱</div><h3>Read Anywhere</h3><p>Mobile-friendly design, PDF reader works on all devices.</p></div>
+        <div class="feature-card"><div class="feature-icon">🛡️</div><h3>Secure & Private</h3><p>Your data stays local (IndexedDB). No third-party tracking.</p></div>
+        <div class="feature-card"><div class="feature-icon">📚</div><h3>Diverse Collection</h3><p>Islamic, educational, kids, history, poetry, health & more.</p></div>
+        <div class="feature-card"><div class="feature-icon">⚡</div><h3>Instant Access</h3><p>One-click reading – no signup required for free books.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="rules">
+    <div class="container">
+      <h2 class="section-title">How It Works & Guidelines</h2>
+      <div class="rules-list">
+        <div class="rule-item"><strong>📖 For Readers</strong><br>• Browse the library, click any book.<br>• Free books: click "Read Now" – PDF opens instantly.<br>• Paid books: demo purchase (no real payment) – then read.<br>• No account needed – all books are stored in your browser.</div>
+        <div class="rule-item"><strong>🔧 For Admins</strong><br>• Click "Admin Mode" → password: admin123.<br>• Add books with cover image, PDF, custom theme colors.<br>• Edit/delete books easily.<br>• All changes are saved locally.</div>
+        <div class="rule-item"><strong>📜 Content Policy</strong><br>• Respect intellectual property – only upload books you own or have rights to.<br>• No offensive or illegal material.<br>• Admin may remove any book without notice.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="store">
+    <div class="container">
+      <h2 class="section-title">📚 Digital Library</h2>
+      <div id="storeGrid" class="grid"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>© 2025 Digital Library Hub – Empowering readers worldwide.</p>
+  <p style="margin-top: 10px;">📧 support@digitallibrary.com | 🌐 Follow us on social media</p>
+</footer>
+
+<!-- Admin Panel (hidden, appears only in admin mode) -->
 <div id="adminPanel" class="admin-panel">
-  <h3>Add / Edit Book</h3>
+  <h3>📘 Add / Edit Book</h3>
   <input type="text" id="title" placeholder="Book Title">
   <input type="text" id="author" placeholder="Author">
   <input type="number" id="price" placeholder="Price (0=Free)" value="0">
   <input type="text" id="imageUrl" placeholder="Image URL (optional)">
   <input type="file" id="coverFile" accept="image/*">
-  <input type="text" id="emoji" placeholder="Emoji (fallback)" value="📗">
-  <div style="display: flex; gap: 8px;">
-    <input type="color" id="color1" value="#1A1F4D">
-    <input type="color" id="color2" value="#5B2EFF">
-  </div>
-  <textarea id="description" rows="2" placeholder="Book description"></textarea>
+  <input type="text" id="emoji" placeholder="Emoji fallback" value="📗">
+  <div><input type="color" id="color1" value="#1A1F4D"> <input type="color" id="color2" value="#5B2EFF"></div>
+  <textarea id="description" rows="2" placeholder="Description"></textarea>
   <input type="file" id="pdfFile" accept="application/pdf">
-  <div style="display: flex; gap: 8px; margin-top: 12px;">
-    <button id="saveBook">Save Book</button>
-    <button id="cancelEdit">Cancel</button>
+  <div style="display: flex; gap: 10px; margin: 10px 0;">
+    <button id="saveBook">💾 Save Book</button>
+    <button id="cancelEdit">🗑 Cancel</button>
   </div>
   <hr>
   <div id="adminBookList"></div>
-  <button id="closeAdmin" style="background:rgba(255,255,255,0.2);">Close Admin</button>
+  <button id="closeAdmin" style="background:#555;">Close Admin Panel</button>
   <button id="exitAdminBtn" style="background:#FF6EC7; margin-top:10px;">Exit Admin Mode</button>
 </div>
 
-<!-- Store Grid -->
-<div id="store" class="grid"></div>
-
-<!-- Book Detail -->
+<!-- Book Detail Modal -->
 <div id="detail" class="detail">
-  <div class="back" id="backBtn">← Back to Store</div>
+  <div class="back" id="backBtn">← Back to Library</div>
   <div class="detail-cover" id="detailCover"></div>
   <h2 id="detailTitle"></h2>
   <p id="detailAuthor"></p>
@@ -232,7 +402,7 @@ button:hover, .btn:hover {
 <div id="adminBadge" class="admin-badge"></div>
 
 <script>
-// ---------- INDEXEDDB SETUP ----------
+// ======================= INDEXEDDB =======================
 let db = null;
 const DB_NAME = 'FinalLib';
 
@@ -244,15 +414,14 @@ function openDB() {
       if (!dbRef.objectStoreNames.contains('books')) {
         const store = dbRef.createObjectStore('books', { keyPath: 'id', autoIncrement: true });
         const sampleBooks = [
-          { title: "Ali Ka Safar (علی کا سفر)", author: "Ahmed Ali", price: 0, imageUrl: "", emoji: "🌙", color1: "#1C2A6E", color2: "#3D5A80", desc: "A children's story about Islamic values.", pdfData: null },
-          { title: "Roshni Ki Raah", author: "Maulana Tariq", price: 199, imageUrl: "", emoji: "🕌", color1: "#1A4D2E", color2: "#4A7C59", desc: "Islamic guidance for daily life.", pdfData: null },
-          { title: "Kamyab Zindagi", author: "Dr. Umar", price: 349, imageUrl: "", emoji: "🚀", color1: "#3D1A6E", color2: "#6A4C9C", desc: "Motivational and success principles.", pdfData: null }
+          { title: "Ali Ka Safar (علی کا سفر)", author: "Ahmed Ali", price: 0, imageUrl: "", emoji: "🌙", color1: "#1C2A6E", color2: "#3D5A80", desc: "A children's Islamic story about values and kindness.", pdfData: null },
+          { title: "Roshni Ki Raah", author: "Maulana Tariq", price: 199, imageUrl: "", emoji: "🕌", color1: "#1A4D2E", color2: "#4A7C59", desc: "Guidance for daily life from Islamic teachings.", pdfData: null },
+          { title: "Kamyab Zindagi", author: "Dr. Umar", price: 349, imageUrl: "", emoji: "🚀", color1: "#3D1A6E", color2: "#6A4C9C", desc: "Motivational principles for success.", pdfData: null }
         ];
         sampleBooks.forEach(b => store.add(b));
       }
     };
     req.onsuccess = () => { db = req.result; resolve(); };
-    req.onerror = () => resolve();
   });
 }
 
@@ -275,11 +444,11 @@ async function deleteBook(id) {
   });
 }
 
-// ---------- STATE ----------
+// ======================= STATE =======================
 let books = [];
-let purchasedIds = []; // demo purchases stored in memory (for current session)
+let purchasedIds = [];
 let editingId = null;
-let isAdminMode = false;   // admin mode flag
+let isAdminMode = false;
 
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -287,17 +456,14 @@ function showToast(msg) {
   t.style.opacity = '1';
   setTimeout(() => t.style.opacity = '0', 2500);
 }
-function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
-}
+function escapeHtml(str) { return (str||'').replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
 
-// ---------- RENDER STORE (edit/delete buttons only in admin mode) ----------
+// ======================= RENDER STORE =======================
 async function renderStore() {
-  const grid = document.getElementById('store');
+  const grid = document.getElementById('storeGrid');
   grid.innerHTML = '';
   if (books.length === 0) {
-    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:60px;">📭 No books. Add via Admin Panel (login as admin).</div>';
+    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:60px;">📭 No books yet. Admin can add books.</div>';
     return;
   }
   for (let book of books) {
@@ -311,8 +477,8 @@ async function renderStore() {
     let actionButtons = '';
     if (isAdminMode) {
       actionButtons = `<div style="margin-top: 8px;">
-        <button class="btn" onclick="event.stopPropagation(); editBook(${book.id})" style="background:#00E5FF20;">✏️</button>
-        <button class="btn" onclick="event.stopPropagation(); deleteBookHandler(${book.id})" style="background:#FF6EC720;">🗑️</button>
+        <button class="btn" onclick="event.stopPropagation(); editBook(${book.id})" style="background:#00E5FF20;">✏️ Edit</button>
+        <button class="btn" onclick="event.stopPropagation(); deleteBookHandler(${book.id})" style="background:#FF6EC720;">🗑 Delete</button>
       </div>`;
     }
     card.innerHTML = `
@@ -328,13 +494,13 @@ async function renderStore() {
   }
 }
 
-// ---------- BOOK DETAIL ----------
+// ======================= BOOK DETAIL =======================
 async function openBookDetail(bookId) {
   const book = books.find(b => b.id === bookId);
   if (!book) return;
   const isPurchased = purchasedIds.includes(book.id);
   const isFree = parseFloat(book.price) === 0;
-  document.getElementById('store').style.display = 'none';
+  document.getElementById('storeGrid').style.display = 'none';
   document.getElementById('detail').style.display = 'block';
   document.body.style.background = `linear-gradient(135deg, ${book.color1||'#1A1F4D'}, ${book.color2||'#5B2EFF'})`;
   const coverDiv = document.getElementById('detailCover');
@@ -353,66 +519,56 @@ async function openBookDetail(bookId) {
   } else {
     readBtn.innerText = '💰 Buy Now (Demo)';
     readBtn.onclick = () => {
-      if (confirm(`Demo payment for ${book.title}? No actual charge.`)) {
+      if (confirm(`Demo payment for ${book.title}? No real charge.`)) {
         purchasedIds.push(book.id);
-        showToast('Purchase successful! You can now read.');
+        showToast('Purchase successful! Now you can read.');
         openBookDetail(book.id);
       }
     };
   }
 }
 
-// ---------- PDF READER ----------
+// ======================= PDF READER =======================
 function openPDF(bookId) {
   const book = books.find(b => b.id === bookId);
   if (!book || !book.pdfData) {
-    showToast('❌ No PDF uploaded for this book. Please upload a PDF from Admin panel.');
+    showToast('❌ No PDF uploaded for this book. Re-upload from Admin.');
     return;
   }
   try {
     const binary = atob(book.pdfData.split(',')[1]);
     const arr = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
-    const blob = new Blob([arr], { type: 'application/pdf' });
+    for (let i=0; i<binary.length; i++) arr[i] = binary.charCodeAt(i);
+    const blob = new Blob([arr], {type:'application/pdf'});
     const url = URL.createObjectURL(blob);
     const win = window.open();
-    if (!win) {
-      showToast('⚠️ Popup blocked. Please allow popups for this site.');
-      return;
-    }
+    if (!win) { showToast('Popup blocked. Please allow popups.'); return; }
     win.document.write(`
       <html><head><title>${escapeHtml(book.title)}</title></head>
       <body style="margin:0;"><iframe src="${url}" width="100%" height="100%" style="border:none; position:fixed;"></iframe></body>
     </html>`);
-  } catch(e) {
-    showToast('PDF data error. Please re-upload.');
-  }
+  } catch(e) { showToast('PDF error. Re-upload.'); }
 }
 
-// ---------- BACK TO STORE ----------
 function goBack() {
-  document.getElementById('store').style.display = 'grid';
+  document.getElementById('storeGrid').style.display = 'grid';
   document.getElementById('detail').style.display = 'none';
   document.body.style.background = 'linear-gradient(135deg, #0A0F2C, #1A1F4D)';
 }
 
-// ---------- ADMIN MODE ----------
+// ======================= ADMIN MODE =======================
 const ADMIN_PASSWORD = 'admin123';
 let adminPanelOpen = false;
 
 function toggleAdminMode() {
   if (isAdminMode) {
-    // exit admin mode
     deactivateAdminMode();
   } else {
-    // prompt for password
     const pass = prompt('Enter admin password:');
     if (pass === ADMIN_PASSWORD) {
       activateAdminMode();
-      showToast('Admin mode activated! Now you can edit/delete books.');
-    } else {
-      showToast('Wrong password!');
-    }
+      showToast('Admin mode activated! You can now edit/delete books.');
+    } else showToast('Wrong password!');
   }
 }
 
@@ -421,14 +577,8 @@ function activateAdminMode() {
   const btn = document.getElementById('adminModeBtn');
   btn.innerText = '🔐 Admin Mode (On)';
   btn.classList.add('admin-active');
-  document.getElementById('adminBadge').innerText = '🛡️ Admin Mode Active - Edit/Delete enabled';
-  // re-render store to show edit/delete buttons
+  document.getElementById('adminBadge').innerText = '🛡️ Admin Mode Active – Edit/Delete enabled';
   renderStore();
-  // also show admin panel (but closed by default)
-  adminPanelOpen = false;
-  document.getElementById('adminPanel').style.display = 'none';
-  // add exit button logic
-  document.getElementById('exitAdminBtn').style.display = 'inline-block';
 }
 
 function deactivateAdminMode() {
@@ -439,16 +589,11 @@ function deactivateAdminMode() {
   btn.classList.remove('admin-active');
   document.getElementById('adminBadge').innerText = '';
   document.getElementById('adminPanel').style.display = 'none';
-  // re-render store to remove edit/delete buttons
   renderStore();
 }
 
-// toggle admin panel (only if admin mode is active)
 function toggleAdminPanel() {
-  if (!isAdminMode) {
-    showToast('Please activate Admin Mode first (click the Admin Mode button and enter password).');
-    return;
-  }
+  if (!isAdminMode) { showToast('Activate Admin Mode first (password: admin123)'); return; }
   const panel = document.getElementById('adminPanel');
   adminPanelOpen = !adminPanelOpen;
   panel.style.display = adminPanelOpen ? 'block' : 'none';
@@ -460,88 +605,71 @@ async function renderAdminList() {
   container.innerHTML = '';
   for (let book of books) {
     const div = document.createElement('div');
-    div.style.cssText = 'background:rgba(255,255,255,0.1); padding:8px; margin:6px 0; border-radius:40px; display:flex; justify-content:space-between; align-items:center;';
-    div.innerHTML = `
-      <span>📘 ${escapeHtml(book.title)}</span>
-      <div>
-        <button onclick="editBook(${book.id})" style="background:#00E5FF20; border:none; border-radius:40px; padding:4px 12px; margin:0 4px;">✏️</button>
-        <button onclick="deleteBookHandler(${book.id})" style="background:#FF6EC720; border:none; border-radius:40px; padding:4px 12px;">🗑️</button>
-      </div>
-    `;
+    div.style.cssText = 'background:rgba(255,255,255,0.1); padding:8px; margin:6px 0; border-radius:40px; display:flex; justify-content:space-between;';
+    div.innerHTML = `<span>📘 ${escapeHtml(book.title)}</span>
+      <div><button onclick="editBook(${book.id})">✏️</button> <button onclick="deleteBookHandler(${book.id})">🗑️</button></div>`;
     container.appendChild(div);
   }
 }
 
 window.editBook = async (id) => {
   if (!isAdminMode) return;
-  const book = books.find(b => b.id === id);
-  if (!book) return;
+  const book = books.find(b=>b.id===id);
+  if(!book) return;
   editingId = id;
   document.getElementById('title').value = book.title;
-  document.getElementById('author').value = book.author || '';
+  document.getElementById('author').value = book.author||'';
   document.getElementById('price').value = book.price;
-  document.getElementById('imageUrl').value = book.imageUrl || '';
-  document.getElementById('emoji').value = book.emoji || '📗';
-  document.getElementById('color1').value = book.color1 || '#1A1F4D';
-  document.getElementById('color2').value = book.color2 || '#5B2EFF';
-  document.getElementById('description').value = book.desc || '';
+  document.getElementById('imageUrl').value = book.imageUrl||'';
+  document.getElementById('emoji').value = book.emoji||'📗';
+  document.getElementById('color1').value = book.color1||'#1A1F4D';
+  document.getElementById('color2').value = book.color2||'#5B2EFF';
+  document.getElementById('description').value = book.desc||'';
   document.getElementById('coverFile').value = '';
   document.getElementById('pdfFile').value = '';
-  showToast('Edit mode: modify and click Save.');
+  showToast('Edit mode: modify and Save.');
 };
 
 window.deleteBookHandler = async (id) => {
   if (!isAdminMode) return;
-  if (confirm('Delete this book permanently?')) {
+  if(confirm('Delete this book permanently?')) {
     await deleteBook(id);
     await loadBooks();
     renderStore();
-    if (adminPanelOpen) renderAdminList();
+    if(adminPanelOpen) renderAdminList();
     showToast('Book deleted');
   }
 };
 
-// ---------- SAVE / UPDATE BOOK ----------
 async function saveBookHandler() {
-  if (!isAdminMode) {
-    showToast('Activate Admin Mode to add/edit books');
-    return;
-  }
+  if(!isAdminMode) { showToast('Activate Admin Mode first'); return; }
   const title = document.getElementById('title').value.trim();
-  if (!title) { showToast('Title is required'); return; }
+  if(!title) { showToast('Title required'); return; }
   let coverData = null;
   const coverFile = document.getElementById('coverFile').files[0];
-  if (coverFile) {
-    coverData = await new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(coverFile); });
-  }
+  if(coverFile) coverData = await new Promise(r=>{const fr=new FileReader(); fr.onload=e=>r(e.target.result); fr.readAsDataURL(coverFile);});
   let pdfData = null;
   const pdfFile = document.getElementById('pdfFile').files[0];
-  if (pdfFile) {
-    pdfData = await new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(pdfFile); });
-  }
+  if(pdfFile) pdfData = await new Promise(r=>{const fr=new FileReader(); fr.onload=e=>r(e.target.result); fr.readAsDataURL(pdfFile);});
   const book = {
-    title: title,
-    author: document.getElementById('author').value.trim(),
+    title, author: document.getElementById('author').value.trim(),
     price: document.getElementById('price').value || '0',
     imageUrl: document.getElementById('imageUrl').value.trim(),
-    coverData: coverData,
-    emoji: document.getElementById('emoji').value.trim() || '📗',
-    color1: document.getElementById('color1').value,
-    color2: document.getElementById('color2').value,
-    desc: document.getElementById('description').value.trim(),
-    pdfData: pdfData
+    coverData, emoji: document.getElementById('emoji').value.trim()||'📗',
+    color1: document.getElementById('color1').value, color2: document.getElementById('color2').value,
+    desc: document.getElementById('description').value.trim(), pdfData
   };
-  if (editingId) {
+  if(editingId) {
     book.id = editingId;
-    const old = books.find(b => b.id === editingId);
-    if (!coverData && old && old.coverData) book.coverData = old.coverData;
-    if (!pdfData && old && old.pdfData) book.pdfData = old.pdfData;
+    const old = books.find(b=>b.id===editingId);
+    if(!coverData && old?.coverData) book.coverData = old.coverData;
+    if(!pdfData && old?.pdfData) book.pdfData = old.pdfData;
     editingId = null;
   }
   await saveBook(book);
   await loadBooks();
   renderStore();
-  if (adminPanelOpen) renderAdminList();
+  if(adminPanelOpen) renderAdminList();
   showToast(book.id ? 'Book updated' : 'Book added');
   // reset form
   document.getElementById('title').value = '';
@@ -555,7 +683,6 @@ async function saveBookHandler() {
   document.getElementById('coverFile').value = '';
   document.getElementById('pdfFile').value = '';
 }
-
 function cancelEdit() {
   editingId = null;
   document.getElementById('title').value = '';
@@ -566,47 +693,27 @@ function cancelEdit() {
   document.getElementById('color1').value = '#1A1F4D';
   document.getElementById('color2').value = '#5B2EFF';
   document.getElementById('description').value = '';
-  document.getElementById('coverFile').value = '';
-  document.getElementById('pdfFile').value = '';
   showToast('Form cleared');
 }
+async function loadBooks() { books = await getAllBooks(); }
 
-async function loadBooks() {
-  books = await getAllBooks();
-}
-
-// ---------- INIT ----------
+// ======================= INITIALIZE =======================
 window.onload = async () => {
   await openDB();
   await loadBooks();
   renderStore();
-  console.log('Books loaded:', books.length);
   document.getElementById('adminModeBtn').onclick = toggleAdminMode;
-  document.getElementById('closeAdmin').onclick = () => {
-    document.getElementById('adminPanel').style.display = 'none';
-    adminPanelOpen = false;
-  };
-  document.getElementById('exitAdminBtn').onclick = () => {
-    deactivateAdminMode();
-    document.getElementById('adminPanel').style.display = 'none';
-    adminPanelOpen = false;
-  };
+  document.getElementById('closeAdmin').onclick = () => { document.getElementById('adminPanel').style.display = 'none'; adminPanelOpen=false; };
+  document.getElementById('exitAdminBtn').onclick = () => deactivateAdminMode();
   document.getElementById('saveBook').onclick = saveBookHandler;
   document.getElementById('cancelEdit').onclick = cancelEdit;
   document.getElementById('backBtn').onclick = goBack;
-  // Allow opening admin panel when admin mode is on – but we'll make it via a separate admin panel button? 
-  // For convenience, let's add admin panel toggle button next to admin mode? Actually we have a navbar button "Admin Mode" already. 
-  // We need a way to open the admin panel when in admin mode. Let's add a button inside the navbar? But to keep simple, we'll use the same "Admin Mode" button? No, that toggles mode.
-  // Let's add a separate "Admin Panel" button that appears only when admin mode is active.
-  const adminPanelToggleBtn = document.createElement('button');
-  adminPanelToggleBtn.innerText = '📋 Admin Panel';
-  adminPanelToggleBtn.className = 'btn';
-  adminPanelToggleBtn.style.marginLeft = '8px';
-  adminPanelToggleBtn.onclick = () => {
-    if (isAdminMode) toggleAdminPanel();
-    else showToast('Activate Admin Mode first');
-  };
-  document.querySelector('.navbar div').appendChild(adminPanelToggleBtn);
+  // Add a button to open admin panel when in admin mode (navbar extra)
+  const adminPanelBtn = document.createElement('button');
+  adminPanelBtn.innerText = '📋 Admin Panel';
+  adminPanelBtn.style.marginLeft = '10px';
+  adminPanelBtn.onclick = toggleAdminPanel;
+  document.querySelector('.nav-links').appendChild(adminPanelBtn);
 };
 </script>
 </body>

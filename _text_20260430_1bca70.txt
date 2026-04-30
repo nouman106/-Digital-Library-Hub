@@ -1,0 +1,8 @@
+/Digital-Library-Hub
+├── index.html
+├── login.html
+├── admin.html
+├── style.css
+├── app.js
+├── logo.png          (apna logo file, optional)
+└── .nojekyll         (important for GitHub Pages)
