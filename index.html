@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digital Library Hub – Book Wallpaper Backgrounds</title>
+<title>Digital Library Hub – Admin Password Change</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: 'Segoe UI', system-ui;
-  transition: background 0.3s;
-  min-height: 100vh;
   background: linear-gradient(135deg, #0A0F2C, #1A1F4D);
   color: white;
+  transition: background 0.3s;
+  min-height: 100vh;
 }
 .navbar {
   display: flex;
@@ -96,8 +96,6 @@ button, .btn {
   border-radius: 28px;
   padding: 28px;
   text-align: center;
-  position: relative;
-  z-index: 2;
 }
 .back {
   display: inline-block;
@@ -142,10 +140,29 @@ button, .btn {
   background: rgba(255,255,255,0.1);
   color: white;
 }
-.admin-panel label {
-  font-size: 12px;
-  color: #ccc;
-  margin-top: 6px;
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  padding-bottom: 8px;
+}
+.admin-tab {
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  padding: 6px 14px;
+  border-radius: 30px;
+  cursor: pointer;
+}
+.admin-tab.active {
+  background: #5B2EFF;
+  color: white;
+}
+.tab-content {
+  display: none;
+}
+.tab-content.active {
   display: block;
 }
 .toast {
@@ -172,41 +189,47 @@ button, .btn {
 
 <!-- Admin Panel -->
 <div id="adminPanel" class="admin-panel">
-  <h3>Add / Edit Book</h3>
-  <input type="text" id="title" placeholder="Book Title (English/Urdu)">
-  <input type="text" id="author" placeholder="Author">
-  <input type="number" id="price" placeholder="Price (0 = Free)" value="0">
-  
-  <label>📸 Book Cover Image (upload)</label>
-  <input type="file" id="coverFile" accept="image/*">
-  <input type="text" id="imageUrl" placeholder="OR Image URL (optional)">
-  
-  <label>🖼️ Background Wallpaper (Full screen – related to book)</label>
-  <input type="file" id="bgFile" accept="image/*">
-  
-  <label>🎨 Fallback Gradient Colors (if no background image)</label>
-  <div style="display: flex; gap: 8px;">
-    <input type="color" id="color1" value="#1A1F4D">
-    <input type="color" id="color2" value="#5B2EFF">
+  <div class="admin-tabs">
+    <button class="admin-tab active" data-tab="books">📚 Books</button>
+    <button class="admin-tab" data-tab="settings">⚙️ Settings</button>
   </div>
-  
-  <input type="text" id="emoji" placeholder="Emoji (if no cover image)" value="📗">
-  <textarea id="description" rows="2" placeholder="Book description"></textarea>
-  <label>📄 Upload PDF (for reading)</label>
-  <input type="file" id="pdfFile" accept="application/pdf">
-  
-  <div style="display: flex; gap: 8px; margin-top: 12px;">
-    <button id="saveBook">Save Book</button>
-    <button id="cancelEdit">Cancel</button>
+
+  <!-- Books Tab -->
+  <div id="booksTab" class="tab-content active">
+    <h3>Add / Edit Book</h3>
+    <input type="text" id="title" placeholder="Book Title">
+    <input type="text" id="author" placeholder="Author">
+    <input type="number" id="price" placeholder="Price (0 = Free)" value="0">
+    <input type="text" id="imageUrl" placeholder="Image URL (optional)">
+    <input type="file" id="coverFile" accept="image/*">
+    <input type="text" id="emoji" placeholder="Emoji (fallback)" value="📗">
+    <div style="display: flex; gap: 8px;">
+      <input type="color" id="color1" value="#1A1F4D">
+      <input type="color" id="color2" value="#5B2EFF">
+    </div>
+    <textarea id="description" rows="2" placeholder="Description"></textarea>
+    <input type="file" id="pdfFile" accept="application/pdf">
+    <div style="display: flex; gap: 8px; margin-top: 12px;">
+      <button id="saveBook">Save Book</button>
+      <button id="cancelEdit">Cancel</button>
+    </div>
+    <hr>
+    <div id="adminBookList"></div>
   </div>
-  <hr style="margin: 16px 0;">
-  <div id="adminBookList"></div>
+
+  <!-- Settings Tab -->
+  <div id="settingsTab" class="tab-content">
+    <h3>Admin Password Change</h3>
+    <input type="password" id="currentPass" placeholder="Current Password">
+    <input type="password" id="newPass" placeholder="New Password">
+    <input type="password" id="confirmPass" placeholder="Confirm New Password">
+    <button id="changePassBtn">Change Password</button>
+    <p style="font-size:12px; margin-top:10px; color:#aaa;">Default current: admin123</p>
+  </div>
 </div>
 
-<!-- Book Store Grid -->
+<!-- Store & Detail -->
 <div id="store" class="grid"></div>
-
-<!-- Book Detail Page -->
 <div id="detail" class="detail">
   <div class="back" id="backBtn">← Back to Store</div>
   <div class="detail-cover" id="detailCover"></div>
@@ -216,17 +239,16 @@ button, .btn {
   <div id="detailPrice" style="font-size: 24px; font-weight: bold; margin: 16px 0;"></div>
   <button id="readBtn" class="btn">Read Now</button>
 </div>
-
 <div id="toast" class="toast"></div>
 
 <script>
-// ---------- INDEXEDDB ----------
+// IndexedDB Setup
 let db = null;
 const DB_NAME = 'LibraryDB';
 
 function openDB() {
   return new Promise((resolve) => {
-    const req = indexedDB.open(DB_NAME, 2);
+    const req = indexedDB.open(DB_NAME, 3);
     req.onupgradeneeded = (e) => {
       const dbRef = e.target.result;
       if (!dbRef.objectStoreNames.contains('books')) {
@@ -234,6 +256,9 @@ function openDB() {
       }
       if (!dbRef.objectStoreNames.contains('purchases')) {
         dbRef.createObjectStore('purchases', { keyPath: 'id', autoIncrement: true });
+      }
+      if (!dbRef.objectStoreNames.contains('settings')) {
+        dbRef.createObjectStore('settings', { keyPath: 'key' });
       }
     };
     req.onsuccess = () => { db = req.result; resolve(); };
@@ -259,20 +284,36 @@ async function deleteBook(id) {
     tx.objectStore('books').delete(id).onsuccess = () => r();
   });
 }
+async function getSetting(key, def) {
+  return new Promise(r => {
+    const tx = db.transaction('settings', 'readonly');
+    tx.objectStore('settings').get(key).onsuccess = e => r(e.target.result ? e.target.result.value : def);
+  });
+}
+async function setSetting(key, value) {
+  const tx = db.transaction('settings', 'readwrite');
+  tx.objectStore('settings').put({ key, value });
+}
 
-// ---------- STATE ----------
+// Global state
 let books = [];
 let purchasedIds = [];
 let editingId = null;
+let adminPassword = 'admin123'; // default, will load from DB
 
+// Helper
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.innerText = msg;
   t.style.opacity = '1';
   setTimeout(() => t.style.opacity = '0', 2500);
 }
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+}
 
-// Render Store
+// Render store
 async function renderStore() {
   const grid = document.getElementById('store');
   grid.innerHTML = '';
@@ -283,13 +324,9 @@ async function renderStore() {
   for (let book of books) {
     const priceText = parseFloat(book.price) === 0 ? 'Free' : 'Rs.' + book.price;
     let coverHtml = '';
-    if (book.coverData) {
-      coverHtml = `<img src="${book.coverData}">`;
-    } else if (book.imageUrl) {
-      coverHtml = `<img src="${book.imageUrl}" onerror="this.style.display='none'">`;
-    } else {
-      coverHtml = `<span>${book.emoji || '📗'}</span>`;
-    }
+    if (book.coverData) coverHtml = `<img src="${book.coverData}">`;
+    else if (book.imageUrl) coverHtml = `<img src="${book.imageUrl}" onerror="this.style.display='none'">`;
+    else coverHtml = `<span>${book.emoji || '📗'}</span>`;
     const card = document.createElement('div');
     card.className = 'book-card';
     card.innerHTML = `
@@ -304,35 +341,23 @@ async function renderStore() {
   }
 }
 
-// Open Book Detail with Background Image (Wallpaper) or Gradient
 async function openBookDetail(bookId) {
   const book = books.find(b => b.id === bookId);
   if (!book) return;
   const isPurchased = purchasedIds.includes(book.id);
   const isFree = parseFloat(book.price) === 0;
-  
   document.getElementById('store').style.display = 'none';
   document.getElementById('detail').style.display = 'block';
-  
-  // Apply background: if background image exists, use it; else fallback to gradient
-  if (book.backgroundData) {
-    document.body.style.background = `url("${book.backgroundData}") center center / cover no-repeat fixed`;
-  } else {
-    document.body.style.background = `linear-gradient(135deg, ${book.color1||'#1A1F4D'}, ${book.color2||'#5B2EFF'})`;
-  }
-  
-  // Cover image
+  document.body.style.background = `linear-gradient(135deg, ${book.color1||'#1A1F4D'}, ${book.color2||'#5B2EFF'})`;
   const coverDiv = document.getElementById('detailCover');
   if (book.coverData) coverDiv.innerHTML = `<img src="${book.coverData}">`;
   else if (book.imageUrl) coverDiv.innerHTML = `<img src="${book.imageUrl}" onerror="this.style.display='none'">`;
   else coverDiv.innerHTML = `<span>${book.emoji || '📗'}</span>`;
   coverDiv.style.background = `linear-gradient(135deg, ${book.color1}, ${book.color2})`;
-  
   document.getElementById('detailTitle').innerText = book.title;
   document.getElementById('detailAuthor').innerText = '✍️ ' + (book.author || 'Unknown');
   document.getElementById('detailDesc').innerText = book.desc || '';
   document.getElementById('detailPrice').innerText = isFree ? 'Free' : `Rs. ${book.price}`;
-  
   const readBtn = document.getElementById('readBtn');
   if (isFree || isPurchased) {
     readBtn.innerText = '📖 Read Now';
@@ -340,16 +365,15 @@ async function openBookDetail(bookId) {
   } else {
     readBtn.innerText = '💰 Buy Now (Demo)';
     readBtn.onclick = () => {
-      if (confirm(`Demo payment for ${book.title}? (No actual charge)`)) {
+      if (confirm(`Demo payment for ${book.title}? No actual charge.`)) {
         purchasedIds.push(book.id);
-        showToast('Purchase successful! You can now read.');
+        showToast('Purchase successful! Now you can read.');
         openBookDetail(book.id);
       }
     };
   }
 }
 
-// Open PDF
 function openPDF(bookId) {
   const book = books.find(b => b.id === bookId);
   if (!book || !book.pdfData) {
@@ -360,36 +384,34 @@ function openPDF(bookId) {
     const binary = atob(book.pdfData.split(',')[1]);
     const arr = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) arr[i] = binary.charCodeAt(i);
-    const blob = new Blob([arr], {type: 'application/pdf'});
+    const blob = new Blob([arr], { type: 'application/pdf' });
     const url = URL.createObjectURL(blob);
     const win = window.open();
     if (!win) {
-      showToast('⚠️ Popup blocked. Allow popups for this site.');
+      showToast('⚠️ Popup blocked. Please allow popups for this site.');
       return;
     }
     win.document.write(`
       <html><head><title>${escapeHtml(book.title)}</title></head>
       <body style="margin:0;"><iframe src="${url}" width="100%" height="100%" style="border:none;"></iframe></body>
-    </html>
-    `);
+    </html>`);
   } catch(e) {
     showToast('PDF error');
   }
 }
 
-// Back to store
 function goBack() {
   document.getElementById('store').style.display = 'grid';
   document.getElementById('detail').style.display = 'none';
   document.body.style.background = 'linear-gradient(135deg, #0A0F2C, #1A1F4D)';
 }
 
-// ---------- ADMIN FUNCTIONS ----------
+// Admin logic with password change
 let adminLoggedIn = false;
 function toggleAdmin() {
   if (!adminLoggedIn) {
     const pass = prompt('Enter admin password:');
-    if (pass === 'admin123') {
+    if (pass === adminPassword) {
       adminLoggedIn = true;
       document.getElementById('adminPanel').style.display = 'block';
       renderAdminList();
@@ -432,11 +454,7 @@ window.editBook = async (id) => {
   document.getElementById('color1').value = book.color1 || '#1A1F4D';
   document.getElementById('color2').value = book.color2 || '#5B2EFF';
   document.getElementById('description').value = book.desc || '';
-  // Clear file inputs (cannot preselect)
-  document.getElementById('coverFile').value = '';
-  document.getElementById('bgFile').value = '';
-  document.getElementById('pdfFile').value = '';
-  showToast('Edit mode: change data and click Save');
+  showToast('Edit mode: make changes and click Save');
 };
 
 window.deleteBookHandler = async (id) => {
@@ -452,44 +470,32 @@ window.deleteBookHandler = async (id) => {
 async function saveBookHandler() {
   const title = document.getElementById('title').value.trim();
   if (!title) { showToast('Title required'); return; }
-  
   let coverData = null;
   const coverFile = document.getElementById('coverFile').files[0];
   if (coverFile) {
     coverData = await new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(coverFile); });
   }
-  
-  let bgData = null;
-  const bgFile = document.getElementById('bgFile').files[0];
-  if (bgFile) {
-    bgData = await new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(bgFile); });
-  }
-  
   let pdfData = null;
   const pdfFile = document.getElementById('pdfFile').files[0];
   if (pdfFile) {
     pdfData = await new Promise(r => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.readAsDataURL(pdfFile); });
   }
-  
   const book = {
     title: title,
     author: document.getElementById('author').value.trim(),
     price: document.getElementById('price').value || '0',
     imageUrl: document.getElementById('imageUrl').value.trim(),
     coverData: coverData,
-    backgroundData: bgData,
     emoji: document.getElementById('emoji').value.trim() || '📗',
     color1: document.getElementById('color1').value,
     color2: document.getElementById('color2').value,
     desc: document.getElementById('description').value.trim(),
     pdfData: pdfData
   };
-  
   if (editingId) {
     book.id = editingId;
     const old = books.find(b => b.id === editingId);
     if (!coverData && old && old.coverData) book.coverData = old.coverData;
-    if (!bgData && old && old.backgroundData) book.backgroundData = old.backgroundData;
     if (!pdfData && old && old.pdfData) book.pdfData = old.pdfData;
     editingId = null;
   }
@@ -497,9 +503,8 @@ async function saveBookHandler() {
   await loadBooks();
   renderStore();
   renderAdminList();
-  showToast(book.id ? 'Book updated' : 'Book added');
-  
-  // Reset form (keep admin panel open)
+  showToast(editingId ? 'Book updated' : 'Book added');
+  // reset form
   document.getElementById('title').value = '';
   document.getElementById('author').value = '';
   document.getElementById('price').value = '0';
@@ -509,7 +514,6 @@ async function saveBookHandler() {
   document.getElementById('color2').value = '#5B2EFF';
   document.getElementById('description').value = '';
   document.getElementById('coverFile').value = '';
-  document.getElementById('bgFile').value = '';
   document.getElementById('pdfFile').value = '';
 }
 
@@ -524,22 +528,51 @@ function cancelEdit() {
   document.getElementById('color2').value = '#5B2EFF';
   document.getElementById('description').value = '';
   document.getElementById('coverFile').value = '';
-  document.getElementById('bgFile').value = '';
   document.getElementById('pdfFile').value = '';
   showToast('Form cleared');
 }
 
+// Password change handler
+async function changePassword() {
+  const current = document.getElementById('currentPass').value.trim();
+  const newPass = document.getElementById('newPass').value.trim();
+  const confirm = document.getElementById('confirmPass').value.trim();
+  if (current !== adminPassword) {
+    showToast('Current password is incorrect');
+    return;
+  }
+  if (!newPass || newPass.length < 4) {
+    showToast('New password must be at least 4 characters');
+    return;
+  }
+  if (newPass !== confirm) {
+    showToast('New passwords do not match');
+    return;
+  }
+  adminPassword = newPass;
+  await setSetting('adminPassword', adminPassword);
+  showToast('Password changed successfully! Use new password next login.');
+  document.getElementById('currentPass').value = '';
+  document.getElementById('newPass').value = '';
+  document.getElementById('confirmPass').value = '';
+}
+
+// Load books and settings
 async function loadBooks() {
   books = await getAllBooks();
-  purchasedIds = []; // in real app, load from DB
+  purchasedIds = []; // could load purchases from DB in future
+  adminPassword = await getSetting('adminPassword', 'admin123');
 }
 
-function escapeHtml(str) {
-  if (!str) return '';
-  return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
+// Tab switching
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+  document.querySelectorAll('.admin-tab').forEach(tab => tab.classList.remove('active'));
+  document.getElementById(tabId + 'Tab').classList.add('active');
+  document.querySelector(`.admin-tab[data-tab="${tabId}"]`).classList.add('active');
 }
 
-// ---------- INIT ----------
+// Initialization
 window.onload = async () => {
   await openDB();
   await loadBooks();
@@ -548,6 +581,10 @@ window.onload = async () => {
   document.getElementById('saveBook').onclick = saveBookHandler;
   document.getElementById('cancelEdit').onclick = cancelEdit;
   document.getElementById('backBtn').onclick = goBack;
+  document.getElementById('changePassBtn').onclick = changePassword;
+  document.querySelectorAll('.admin-tab').forEach(btn => {
+    btn.onclick = () => switchTab(btn.getAttribute('data-tab'));
+  });
 };
 </script>
 </body>
