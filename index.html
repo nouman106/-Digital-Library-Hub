@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Digital Library Hub – No Password, Ready to Use</title>
+<title>Digital Library Hub – Admin Mode (Secure)</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -39,9 +39,18 @@ button, .btn {
   border-radius: 40px;
   color: white;
   cursor: pointer;
+  transition: all 0.2s;
 }
-.admin-btn {
+button:hover, .btn:hover {
+  background: rgba(255,255,255,0.3);
+  transform: translateY(-2px);
+}
+.admin-mode-btn {
   background: #5B2EFF;
+}
+.admin-mode-btn.admin-active {
+  background: #00C9A7;
+  box-shadow: 0 0 8px #00C9A7;
 }
 .grid {
   display: grid;
@@ -55,12 +64,13 @@ button, .btn {
   border-radius: 18px;
   padding: 12px;
   cursor: pointer;
-  transition: 0.2s;
+  transition: 0.3s;
   border: 1px solid rgba(255,255,255,0.1);
 }
 .book-card:hover {
   transform: translateY(-5px);
   background: rgba(255,255,255,0.15);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 .cover {
   aspect-ratio: 2/3;
@@ -104,6 +114,10 @@ button, .btn {
   border-radius: 40px;
   margin-bottom: 20px;
   cursor: pointer;
+  transition: all 0.2s;
+}
+.back:hover {
+  background: rgba(255,255,255,0.35);
 }
 .detail-cover {
   width: 160px;
@@ -129,6 +143,7 @@ button, .btn {
   display: none;
   max-height: 80vh;
   overflow-y: auto;
+  z-index: 100;
 }
 .admin-panel input, .admin-panel textarea, .admin-panel select {
   display: block;
@@ -150,6 +165,18 @@ button, .btn {
   opacity: 0;
   transition: 0.3s;
   z-index: 999;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+.admin-badge {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  font-size: 11px;
+  background: rgba(0,0,0,0.5);
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: #aaa;
+  z-index: 1000;
 }
 </style>
 </head>
@@ -158,11 +185,11 @@ button, .btn {
 <div class="navbar">
   <div class="logo">📘 Digital Library Hub</div>
   <div>
-    <button id="adminBtn" class="admin-btn">Admin Panel</button>
+    <button id="adminModeBtn" class="admin-mode-btn">🔐 Admin Mode (Off)</button>
   </div>
 </div>
 
-<!-- Admin Panel (no password) -->
+<!-- Admin Panel (only visible in admin mode) -->
 <div id="adminPanel" class="admin-panel">
   <h3>Add / Edit Book</h3>
   <input type="text" id="title" placeholder="Book Title">
@@ -184,6 +211,7 @@ button, .btn {
   <hr>
   <div id="adminBookList"></div>
   <button id="closeAdmin" style="background:rgba(255,255,255,0.2);">Close Admin</button>
+  <button id="exitAdminBtn" style="background:#FF6EC7; margin-top:10px;">Exit Admin Mode</button>
 </div>
 
 <!-- Store Grid -->
@@ -201,6 +229,7 @@ button, .btn {
 </div>
 
 <div id="toast" class="toast"></div>
+<div id="adminBadge" class="admin-badge"></div>
 
 <script>
 // ---------- INDEXEDDB SETUP ----------
@@ -214,7 +243,6 @@ function openDB() {
       const dbRef = e.target.result;
       if (!dbRef.objectStoreNames.contains('books')) {
         const store = dbRef.createObjectStore('books', { keyPath: 'id', autoIncrement: true });
-        // Add sample books only if upgrading from empty DB
         const sampleBooks = [
           { title: "Ali Ka Safar (علی کا سفر)", author: "Ahmed Ali", price: 0, imageUrl: "", emoji: "🌙", color1: "#1C2A6E", color2: "#3D5A80", desc: "A children's story about Islamic values.", pdfData: null },
           { title: "Roshni Ki Raah", author: "Maulana Tariq", price: 199, imageUrl: "", emoji: "🕌", color1: "#1A4D2E", color2: "#4A7C59", desc: "Islamic guidance for daily life.", pdfData: null },
@@ -251,6 +279,7 @@ async function deleteBook(id) {
 let books = [];
 let purchasedIds = []; // demo purchases stored in memory (for current session)
 let editingId = null;
+let isAdminMode = false;   // admin mode flag
 
 function showToast(msg) {
   const t = document.getElementById('toast');
@@ -263,12 +292,12 @@ function escapeHtml(str) {
   return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]));
 }
 
-// ---------- RENDER STORE ----------
+// ---------- RENDER STORE (edit/delete buttons only in admin mode) ----------
 async function renderStore() {
   const grid = document.getElementById('store');
   grid.innerHTML = '';
   if (books.length === 0) {
-    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:60px;">📭 No books. Add via Admin Panel.</div>';
+    grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:60px;">📭 No books. Add via Admin Panel (login as admin).</div>';
     return;
   }
   for (let book of books) {
@@ -279,16 +308,20 @@ async function renderStore() {
     else coverHtml = `<span>${book.emoji || '📗'}</span>`;
     const card = document.createElement('div');
     card.className = 'book-card';
+    let actionButtons = '';
+    if (isAdminMode) {
+      actionButtons = `<div style="margin-top: 8px;">
+        <button class="btn" onclick="event.stopPropagation(); editBook(${book.id})" style="background:#00E5FF20;">✏️</button>
+        <button class="btn" onclick="event.stopPropagation(); deleteBookHandler(${book.id})" style="background:#FF6EC720;">🗑️</button>
+      </div>`;
+    }
     card.innerHTML = `
       <div class="cover" style="background:linear-gradient(135deg, ${book.color1||'#1A1F4D'}, ${book.color2||'#5B2EFF'});">
         ${coverHtml}
       </div>
       <h4>${escapeHtml(book.title)}</h4>
       <div class="price">${priceText}</div>
-      <div style="margin-top: 8px;">
-        <button class="btn" onclick="event.stopPropagation(); editBook(${book.id})" style="background:#00E5FF20;">✏️</button>
-        <button class="btn" onclick="event.stopPropagation(); deleteBookHandler(${book.id})" style="background:#FF6EC720;">🗑️</button>
-      </div>
+      ${actionButtons}
     `;
     card.onclick = () => openBookDetail(book.id);
     grid.appendChild(card);
@@ -363,13 +396,63 @@ function goBack() {
   document.body.style.background = 'linear-gradient(135deg, #0A0F2C, #1A1F4D)';
 }
 
-// ---------- ADMIN PANEL (NO PASSWORD) ----------
-let adminOpen = false;
-function toggleAdmin() {
-  adminOpen = !adminOpen;
+// ---------- ADMIN MODE ----------
+const ADMIN_PASSWORD = 'admin123';
+let adminPanelOpen = false;
+
+function toggleAdminMode() {
+  if (isAdminMode) {
+    // exit admin mode
+    deactivateAdminMode();
+  } else {
+    // prompt for password
+    const pass = prompt('Enter admin password:');
+    if (pass === ADMIN_PASSWORD) {
+      activateAdminMode();
+      showToast('Admin mode activated! Now you can edit/delete books.');
+    } else {
+      showToast('Wrong password!');
+    }
+  }
+}
+
+function activateAdminMode() {
+  isAdminMode = true;
+  const btn = document.getElementById('adminModeBtn');
+  btn.innerText = '🔐 Admin Mode (On)';
+  btn.classList.add('admin-active');
+  document.getElementById('adminBadge').innerText = '🛡️ Admin Mode Active - Edit/Delete enabled';
+  // re-render store to show edit/delete buttons
+  renderStore();
+  // also show admin panel (but closed by default)
+  adminPanelOpen = false;
+  document.getElementById('adminPanel').style.display = 'none';
+  // add exit button logic
+  document.getElementById('exitAdminBtn').style.display = 'inline-block';
+}
+
+function deactivateAdminMode() {
+  isAdminMode = false;
+  adminPanelOpen = false;
+  const btn = document.getElementById('adminModeBtn');
+  btn.innerText = '🔐 Admin Mode (Off)';
+  btn.classList.remove('admin-active');
+  document.getElementById('adminBadge').innerText = '';
+  document.getElementById('adminPanel').style.display = 'none';
+  // re-render store to remove edit/delete buttons
+  renderStore();
+}
+
+// toggle admin panel (only if admin mode is active)
+function toggleAdminPanel() {
+  if (!isAdminMode) {
+    showToast('Please activate Admin Mode first (click the Admin Mode button and enter password).');
+    return;
+  }
   const panel = document.getElementById('adminPanel');
-  panel.style.display = adminOpen ? 'block' : 'none';
-  if (adminOpen) renderAdminList();
+  adminPanelOpen = !adminPanelOpen;
+  panel.style.display = adminPanelOpen ? 'block' : 'none';
+  if (adminPanelOpen) renderAdminList();
 }
 
 async function renderAdminList() {
@@ -390,6 +473,7 @@ async function renderAdminList() {
 }
 
 window.editBook = async (id) => {
+  if (!isAdminMode) return;
   const book = books.find(b => b.id === id);
   if (!book) return;
   editingId = id;
@@ -401,24 +485,28 @@ window.editBook = async (id) => {
   document.getElementById('color1').value = book.color1 || '#1A1F4D';
   document.getElementById('color2').value = book.color2 || '#5B2EFF';
   document.getElementById('description').value = book.desc || '';
-  // Clear file inputs (they can't be pre-filled)
   document.getElementById('coverFile').value = '';
   document.getElementById('pdfFile').value = '';
   showToast('Edit mode: modify and click Save.');
 };
 
 window.deleteBookHandler = async (id) => {
+  if (!isAdminMode) return;
   if (confirm('Delete this book permanently?')) {
     await deleteBook(id);
     await loadBooks();
     renderStore();
-    if (adminOpen) renderAdminList();
+    if (adminPanelOpen) renderAdminList();
     showToast('Book deleted');
   }
 };
 
 // ---------- SAVE / UPDATE BOOK ----------
 async function saveBookHandler() {
+  if (!isAdminMode) {
+    showToast('Activate Admin Mode to add/edit books');
+    return;
+  }
   const title = document.getElementById('title').value.trim();
   if (!title) { showToast('Title is required'); return; }
   let coverData = null;
@@ -453,9 +541,9 @@ async function saveBookHandler() {
   await saveBook(book);
   await loadBooks();
   renderStore();
-  if (adminOpen) renderAdminList();
+  if (adminPanelOpen) renderAdminList();
   showToast(book.id ? 'Book updated' : 'Book added');
-  // Clear form except maybe keep fields? Reset them
+  // reset form
   document.getElementById('title').value = '';
   document.getElementById('author').value = '';
   document.getElementById('price').value = '0';
@@ -493,14 +581,32 @@ window.onload = async () => {
   await loadBooks();
   renderStore();
   console.log('Books loaded:', books.length);
-  document.getElementById('adminBtn').onclick = toggleAdmin;
+  document.getElementById('adminModeBtn').onclick = toggleAdminMode;
   document.getElementById('closeAdmin').onclick = () => {
     document.getElementById('adminPanel').style.display = 'none';
-    adminOpen = false;
+    adminPanelOpen = false;
+  };
+  document.getElementById('exitAdminBtn').onclick = () => {
+    deactivateAdminMode();
+    document.getElementById('adminPanel').style.display = 'none';
+    adminPanelOpen = false;
   };
   document.getElementById('saveBook').onclick = saveBookHandler;
   document.getElementById('cancelEdit').onclick = cancelEdit;
   document.getElementById('backBtn').onclick = goBack;
+  // Allow opening admin panel when admin mode is on – but we'll make it via a separate admin panel button? 
+  // For convenience, let's add admin panel toggle button next to admin mode? Actually we have a navbar button "Admin Mode" already. 
+  // We need a way to open the admin panel when in admin mode. Let's add a button inside the navbar? But to keep simple, we'll use the same "Admin Mode" button? No, that toggles mode.
+  // Let's add a separate "Admin Panel" button that appears only when admin mode is active.
+  const adminPanelToggleBtn = document.createElement('button');
+  adminPanelToggleBtn.innerText = '📋 Admin Panel';
+  adminPanelToggleBtn.className = 'btn';
+  adminPanelToggleBtn.style.marginLeft = '8px';
+  adminPanelToggleBtn.onclick = () => {
+    if (isAdminMode) toggleAdminPanel();
+    else showToast('Activate Admin Mode first');
+  };
+  document.querySelector('.navbar div').appendChild(adminPanelToggleBtn);
 };
 </script>
 </body>
