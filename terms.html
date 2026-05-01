@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Terms & Conditions — KitabGhar</title>
+<style>
+:root{
+  --bg:#0a0a1a;--bg2:#0f0f2a;--bg3:#13132e;
+  --text:#e8e8f8;--text2:#a0a0c8;--text3:#6060a0;
+  --primary:#7c3aed;--primary2:#9f5bff;--primary-light:#1e1040;
+  --secondary:#06b6d4;--secondary-light:#0e2a3a;
+  --border:#1e1e4a;--border2:#1a1a3e;
+  --card:#0f0f2a;--card-shadow:0 4px 24px rgba(124,58,237,.18);
+  --radius:14px;--radius-sm:8px;
+  --font:'Segoe UI',Tahoma,sans-serif;
+  --glow-p:rgba(124,58,237,.5);--glow-s:rgba(6,182,212,.4);
+}
+[data-theme="dark"]{
+  --bg:#060612;--bg2:#0a0a1e;--bg3:#0d0d24;
+  --text:#f0f0ff;--text2:#9090c0;--text3:#5050a0;
+  --primary:#8b5cf6;--primary2:#a78bfa;--primary-light:#1a0e40;
+  --secondary:#22d3ee;--secondary-light:#0a2535;
+  --border:#1a1a40;--border2:#141438;
+  --card:#0a0a1e;--card-shadow:0 4px 24px rgba(139,92,246,.2);
+  --glow-p:rgba(139,92,246,.6);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.7}
+nav{background:var(--bg2);border-bottom:1px solid var(--border);padding:.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.nav-brand{font-weight:700;font-size:1.1rem;background:linear-gradient(135deg,var(--primary2),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:1rem;align-items:center}
+.nav-links a{color:var(--text2);font-size:.88rem;text-decoration:none;padding:4px 10px;border-radius:6px;transition:all .2s}
+.nav-links a:hover{background:var(--primary-light);background:linear-gradient(135deg,var(--primary2),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.theme-btn{background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:.82rem;color:var(--text2);cursor:pointer;font-family:var(--font)}
+.theme-btn:hover{border-color:var(--primary);background:linear-gradient(135deg,var(--primary2),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.hero{background:linear-gradient(135deg,#0d0928,#1a1050);color:#fff;padding:2.5rem 1rem;text-align:center}
+.hero h1{font-size:1.8rem;font-weight:700;margin-bottom:.4rem}
+.hero p{opacity:.85;font-size:.95rem}
+
+.content{max-width:800px;margin:0 auto;padding:2rem 1rem}
+.section{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.2rem}
+.section-icon{font-size:1.5rem;margin-bottom:.5rem}
+.section h2{font-size:1.1rem;font-weight:700;color:var(--primary);margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem}
+.section p,.section li{color:var(--text2);font-size:.92rem;margin-bottom:.5rem}
+.section ul,.section ol{padding-left:1.3rem}
+.section li{margin-bottom:.4rem}
+.highlight{background:var(--primary-light);border-left:4px solid var(--primary);padding:.8rem 1rem;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:.8rem 0;color:var(--text);font-size:.9rem}
+.policy-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:.8rem}
+.policy-card{background:var(--bg3);border-radius:var(--radius-sm);padding:1rem;text-align:center}
+.policy-card .icon{font-size:1.8rem;margin-bottom:.5rem}
+.policy-card h3{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:.3rem}
+.policy-card p{font-size:.8rem;color:var(--text2)}
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:1.2rem;text-align:center;color:var(--text3);font-size:.83rem;margin-top:1rem}
+footer a{color:var(--primary);text-decoration:underline}
+
+/* ===== ADVANCED ANIMATIONS & GLOW EFFECTS ===== */
+
+/* Nav entrance */
+nav{
+  animation:navDrop .5s cubic-bezier(.16,1,.3,1) both;
+  transition:box-shadow .3s;
+}
+nav.scrolled{box-shadow:0 4px 24px rgba(124,58,237,.15)}
+@keyframes navDrop{
+  from{opacity:0;transform:translateY(-20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Hero with floating particles */
+.hero{
+  position:relative;overflow:hidden;
+  animation:heroIn .7s both;
+}
+@keyframes heroIn{
+  from{opacity:0;transform:translateY(-10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.hero::before,.hero::after{
+  content:'';position:absolute;border-radius:50%;pointer-events:none;
+}
+.hero::before{
+  width:300px;height:300px;top:-100px;left:-80px;
+  background:radial-gradient(circle,rgba(255,255,255,.15),transparent 70%);
+  animation:heroOrb 7s ease-in-out infinite;
+}
+.hero::after{
+  width:180px;height:180px;bottom:-60px;right:-40px;
+  background:radial-gradient(circle,rgba(255,255,255,.1),transparent 70%);
+  animation:heroOrb 5s ease-in-out infinite reverse;
+}
+@keyframes heroOrb{
+  0%,100%{transform:translate(0,0)}
+  50%{transform:translate(15px,-20px)}
+}
+
+.hero h1{animation:slideUpFade .7s .1s both}
+.hero p{animation:slideUpFade .7s .25s both}
+@keyframes slideUpFade{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Section cards — scroll reveal */
+.section{
+  opacity:0;transform:translateY(24px);
+  transition:opacity .5s,transform .5s;
+}
+.section.visible{opacity:1;transform:translateY(0)}
+
+/* Section h2 glow on hover */
+.section h2{
+  transition:color .2s;
+}
+.section:hover h2{
+  text-shadow:0 0 20px rgba(124,58,237,.3);
+}
+
+/* Policy cards pop */
+.policy-card{
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,border-color .3s;
+  border:1px solid transparent;
+}
+.policy-card:hover{
+  transform:translateY(-6px) scale(1.03);
+  box-shadow:0 12px 32px rgba(124,58,237,.15);
+  border-color:rgba(124,58,237,.2);
+}
+.policy-card .icon{
+  display:inline-block;
+  transition:transform .3s;
+}
+.policy-card:hover .icon{
+  transform:scale(1.3) rotate(-8deg);
+}
+
+/* Highlight glow */
+.highlight{
+  transition:box-shadow .3s;
+  position:relative;
+}
+.highlight:hover{
+  box-shadow:0 4px 20px rgba(124,58,237,.15);
+}
+
+/* Nav links hover */
+.nav-links a{
+  transition:all .2s;
+}
+.nav-links a:hover{
+  box-shadow:0 4px 12px rgba(124,58,237,.15);
+  transform:translateY(-1px);
+}
+
+/* Footer link glow */
+footer a{
+  transition:color .2s,text-shadow .2s;
+}
+footer a:hover{
+  text-shadow:0 0 12px rgba(124,58,237,.4);
+}
+
+/* Dark mode enhanced glows */
+[data-theme="dark"] .section:hover h2{
+  text-shadow:0 0 20px rgba(139,92,246,.4);
+}
+[data-theme="dark"] .policy-card:hover{
+  box-shadow:0 12px 32px rgba(0,0,0,.4),0 0 16px rgba(139,92,246,.1);
+}
+[data-theme="dark"] .highlight:hover{
+  box-shadow:0 4px 20px rgba(139,92,246,.15);
+}
+
+/* ===== NEON PURPLE THEME EXTRAS ===== */
+body{background:var(--bg);background-image:radial-gradient(ellipse at 30% 20%,rgba(124,58,237,.05) 0%,transparent 50%)}
+nav{background:rgba(15,15,42,.95);backdrop-filter:blur(12px);box-shadow:0 1px 0 rgba(124,58,237,.3)}
+.hero{background:radial-gradient(ellipse at 50% 50%,#1a0d40 0%,#0a0a1a 70%) !important;border-bottom:1px solid rgba(124,58,237,.2)}
+.section{background:rgba(15,15,42,.8);border-color:rgba(30,30,74,.8)}
+.highlight{background:rgba(124,58,237,.12);border-left-color:var(--primary)}
+.policy-card{background:rgba(19,19,46,.8)}
+.policy-card:hover{border-color:rgba(124,58,237,.5) !important;box-shadow:0 0 24px rgba(124,58,237,.2) !important}
+footer{background:rgba(10,10,26,.9);border-color:rgba(124,58,237,.2)}
+
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">📚 KitabGhar</div>
+  <div class="nav-links">
+    <a href="index.html">🏠 Home</a>
+    <button class="theme-btn" id="theme-btn">🌙 Dark</button>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>📜 Terms & Conditions</h1>
+  <p>Shukriya ke aap KitabGhar use karte hain — yahan kuch zaruri baatein hain</p>
+</div>
+
+<div class="content">
+
+  <div class="section">
+    <h2>📖 Khidmat Ka Maqsad (How It Works)</h2>
+    <div class="highlight">KitabGhar ek muft online library hai jo ilm ko aam karne ke liye banayi gayi hai.</div>
+    <p>Hamare platform par aap in kitabon ko browser mein parh sakte hain:</p>
+    <ul>
+      <li>📕 <strong>Islami Kitabein</strong> — Din o Dunya ki rehbari ke liye</li>
+      <li>🎓 <strong>Talimi Kitabein</strong> — Science, Math, History aur zyadah</li>
+      <li>🔥 <strong>Hosla Afzai</strong> — Aapka jazba barhane ke liye</li>
+      <li>🧒 <strong>Bachon Ki Kitabein</strong> — Chhoti umar mein bari taleem</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>👥 Parhnay Walon Ke Liye (For Readers)</h2>
+    <div class="policy-grid">
+      <div class="policy-card">
+        <div class="icon">✅</div>
+        <h3>Ijazat Hai</h3>
+        <p>Browser mein parhen, seekhen aur ilm hasil karein</p>
+      </div>
+      <div class="policy-card">
+        <div class="icon">🔗</div>
+        <h3>Share Karein</h3>
+        <p>Website ka link dosto ke saath share kar sakte hain</p>
+      </div>
+      <div class="policy-card">
+        <div class="icon">❌</div>
+        <h3>Copy Nahi</h3>
+        <p>Kitab ke content ko copy/print karna mana hai</p>
+      </div>
+      <div class="policy-card">
+        <div class="icon">💰</div>
+        <h3>Bech Nahi Sakte</h3>
+        <p>Content ko tijaarati maqsad ke liye use karna mana hai</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>⚙️ Admins Ke Liye (For Admins)</h2>
+    <ul>
+      <li>Sirf woh kitabein add karein jinka aapke paas haq hai (copyright clear ho)</li>
+      <li>Galat ya harmful content upload karna sakht mana hai</li>
+      <li>Admin password kisi se share na karein</li>
+      <li>Data ki zimmedari aap par hai — backup rakhein</li>
+      <li>IndexedDB mein data local device par rehta hai — server backup nahi hota</li>
+    </ul>
+    <div class="highlight">⚠️ Admin panel ka galat istimaal account ban ka sabab ban sakta hai.</div>
+  </div>
+
+  <div class="section">
+    <h2>📋 Content Policy</h2>
+    <ol>
+      <li><strong>Halal Content:</strong> Sirf woh content jo Islami wa qanuni usoolon ke mutabiq ho</li>
+      <li><strong>Copyright:</strong> Sirf woh kitabein add karein jo public domain mein hon ya aapke paas permission ho</li>
+      <li><strong>Quality:</strong> Clearly illegible ya corrupt PDF files na daalein</li>
+      <li><strong>Accuracy:</strong> Kitab ki sahi malumat (naam, author, category) fill karein</li>
+      <li><strong>Privacy:</strong> Kisi ki personal malumat share na karein</li>
+    </ol>
+  </div>
+
+  <div class="section">
+    <h2>💾 Data & Privacy</h2>
+    <p>KitabGhar mein aapka data <strong>sirf aapke browser</strong> mein store hota hai (IndexedDB). Hamare servers par koi data nahi jaata. Isliye:</p>
+    <ul>
+      <li>Browser clear karne par data mit sakta hai — backup rakhein</li>
+      <li>Doosre device par data access nahi hoga</li>
+      <li>Hum aapki koi personal malumat nahi jante aur nahi rakhte</li>
+    </ul>
+    <div class="highlight">🔒 Aapki privacy hamari priority hai — koi tracking nahi, koi ads nahi.</div>
+  </div>
+
+  <div class="section">
+    <h2>⚠️ Disclaimer</h2>
+    <p>KitabGhar mein maujood kitabein sirf taleem aur ilm ke maqsad ke liye hain. Kisi kitab ka content third-party hai — ham us content ki sahihat ki guarantee nahi dete. Parhnay wala khud zimmedaar hai.</p>
+  </div>
+
+  <div class="section">
+    <h2>📞 Rabta Karein</h2>
+    <p>Koi shikayat, mashwara ya sawaal ho toh admin se rabta karein. Hum aman se kaam karte hain aur aapki madad karne mein khush hain.</p>
+    <div class="highlight">🌟 Shukriya ke aap ilm ki is duniya ka hissa hain — KitabGhar par khush aamdeed!</div>
+  </div>
+
+</div>
+
+<footer>
+  <a href="index.html">🏠 Home Wapas Jayein</a> &nbsp;|&nbsp; &copy; 2024 KitabGhar — Tamam huqooq mahfooz hain
+</footer>
+
+<script>
+const saved=localStorage.getItem('theme')||'light';
+document.documentElement.setAttribute('data-theme',saved);
+document.getElementById('theme-btn').textContent=saved==='dark'?'☀️ Light':'🌙 Dark';
+document.getElementById('theme-btn').addEventListener('click',()=>{
+  const cur=document.documentElement.getAttribute('data-theme');
+  const next=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',next);
+  document.getElementById('theme-btn').textContent=next==='dark'?'☀️ Light':'🌙 Dark';
+  localStorage.setItem('theme',next);
+});
+
+// Load site theme colors from IndexedDB
+(function(){
+  const req=indexedDB.open('kitabghar_db',2);
+  req.onsuccess=function(e){
+    const db=e.target.result;
+    const themeKeys={bg_color:'--bg',card_color:'--card',text_color:'--text',border_color:'--border',primary_color:'--primary',secondary_color:'--secondary'};
+    Object.entries(themeKeys).forEach(([k,cssVar])=>{
+      const tx=db.transaction('settings','readonly');
+      const r=tx.objectStore('settings').get(k);
+      r.onsuccess=function(ev){
+        if(ev.target.result&&ev.target.result.value)
+          document.documentElement.style.setProperty(cssVar,ev.target.result.value);
+      };
+    });
+    // hero gradient
+    const htx=db.transaction('settings','readonly');
+    const hr=htx.objectStore('settings').get('hero_gradient');
+    hr.onsuccess=function(ev){
+      if(ev.target.result&&ev.target.result.value){
+        const hero=document.querySelector('.hero');
+        if(hero)hero.style.background=ev.target.result.value;
+      }
+    };
+  };
+})();
+
+// ===== SCROLL ANIMATIONS =====
+window.addEventListener('scroll',()=>{
+  document.querySelector('nav').classList.toggle('scrolled',window.scrollY>20);
+},{passive:true});
+
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      e.target.style.transitionDelay=(i*0.05)+'s';
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+},{threshold:.08});
+document.querySelectorAll('.section').forEach(s=>observer.observe(s));
+</script>
+</body>
+</html>
