@@ -36,15 +36,22 @@ body{display:flex;flex-direction:column;background:#0a0a1a;color:#eee}
 .back-btn:hover{background:rgba(255,255,255,.28)}
 .book-title-bar{font-size:.95rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.9}
 .header-right{display:flex;align-items:center;gap:.5rem;flex-shrink:0}
-.hdr-btn{
+.hdr-btn, .nav-btn{
   background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
   color:inherit;border-radius:8px;padding:5px 12px;font-size:.8rem;cursor:pointer;
 }
-.hdr-btn:hover{background:rgba(255,255,255,.25)}
+.hdr-btn:hover, .nav-btn:hover{background:rgba(255,255,255,.25)}
+.page-indicator{
+  background:rgba(0,0,0,.5);
+  padding:5px 12px;
+  border-radius:20px;
+  font-size:.8rem;
+  font-weight:600;
+}
 .reader-body{flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative}
-.pdf-container{width:100%;height:100%;overflow:auto;background:#525659;}
-.pdf-viewer{width:100%;margin:0 auto;background:#eee;box-shadow:0 0 10px rgba(0,0,0,0.2);}
-canvas{display:block;margin:0 auto;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+.pdf-container{width:100%;height:100%;overflow:auto;background:#525659;display:flex;justify-content:center;padding:1rem;}
+.pdf-viewer{width:100%;max-width:900px;margin:0 auto;}
+canvas{display:block;margin:0 auto;box-shadow:0 2px 8px rgba(0,0,0,0.3);border-radius:4px;}
 .loading{
   position:absolute;inset:0;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:1rem;
@@ -60,7 +67,7 @@ canvas{display:block;margin:0 auto;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
 .error-msg{font-size:1rem;opacity:.85}
 .error-hint{font-size:.82rem;opacity:.6}
 .wallpaper{position:fixed;inset:0;background-size:cover;background-position:center;z-index:-1;opacity:.18}
-@media(max-width:500px){.book-title-bar{font-size:.82rem}.hdr-btn span{display:none}}
+@media(max-width:500px){.book-title-bar{font-size:.82rem}.hdr-btn span, .nav-btn span{display:none}}
 </style>
 </head>
 <body>
@@ -71,8 +78,11 @@ canvas{display:block;margin:0 auto;box-shadow:0 2px 8px rgba(0,0,0,0.1);}
     <div class="book-title-bar" id="book-title">Kitab Load Ho Rahi Hai...</div>
   </div>
   <div class="header-right">
-    <button class="hdr-btn" id="zoom-in" onclick="zoomIn()">🔍+</button>
-    <button class="hdr-btn" id="zoom-out" onclick="zoomOut()">🔍−</button>
+    <button class="nav-btn" id="prev-page" onclick="changePage(-1)" style="display:none">◀ <span>Pichla</span></button>
+    <span class="page-indicator" id="page-indicator" style="display:none">-- / --</span>
+    <button class="nav-btn" id="next-page" onclick="changePage(1)" style="display:none"><span>Agla</span> ▶</button>
+    <button class="hdr-btn" onclick="zoomIn()">🔍+</button>
+    <button class="hdr-btn" onclick="zoomOut()">🔍−</button>
     <button class="hdr-btn" onclick="toggleFullscreen()">⛶</button>
   </div>
 </div>
@@ -129,12 +139,15 @@ function dbGet(store,key){
 // ========== PDF.js Setup ==========
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-let pdfDoc = null, pageNum = 1, pageRendering = false, pageNumPending = null, scale = 1.2;
-const canvasContainer = document.getElementById('pdf-viewer');
-let currentPdfData = null;
+let pdfDoc = null, currentPage = 1, totalPages = 0, scale = 1.2, rendering = false;
+const viewer = document.getElementById('pdf-viewer');
+const prevBtn = document.getElementById('prev-page');
+const nextBtn = document.getElementById('next-page');
+const pageIndicator = document.getElementById('page-indicator');
 
 function renderPage(num) {
-  pageRendering = true;
+  if (!pdfDoc) return;
+  rendering = true;
   pdfDoc.getPage(num).then(page => {
     const viewport = page.getViewport({ scale: scale });
     const canvas = document.createElement('canvas');
@@ -143,28 +156,27 @@ function renderPage(num) {
     canvas.width = viewport.width;
     canvas.style.width = '100%';
     canvas.style.height = 'auto';
-    canvasContainer.innerHTML = '';
-    canvasContainer.appendChild(canvas);
+    viewer.innerHTML = '';
+    viewer.appendChild(canvas);
     const renderContext = { canvasContext: context, viewport: viewport };
     page.render(renderContext).promise.then(() => {
-      pageRendering = false;
-      if (pageNumPending !== null) { renderPage(pageNumPending); pageNumPending = null; }
-    });
-  });
+      rendering = false;
+      pageIndicator.textContent = `${currentPage} / ${totalPages}`;
+    }).catch(err => console.warn('Render error', err));
+  }).catch(err => { console.warn('Page fetch error', err); rendering = false; });
 }
 
-function queueRenderPage(num) {
-  if (pageRendering) { pageNumPending = num; } else { renderPage(num); }
+function changePage(delta) {
+  if (!pdfDoc) return;
+  let newPage = currentPage + delta;
+  if (newPage >= 1 && newPage <= totalPages) {
+    currentPage = newPage;
+    renderPage(currentPage);
+  }
 }
 
-function zoomIn() {
-  scale = Math.min(scale + 0.2, 3.0);
-  if (pdfDoc) renderPage(pageNum);
-}
-function zoomOut() {
-  scale = Math.max(scale - 0.2, 0.6);
-  if (pdfDoc) renderPage(pageNum);
-}
+function zoomIn() { scale = Math.min(scale + 0.2, 3.0); if (pdfDoc) renderPage(currentPage); }
+function zoomOut() { scale = Math.max(scale - 0.2, 0.6); if (pdfDoc) renderPage(currentPage); }
 
 // ========== LOAD BOOK ==========
 async function init(){
@@ -192,8 +204,7 @@ function loadBook(book){
   let pdfData = book.pdf_url;
   if(!pdfData){ showError('PDF link nahi hai','Admin se rabta karein'); return; }
 
-  // Convert to blob if base64
-  let blobUrl = null;
+  let pdfSrc = pdfData;
   if(pdfData.startsWith('data:application/pdf')){
     try{
       const base64 = pdfData.split(',')[1];
@@ -201,21 +212,22 @@ function loadBook(book){
       const bytes = new Uint8Array(binary.length);
       for(let i=0;i<binary.length;i++) bytes[i] = binary.charCodeAt(i);
       const blob = new Blob([bytes], {type:'application/pdf'});
-      blobUrl = URL.createObjectURL(blob);
-      loadPdf(blobUrl);
-    } catch(e){ showError('PDF corrupt hai','Dobara upload karein'); }
-  } else {
-    // URL — use PDF.js directly
-    loadPdf(pdfData);
+      pdfSrc = URL.createObjectURL(blob);
+    } catch(e){ showError('PDF corrupt hai','Dobara upload karein'); return; }
   }
-}
 
-function loadPdf(src){
+  // Show loading
   document.getElementById('loading').style.display = 'flex';
-  pdfjsLib.getDocument(src).promise.then(pdf => {
+  pdfjsLib.getDocument(pdfSrc).promise.then(pdf => {
     pdfDoc = pdf;
+    totalPages = pdf.numPages;
+    currentPage = 1;
+    // Show navigation buttons and indicator
+    prevBtn.style.display = 'inline-flex';
+    nextBtn.style.display = 'inline-flex';
+    pageIndicator.style.display = 'inline-flex';
     document.getElementById('loading').style.display = 'none';
-    document.getElementById('pdf-container').style.display = 'block';
+    document.getElementById('pdf-container').style.display = 'flex';
     renderPage(1);
   }).catch(err => {
     showError('PDF load nahi ho saka', 'Check URL ya file format');
