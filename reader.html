@@ -73,96 +73,31 @@ body{display:flex;flex-direction:column;background:#0a0a1a;color:#eee;transition
 /* WALLPAPER overlay */
 .wallpaper{position:fixed;inset:0;background-size:cover;background-position:center;z-index:-1;opacity:.18}
 
-/* ===== ADVANCED ANIMATIONS & GLOW EFFECTS ===== */
-.reader-header{
-  animation:headerSlide .5s cubic-bezier(.16,1,.3,1) both;
-  border-bottom:1px solid rgba(255,255,255,.1);
-}
-@keyframes headerSlide{
-  from{opacity:0;transform:translateY(-100%)}
-  to{opacity:1;transform:translateY(0)}
-}
-.back-btn{
-  position:relative;overflow:hidden;
-  transition:background .2s,box-shadow .2s,transform .15s;
-}
-.back-btn::after{
-  content:'';position:absolute;top:-50%;left:-60%;width:40%;height:200%;
-  background:rgba(255,255,255,.2);transform:skewX(-20deg);
-  transition:left .4s;
-}
-.back-btn:hover{
-  transform:translateY(-1px);
-  box-shadow:0 4px 16px rgba(0,0,0,.3);
-}
+/* Animations (same as before) */
+.reader-header{animation:headerSlide .5s cubic-bezier(.16,1,.3,1) both;border-bottom:1px solid rgba(255,255,255,.1);}
+@keyframes headerSlide{from{opacity:0;transform:translateY(-100%)}to{opacity:1;transform:translateY(0)}}
+.back-btn{position:relative;overflow:hidden;transition:background .2s,box-shadow .2s,transform .15s;}
+.back-btn::after{content:'';position:absolute;top:-50%;left:-60%;width:40%;height:200%;background:rgba(255,255,255,.2);transform:skewX(-20deg);transition:left .4s;}
+.back-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3);}
 .back-btn:hover::after{left:130%}
-.hdr-btn{
-  position:relative;overflow:hidden;
-  transition:background .2s,box-shadow .2s,transform .15s;
-}
-.hdr-btn:hover{
-  transform:translateY(-1px);
-  box-shadow:0 4px 16px rgba(0,0,0,.3);
-}
-.book-title-bar{
-  animation:titleFade .6s .3s both;
-}
-@keyframes titleFade{
-  from{opacity:0;transform:translateX(10px)}
-  to{opacity:.9;transform:translateX(0)}
-}
-.spinner{
-  box-shadow:0 0 20px rgba(255,255,255,.25);
-  animation:spin .8s linear infinite, spinGlow 2s ease-in-out infinite;
-}
-@keyframes spinGlow{
-  0%,100%{box-shadow:0 0 12px rgba(255,255,255,.15)}
-  50%{box-shadow:0 0 28px rgba(255,255,255,.35)}
-}
-.loading-text{
-  animation:textPulse 2s ease-in-out infinite;
-}
-@keyframes textPulse{
-  0%,100%{opacity:.5}
-  50%{opacity:.9}
-}
-.pdf-frame{
-  animation:frameReveal .6s both;
-}
-@keyframes frameReveal{
-  from{opacity:0;transform:scale(.99)}
-  to{opacity:1;transform:scale(1)}
-}
-.error-icon{
-  animation:floatIcon 3s ease-in-out infinite;
-  display:block;
-}
-@keyframes floatIcon{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-12px)}
-}
-#zoom-in:hover,#zoom-out:hover{
-  background:rgba(255,255,255,.3);
-  box-shadow:0 0 12px rgba(255,255,255,.2);
-}
-.wallpaper{
-  animation:wallpaperZoom 20s ease-in-out infinite alternate;
-}
-@keyframes wallpaperZoom{
-  from{transform:scale(1)}
-  to{transform:scale(1.05)}
-}
-.loading.hide{
-  animation:loadingFade .4s ease both;
-}
-@keyframes loadingFade{
-  from{opacity:1}
-  to{opacity:0;pointer-events:none}
-}
-@media(max-width:500px){
-  .book-title-bar{font-size:.82rem}
-  .hdr-btn span{display:none}
-}
+.hdr-btn{position:relative;overflow:hidden;transition:background .2s,box-shadow .2s,transform .15s;}
+.hdr-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.3);}
+.book-title-bar{animation:titleFade .6s .3s both;}
+@keyframes titleFade{from{opacity:0;transform:translateX(10px)}to{opacity:.9;transform:translateX(0)}}
+.spinner{box-shadow:0 0 20px rgba(255,255,255,.25);animation:spin .8s linear infinite, spinGlow 2s ease-in-out infinite;}
+@keyframes spinGlow{0%,100%{box-shadow:0 0 12px rgba(255,255,255,.15)}50%{box-shadow:0 0 28px rgba(255,255,255,.35)}}
+.loading-text{animation:textPulse 2s ease-in-out infinite;}
+@keyframes textPulse{0%,100%{opacity:.5}50%{opacity:.9}}
+.pdf-frame{animation:frameReveal .6s both;}
+@keyframes frameReveal{from{opacity:0;transform:scale(.99)}to{opacity:1;transform:scale(1)}}
+.error-icon{animation:floatIcon 3s ease-in-out infinite;display:block;}
+@keyframes floatIcon{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+#zoom-in:hover,#zoom-out:hover{background:rgba(255,255,255,.3);box-shadow:0 0 12px rgba(255,255,255,.2);}
+.wallpaper{animation:wallpaperZoom 20s ease-in-out infinite alternate;}
+@keyframes wallpaperZoom{from{transform:scale(1)}to{transform:scale(1.05)}}
+.loading.hide{animation:loadingFade .4s ease both;}
+@keyframes loadingFade{from{opacity:1}to{opacity:0;pointer-events:none}}
+@media(max-width:500px){.book-title-bar{font-size:.82rem}.hdr-btn span{display:none}}
 body{background:#0a0a1a}
 .reader-header{background:rgba(10,10,26,.8);backdrop-filter:blur(12px);border-bottom:1px solid rgba(124,58,237,.25);box-shadow:0 4px 24px rgba(0,0,0,.5)}
 .back-btn{background:rgba(124,58,237,.2);border-color:rgba(124,58,237,.4)}
@@ -205,27 +140,22 @@ body{background:#0a0a1a}
 <script>
 // ========== SECURITY: Block Right-click, Save Shortcuts, DevTools ==========
 (function() {
-  // Block right-click
   document.addEventListener('contextmenu', function(e) {
     e.preventDefault();
     return false;
   });
 
-  // Block keyboard shortcuts: Ctrl+S, Ctrl+P, Ctrl+U, Ctrl+Shift+I, F12
   document.addEventListener('keydown', function(e) {
-    // Ctrl+S, Ctrl+P, Ctrl+U
     if (e.ctrlKey && (e.key === 's' || e.key === 'S' ||
                       e.key === 'p' || e.key === 'P' ||
                       e.key === 'u' || e.key === 'U')) {
       e.preventDefault();
       return false;
     }
-    // Ctrl+Shift+I
     if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
       e.preventDefault();
       return false;
     }
-    // F12
     if (e.key === 'F12') {
       e.preventDefault();
       return false;
@@ -233,7 +163,7 @@ body{background:#0a0a1a}
   });
 })();
 
-// ========== DB (Same as before, keeps your existing library) ==========
+// ========== DB (IndexedDB) ==========
 let db;
 function openDB(){
   return new Promise((res,rej)=>{
@@ -256,7 +186,7 @@ function dbGet(store,key){
   });
 }
 
-// ========== LOAD BOOK with Google Docs viewer (no download button) ==========
+// ========== LOAD BOOK ==========
 async function init(){
   const params=new URLSearchParams(window.location.search);
   const bookId=parseInt(params.get('id'));
@@ -272,49 +202,55 @@ async function init(){
 }
 
 function loadBook(book){
-  // Apply theme
   const bg=book.bg_color||'#0a0a1a';
   const tc=book.text_color||'#eeeeee';
   const wallpaper=book.wallpaper_url||'';
   document.body.style.background=bg;
   document.body.style.color=tc;
   document.getElementById('reader-header').style.color=tc;
-
   if(wallpaper){
     document.getElementById('wallpaper').style.backgroundImage=`url('${wallpaper}')`;
   }
-
   document.title=(book.title||'Kitab')+' — KitabGhar';
   document.getElementById('book-title').textContent=book.title||'Kitab';
 
-  const pdfUrl=book.pdf_url||'';
+  let pdfUrl = book.pdf_url || '';
   if(!pdfUrl){
     showError('PDF link maujood nahi hai','Admin se is kitab ka PDF link add karwayein');
     return;
   }
 
-  const frame=document.getElementById('pdf-frame');
+  const frame = document.getElementById('pdf-frame');
   
-  // FORCE Google Docs embedded viewer to hide download/print buttons
-  // It also prevents right-click on PDF (though not 100% perfect, but best free method)
-  const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
-  frame.src = viewerUrl;
-
-  frame.onload = () => {
-    document.getElementById('loading').style.display = 'none';
-    frame.style.display = 'block';
-  };
-  frame.onerror = () => {
-    // Fallback to direct PDF if Google fails (but will show download button)
-    frame.src = pdfUrl;
-    frame.onload = () => {
-      document.getElementById('loading').style.display = 'none';
-      frame.style.display = 'block';
-    };
+  // CHECK IF BASE64 PDF (uploaded file)
+  if(pdfUrl.startsWith('data:application/pdf')){
+    // Convert base64 to blob URL (no download button in browser's PDF viewer but user can still right-click? we already blocked right-click)
+    try{
+      const base64Data = pdfUrl.split(',')[1];
+      const binaryString = atob(base64Data);
+      const bytes = new Uint8Array(binaryString.length);
+      for(let i=0; i<binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+      const blob = new Blob([bytes], {type: 'application/pdf'});
+      const blobUrl = URL.createObjectURL(blob);
+      frame.src = blobUrl;
+      frame.onload = () => { document.getElementById('loading').style.display='none'; frame.style.display='block'; };
+      frame.onerror = () => { showError('Base64 PDF corrupt hai','Admin se dobara upload karwayein'); };
+    } catch(e){
+      showError('PDF convert nahi ho saka','File sahi nahi hai');
+    }
+  } 
+  else {
+    // It's a URL — use Google Docs viewer to hide download/print
+    const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
+    frame.src = viewerUrl;
+    frame.onload = () => { document.getElementById('loading').style.display='none'; frame.style.display='block'; };
     frame.onerror = () => {
-      showError('PDF load nahi ho saka','URL check karein — Direct PDF link hona chahiye (Google Drive ya Dropbox direct link)');
+      // Fallback to direct PDF if Google fails
+      frame.src = pdfUrl;
+      frame.onload = () => { document.getElementById('loading').style.display='none'; frame.style.display='block'; };
+      frame.onerror = () => { showError('PDF load nahi ho saka','Check URL ya Dobara upload karein'); };
     };
-  };
+  }
 
   setTimeout(() => {
     if(frame.style.display === 'none'){
@@ -335,22 +271,18 @@ function showError(msg,hint){
 
 // ========== CONTROLS ==========
 function goBack(){
-  if(document.referrer&&document.referrer.includes('index')){history.back();}
-  else{window.location.href='index.html';}
+  if(document.referrer && document.referrer.includes('index')) history.back();
+  else window.location.href='index.html';
 }
 
 let zoom=100;
-function zoomIn(){zoom=Math.min(zoom+10,200);document.getElementById('pdf-frame').style.transform=`scale(${zoom/100})`;document.getElementById('pdf-frame').style.transformOrigin='top center';}
-function zoomOut(){zoom=Math.max(zoom-10,50);document.getElementById('pdf-frame').style.transform=`scale(${zoom/100})`;document.getElementById('pdf-frame').style.transformOrigin='top center';}
-
+function zoomIn(){ zoom=Math.min(zoom+10,200); let f=document.getElementById('pdf-frame'); f.style.transform=`scale(${zoom/100})`; f.style.transformOrigin='top center'; }
+function zoomOut(){ zoom=Math.max(zoom-10,50); let f=document.getElementById('pdf-frame'); f.style.transform=`scale(${zoom/100})`; f.style.transformOrigin='top center'; }
 function toggleFullscreen(){
-  if(!document.fullscreenElement){document.documentElement.requestFullscreen().catch(()=>{});}
-  else{document.exitFullscreen();}
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+  else document.exitFullscreen();
 }
-
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'&&!document.fullscreenElement)goBack();
-});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape' && !document.fullscreenElement) goBack(); });
 
 init();
 </script>
