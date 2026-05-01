@@ -74,8 +74,6 @@ body{display:flex;flex-direction:column;background:#0a0a1a;color:#eee;transition
 .wallpaper{position:fixed;inset:0;background-size:cover;background-position:center;z-index:-1;opacity:.18}
 
 /* ===== ADVANCED ANIMATIONS & GLOW EFFECTS ===== */
-
-/* Header slide down */
 .reader-header{
   animation:headerSlide .5s cubic-bezier(.16,1,.3,1) both;
   border-bottom:1px solid rgba(255,255,255,.1);
@@ -84,8 +82,6 @@ body{display:flex;flex-direction:column;background:#0a0a1a;color:#eee;transition
   from{opacity:0;transform:translateY(-100%)}
   to{opacity:1;transform:translateY(0)}
 }
-
-/* Back button glow */
 .back-btn{
   position:relative;overflow:hidden;
   transition:background .2s,box-shadow .2s,transform .15s;
@@ -100,8 +96,6 @@ body{display:flex;flex-direction:column;background:#0a0a1a;color:#eee;transition
   box-shadow:0 4px 16px rgba(0,0,0,.3);
 }
 .back-btn:hover::after{left:130%}
-
-/* Header buttons glow */
 .hdr-btn{
   position:relative;overflow:hidden;
   transition:background .2s,box-shadow .2s,transform .15s;
@@ -110,8 +104,6 @@ body{display:flex;flex-direction:column;background:#0a0a1a;color:#eee;transition
   transform:translateY(-1px);
   box-shadow:0 4px 16px rgba(0,0,0,.3);
 }
-
-/* Title bar animated text */
 .book-title-bar{
   animation:titleFade .6s .3s both;
 }
@@ -119,8 +111,6 @@ body{display:flex;flex-direction:column;background:#0a0a1a;color:#eee;transition
   from{opacity:0;transform:translateX(10px)}
   to{opacity:.9;transform:translateX(0)}
 }
-
-/* Spinner glow */
 .spinner{
   box-shadow:0 0 20px rgba(255,255,255,.25);
   animation:spin .8s linear infinite, spinGlow 2s ease-in-out infinite;
@@ -129,8 +119,6 @@ body{display:flex;flex-direction:column;background:#0a0a1a;color:#eee;transition
   0%,100%{box-shadow:0 0 12px rgba(255,255,255,.15)}
   50%{box-shadow:0 0 28px rgba(255,255,255,.35)}
 }
-
-/* Loading text pulse */
 .loading-text{
   animation:textPulse 2s ease-in-out infinite;
 }
@@ -138,8 +126,6 @@ body{display:flex;flex-direction:column;background:#0a0a1a;color:#eee;transition
   0%,100%{opacity:.5}
   50%{opacity:.9}
 }
-
-/* PDF frame fade in */
 .pdf-frame{
   animation:frameReveal .6s both;
 }
@@ -147,8 +133,6 @@ body{display:flex;flex-direction:column;background:#0a0a1a;color:#eee;transition
   from{opacity:0;transform:scale(.99)}
   to{opacity:1;transform:scale(1)}
 }
-
-/* Error icon float */
 .error-icon{
   animation:floatIcon 3s ease-in-out infinite;
   display:block;
@@ -157,14 +141,10 @@ body{display:flex;flex-direction:column;background:#0a0a1a;color:#eee;transition
   0%,100%{transform:translateY(0)}
   50%{transform:translateY(-12px)}
 }
-
-/* Fullscreen button glow pulse */
 #zoom-in:hover,#zoom-out:hover{
   background:rgba(255,255,255,.3);
   box-shadow:0 0 12px rgba(255,255,255,.2);
 }
-
-/* Wallpaper slow zoom */
 .wallpaper{
   animation:wallpaperZoom 20s ease-in-out infinite alternate;
 }
@@ -172,8 +152,6 @@ body{display:flex;flex-direction:column;background:#0a0a1a;color:#eee;transition
   from{transform:scale(1)}
   to{transform:scale(1.05)}
 }
-
-/* Loading overlay exit */
 .loading.hide{
   animation:loadingFade .4s ease both;
 }
@@ -181,14 +159,10 @@ body{display:flex;flex-direction:column;background:#0a0a1a;color:#eee;transition
   from{opacity:1}
   to{opacity:0;pointer-events:none}
 }
-
-/* MOBILE */
 @media(max-width:500px){
   .book-title-bar{font-size:.82rem}
   .hdr-btn span{display:none}
 }
-
-/* ===== NEON PURPLE THEME EXTRAS ===== */
 body{background:#0a0a1a}
 .reader-header{background:rgba(10,10,26,.8);backdrop-filter:blur(12px);border-bottom:1px solid rgba(124,58,237,.25);box-shadow:0 4px 24px rgba(0,0,0,.5)}
 .back-btn{background:rgba(124,58,237,.2);border-color:rgba(124,58,237,.4)}
@@ -196,7 +170,6 @@ body{background:#0a0a1a}
 .hdr-btn{background:rgba(124,58,237,.15);border-color:rgba(124,58,237,.35)}
 .hdr-btn:hover{background:rgba(124,58,237,.3) !important;box-shadow:0 0 12px rgba(124,58,237,.3) !important}
 .spinner{border-color:rgba(124,58,237,.25);border-top-color:#9f5bff;box-shadow:0 0 24px rgba(124,58,237,.5)}
-
 </style>
 </head>
 <body>
@@ -230,7 +203,37 @@ body{background:#0a0a1a}
 </div>
 
 <script>
-// ========== DB ==========
+// ========== SECURITY: Block Right-click, Save Shortcuts, DevTools ==========
+(function() {
+  // Block right-click
+  document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    return false;
+  });
+
+  // Block keyboard shortcuts: Ctrl+S, Ctrl+P, Ctrl+U, Ctrl+Shift+I, F12
+  document.addEventListener('keydown', function(e) {
+    // Ctrl+S, Ctrl+P, Ctrl+U
+    if (e.ctrlKey && (e.key === 's' || e.key === 'S' ||
+                      e.key === 'p' || e.key === 'P' ||
+                      e.key === 'u' || e.key === 'U')) {
+      e.preventDefault();
+      return false;
+    }
+    // Ctrl+Shift+I
+    if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
+      e.preventDefault();
+      return false;
+    }
+    // F12
+    if (e.key === 'F12') {
+      e.preventDefault();
+      return false;
+    }
+  });
+})();
+
+// ========== DB (Same as before, keeps your existing library) ==========
 let db;
 function openDB(){
   return new Promise((res,rej)=>{
@@ -253,7 +256,7 @@ function dbGet(store,key){
   });
 }
 
-// ========== LOAD BOOK ==========
+// ========== LOAD BOOK with Google Docs viewer (no download button) ==========
 async function init(){
   const params=new URLSearchParams(window.location.search);
   const bookId=parseInt(params.get('id'));
@@ -281,11 +284,9 @@ function loadBook(book){
     document.getElementById('wallpaper').style.backgroundImage=`url('${wallpaper}')`;
   }
 
-  // Title
   document.title=(book.title||'Kitab')+' — KitabGhar';
   document.getElementById('book-title').textContent=book.title||'Kitab';
 
-  // Load PDF
   const pdfUrl=book.pdf_url||'';
   if(!pdfUrl){
     showError('PDF link maujood nahi hai','Admin se is kitab ka PDF link add karwayein');
@@ -293,52 +294,34 @@ function loadBook(book){
   }
 
   const frame=document.getElementById('pdf-frame');
+  
+  // FORCE Google Docs embedded viewer to hide download/print buttons
+  // It also prevents right-click on PDF (though not 100% perfect, but best free method)
+  const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
+  frame.src = viewerUrl;
 
-  // Detect if base64 or URL
-  if(pdfUrl.startsWith('data:application/pdf')){
-    // base64 PDF — use blob URL
-    try{
-      const base64=pdfUrl.split(',')[1];
-      const binary=atob(base64);
-      const bytes=new Uint8Array(binary.length);
-      for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
-      const blob=new Blob([bytes],{type:'application/pdf'});
-      const blobUrl=URL.createObjectURL(blob);
-      frame.src=blobUrl;
-    }catch(e){
-      showError('PDF parse nahi ho saka','File corrupt ho sakti hai — admin se dobara upload karwayein');
-      return;
-    }
-  } else {
-    // Direct URL — use Google Docs viewer as fallback for cross-origin
-    // Try direct first, fallback to viewer
-    frame.src=pdfUrl;
-  }
-
-  frame.onload=()=>{
-    document.getElementById('loading').style.display='none';
-    frame.style.display='block';
+  frame.onload = () => {
+    document.getElementById('loading').style.display = 'none';
+    frame.style.display = 'block';
   };
-  frame.onerror=()=>{
-    // Fallback: try Google Docs viewer
-    const viewerUrl=`https://docs.google.com/viewer?url=${encodeURIComponent(pdfUrl)}&embedded=true`;
-    frame.src=viewerUrl;
-    frame.onload=()=>{
-      document.getElementById('loading').style.display='none';
-      frame.style.display='block';
+  frame.onerror = () => {
+    // Fallback to direct PDF if Google fails (but will show download button)
+    frame.src = pdfUrl;
+    frame.onload = () => {
+      document.getElementById('loading').style.display = 'none';
+      frame.style.display = 'block';
     };
-    frame.onerror=()=>{
+    frame.onerror = () => {
       showError('PDF load nahi ho saka','URL check karein — Direct PDF link hona chahiye (Google Drive ya Dropbox direct link)');
     };
   };
 
-  // Timeout fallback — agar 15 sec mein load na ho
-  setTimeout(()=>{
-    if(frame.style.display==='none'){
-      document.getElementById('loading').style.display='none';
-      frame.style.display='block';
+  setTimeout(() => {
+    if(frame.style.display === 'none'){
+      document.getElementById('loading').style.display = 'none';
+      frame.style.display = 'block';
     }
-  },15000);
+  }, 15000);
 }
 
 function showError(msg,hint){
