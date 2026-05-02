@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ur" dir="ltr">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>KitabGhar — Ilm ki Duniya</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
@@ -56,7 +56,7 @@ footer{background:var(--bg2);text-align:center;padding:1rem;margin-top:2rem;colo
 <nav>
   <div class="nav-inner">
     <div class="nav-logo">📚 <span id="site-name">KitabGhar</span></div>
-    <div class="nav-search"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Kitab dhundhen..."/></div>
+    <div class="nav-search"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Kitab dhundhen..."></div>
     <div class="nav-links"><a href="#features">Features</a><a href="#about">About</a><a href="terms.html">Rules</a><button class="theme-btn" id="theme-toggle">🌙 Dark</button><button class="admin-btn" onclick="location.href='admin.html'">Admin</button></div>
   </div>
 </nav>
@@ -80,11 +80,13 @@ footer{background:var(--bg2);text-align:center;padding:1rem;margin-top:2rem;colo
         else if (s.key === 'about_text') document.getElementById('about-text').innerText = s.value;
         else if (s.key === 'footer_text') document.getElementById('footer-text').innerText = s.value;
         else if (s.key === 'slider_images') {
-          let imgs = JSON.parse(s.value);
-          let html = '<div class="slider-container">' + imgs.map(img => `<div class="slide" style="background-image:url(${img})"><div class="slide-content"><h1>KitabGhar</h1><p>Ilm ki Duniya</p></div></div>`).join('') + '</div>';
-          document.getElementById('slider-container').innerHTML = html;
-          let idx = 0, container = document.querySelector('.slider-container');
-          if (container) setInterval(() => { idx = (idx + 1) % imgs.length; container.style.transform = `translateX(-${idx * 100}%)`; }, 4000);
+          try {
+            let imgs = JSON.parse(s.value);
+            let html = '<div class="slider-container">' + imgs.map(img => `<div class="slide" style="background-image:url(${img})"><div class="slide-content"><h1>KitabGhar</h1><p>Ilm ki Duniya</p></div></div>`).join('') + '</div>';
+            document.getElementById('slider-container').innerHTML = html;
+            let idx = 0, container = document.querySelector('.slider-container');
+            if (container) setInterval(() => { idx = (idx + 1) % imgs.length; container.style.transform = `translateX(-${idx * 100}%)`; }, 4000);
+          } catch(e) { console.warn(e); }
         }
       }
     }

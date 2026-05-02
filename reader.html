@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ur" dir="ltr">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Reader — KitabGhar</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
@@ -34,12 +34,8 @@ async function init(){
     wm.className='watermark';
     wm.innerText='📖 Sirf parhne ke liye – Download allowed nahi';
     document.body.appendChild(wm);
-    // Disable right-click and shortcuts
     document.addEventListener('contextmenu',e=>e.preventDefault());
-    document.addEventListener('keydown',e=>{
-      if(e.ctrlKey && (e.key==='s'||e.key==='S'||e.key==='p'||e.key==='P'))
-        e.preventDefault();
-    });
+    document.addEventListener('keydown',e=>{ if(e.ctrlKey && (e.key==='s'||e.key==='S'||e.key==='p'||e.key==='P')) e.preventDefault(); });
   }
   await incrementBookDownloads(parseInt(id));
   let pdfSrc=book.pdf_url;
