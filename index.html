@@ -463,29 +463,6 @@
         }
 
         /* CTA Section */
-        .cta-section {
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(6, 182, 212, 0.2));
-            padding: 3rem 1rem;
-            text-align: center;
-            margin-top: 3rem;
-        }
-
-        .cta-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .cta-content h2 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .cta-content p {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-        }
-
         /* Footer */
         footer {
             background-color: var(--bg-secondary);
@@ -579,6 +556,37 @@
         html[lang="ur"] {
             direction: rtl;
         }
+
+        /* Day Mode Red Theme */
+        body.light-mode {
+            --bg-primary: #fafafa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f5f5f5;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --accent-purple: #dc2626;
+            --accent-cyan: #991b1b;
+            --accent-purple-light: #ef4444;
+            --border-color: #e5e5e5;
+            --border-light: #f0f0f0;
+        }
+
+        body.light-mode nav {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        body.light-mode .nav-search input {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+
+        body.light-mode .theme-btn {
+            border-color: var(--border-color);
+            color: var(--text-secondary);
+        }
     </style>
 </head>
 <body>
@@ -612,7 +620,7 @@
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="hero-content">
-            <div class="hero-badge">EST. 2024</div>
+
             <h1 class="urdu-only">دریافت کریں۔ پڑھیں۔<br><span class="gradient-text">اپنے ذہن کو بہتر بنائیں۔</span></h1>
             <h1 class="english-only">Discover. Read.<br><span class="gradient-text">Enrich Your Mind.</span></h1>
             
@@ -787,18 +795,6 @@
         </div>
     </section>
 
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="cta-content">
-            <h2 class="urdu-only">ہزاروں کتابیں آپ کے انتظار میں</h2>
-            <h2 class="english-only">Thousands of Books Await You</h2>
-            <p class="urdu-only">اردو ادب کا سب سے بڑا ڈیجیٹل لائبریری میں شامل ہوں اور علم کی دنیا میں ڈوب جائیں۔</p>
-            <p class="english-only">Join the largest digital library of Urdu literature and immerse yourself in the world of knowledge.</p>
-            <button class="btn btn-primary urdu-only">ابھی شروع کریں</button>
-            <button class="btn btn-primary english-only">Get Started Now</button>
-        </div>
-    </section>
-
     <!-- Footer -->
     <footer id="contact">
         <p class="urdu-only">© 2025 KitabGhar - تمام حقوق محفوظ ہیں</p>
@@ -837,21 +833,16 @@
 
         // Theme Toggle
         function toggleTheme() {
-            const isDark = document.body.style.filter === 'invert(1)';
-            
-            if (isDark) {
-                document.body.style.filter = 'none';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                document.body.style.filter = 'invert(1)';
-                localStorage.setItem('theme', 'light');
-            }
+            const body = document.body;
+            body.classList.toggle('light-mode');
+            const isLight = body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
         }
 
         // Load saved theme
         const savedTheme = localStorage.getItem('theme');
         if (savedTheme === 'light') {
-            document.body.style.filter = 'invert(1)';
+            document.body.classList.add('light-mode');
         }
 
         // Search functionality
