@@ -18,8 +18,8 @@ nav{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;
 .nav-search .search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%)}
 .nav-links{display:flex;align-items:center;gap:.8rem;margin-left:auto}
 .nav-links a{color:var(--text2);text-decoration:none;padding:5px 8px}
-.theme-btn,.admin-btn{background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;color:var(--text2);cursor:pointer}
-.admin-btn{background:linear-gradient(135deg,#0d0928,#1a1050);color:#fff}
+.theme-btn{background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;color:var(--text2);cursor:pointer}
+/* Admin button CSS removed */
 .announcement-bar{background:var(--primary);color:#fff;text-align:center;padding:8px;font-size:.85rem}
 .hero-slider{position:relative;height:400px;overflow:hidden}
 .slider-container{display:flex;transition:transform .5s ease;height:100%}
@@ -57,20 +57,52 @@ footer{background:var(--bg2);text-align:center;padding:1rem;margin-top:2rem;colo
   <div class="nav-inner">
     <div class="nav-logo">📚 <span id="site-name">KitabGhar</span></div>
     <div class="nav-search"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Kitab dhundhen..."></div>
-    <div class="nav-links"><a href="#features">Features</a><a href="#about">About</a><a href="terms.html">Rules</a><button class="theme-btn" id="theme-toggle">🌙 Dark</button><button class="admin-btn" onclick="location.href='admin.html'">Admin</button></div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#about">About</a>
+      <a href="terms.html">Rules</a>
+      <button class="theme-btn" id="theme-toggle">🌙 Dark</button>
+    </div>
   </div>
 </nav>
 <div class="hero-slider"><div class="slider-container" id="slider-container">Loading...</div></div>
 <div class="main">
-  <div class="filters" id="filters"><button class="filter-btn active" data-cat="all">📚 Sab</button><button class="filter-btn" data-cat="islamic">☪️ Islami</button><button class="filter-btn" data-cat="educational">🎓 Talimi</button><button class="filter-btn" data-cat="motivational">🔥 Hosla Afzai</button><button class="filter-btn" data-cat="kids">🧒 Bachon Ki</button><button class="filter-btn" data-cat="other">📖 Aur</button></div>
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-cat="all">📚 Sab</button>
+    <button class="filter-btn" data-cat="islamic">☪️ Islami</button>
+    <button class="filter-btn" data-cat="educational">🎓 Talimi</button>
+    <button class="filter-btn" data-cat="motivational">🔥 Hosla Afzai</button>
+    <button class="filter-btn" data-cat="kids">🧒 Bachon Ki</button>
+    <button class="filter-btn" data-cat="other">📖 Aur</button>
+  </div>
   <div class="books-grid" id="books-grid"></div>
 </div>
-<div class="section" id="features"><div class="section-title">✨ Hamare Khaas Features</div><div class="features-grid"><div class="feature-card"><div class="icon">📖</div><div>Asaan Mutalia</div><div>Browser mein seedha parhen</div></div><div class="feature-card"><div class="icon">🆓</div><div>Muft Kitabein</div><div>Kai kitabein muft</div></div><div class="feature-card"><div class="icon">🌙</div><div>Dark Mode</div><div>Aankhon ka sukoon</div></div><div class="feature-card"><div class="icon">📱</div><div>Mobile Friendly</div><div>Har device par</div></div></div></div>
-<div class="section" id="about"><div class="section-title">📜 Hamare Baare Mein</div><div class="about-text" id="about-text">Loading...</div></div>
-<div class="section" id="contact"><div class="section-title">📩 Rabta Karein</div><form id="contact-form" class="contact-form"><input type="text" id="cname" placeholder="Aapka naam" required><input type="email" id="cemail" placeholder="Email" required><textarea id="cmsg" rows="4" placeholder="Apna paigham likhein..."></textarea><button type="submit">Bhejein</button></form></div>
+<div class="section" id="features">
+  <div class="section-title">✨ Hamare Khaas Features</div>
+  <div class="features-grid">
+    <div class="feature-card"><div class="icon">📖</div><div>Asaan Mutalia</div><div>Browser mein seedha parhen</div></div>
+    <div class="feature-card"><div class="icon">🆓</div><div>Muft Kitabein</div><div>Kai kitabein muft</div></div>
+    <div class="feature-card"><div class="icon">🌙</div><div>Dark Mode</div><div>Aankhon ka sukoon</div></div>
+    <div class="feature-card"><div class="icon">📱</div><div>Mobile Friendly</div><div>Har device par</div></div>
+  </div>
+</div>
+<div class="section" id="about">
+  <div class="section-title">📜 Hamare Baare Mein</div>
+  <div class="about-text" id="about-text">Loading...</div>
+</div>
+<div class="section" id="contact">
+  <div class="section-title">📩 Rabta Karein</div>
+  <form id="contact-form" class="contact-form">
+    <input type="text" id="cname" placeholder="Aapka naam" required>
+    <input type="email" id="cemail" placeholder="Email" required>
+    <textarea id="cmsg" rows="4" placeholder="Apna paigham likhein..."></textarea>
+    <button type="submit">Bhejein</button>
+  </form>
+</div>
 <footer><span id="footer-text">© 2025 KitabGhar</span></footer>
 <script>
   let allBooks = [], currentFilter = 'all', currentSearch = '';
+  const supabase = window.supabaseClient;
   async function loadSettings() {
     const { data } = await supabase.from('settings').select('*');
     if (data) {
@@ -117,7 +149,7 @@ footer{background:var(--bg2);text-align:center;padding:1rem;margin-top:2rem;colo
   const savedTheme = localStorage.getItem('theme') || 'light';
   applyTheme(savedTheme);
   document.getElementById('theme-toggle').addEventListener('click', () => { const cur = document.documentElement.getAttribute('data-theme'); applyTheme(cur === 'dark' ? 'light' : 'dark'); });
-  trackSiteVisit('home');
+  window.trackSiteVisit('home');
   loadSettings();
   loadBooks();
 </script>

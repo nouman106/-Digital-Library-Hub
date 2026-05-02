@@ -1,6 +1,5 @@
-// config.js - Safe version (no duplicate declaration)
+// config.js - Safe version with no duplicate declaration
 (function() {
-  // Agar pehle se define hai to do nothing
   if (window.supabaseClient) return;
   
   const SUPABASE_URL = 'https://ykmsizkprilhidqvxaqq.supabase.co';

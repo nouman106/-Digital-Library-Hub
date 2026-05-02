@@ -37,7 +37,7 @@ async function init(){
     document.addEventListener('contextmenu',e=>e.preventDefault());
     document.addEventListener('keydown',e=>{ if(e.ctrlKey && (e.key==='s'||e.key==='S'||e.key==='p'||e.key==='P')) e.preventDefault(); });
   }
-  await incrementBookDownloads(parseInt(id));
+  await window.incrementBookDownloads(parseInt(id));
   let pdfSrc=book.pdf_url;
   if(!pdfSrc) { document.querySelector('.pdf-container').innerHTML='<div>PDF link nahi hai</div>'; return; }
   if(pdfSrc.startsWith('data:application/pdf')){

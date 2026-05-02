@@ -17,13 +17,14 @@ button{background:#7c3aed;color:#fff;border:none;border-radius:30px;padding:12px
 <body>
 <div id="book-container" class="container">Loading...</div>
 <script>
+const supabase = window.supabaseClient;
 async function loadBook(){
   const params=new URLSearchParams(location.search);
   const id=params.get('id');
   if(!id){ document.getElementById('book-container').innerHTML='<div class="error-page">Kitab ID nahi mili</div>'; return; }
   const {data:book}=await supabase.from('books').select('*').eq('id',id).single();
   if(!book) { document.getElementById('book-container').innerHTML='<div class="error-page">Kitab nahi mili</div>'; return; }
-  await incrementBookViews(parseInt(id));
+  await window.incrementBookViews(parseInt(id));
   document.title=book.title+' — KitabGhar';
   document.body.style.background=book.bg_color||'#0a0a1a';
   document.body.style.color=book.text_color||'#eeeeee';
