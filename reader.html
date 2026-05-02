@@ -6,140 +6,73 @@
 <title>Reader — KitabGhar</title>
 <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden;font-family:'Segoe UI',sans-serif;background:#1a1a2e;color:#eee}
-header{background:rgba(10,10,30,.95);border-bottom:1px solid rgba(124,58,237,.3);padding:10px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;position:relative;z-index:10}
-.back-btn{background:rgba(124,58,237,.2);border:1px solid rgba(124,58,237,.4);color:#eee;border-radius:20px;padding:6px 16px;font-size:.85rem;cursor:pointer;transition:background .2s}
-.back-btn:hover{background:rgba(124,58,237,.4)}
-.ctrl-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#eee;border-radius:8px;padding:6px 12px;font-size:.82rem;cursor:pointer;margin-left:.4rem}
-#book-title{font-size:.95rem;font-weight:600;opacity:.9;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.reader-body{width:100%;height:calc(100vh - 54px);position:relative}
-.pdf-frame{width:100%;height:100%;border:none;display:none}
-.loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;z-index:5}
-.spinner{width:44px;height:44px;border:4px solid rgba(124,58,237,.2);border-top-color:#7c3aed;border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.error-box{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center}
-.watermark{position:fixed;bottom:14px;right:16px;background:rgba(0,0,0,.75);color:#fff;padding:5px 14px;border-radius:20px;font-size:.78rem;z-index:999;pointer-events:none}
+body{display:flex;flex-direction:column;height:100vh;margin:0;font-family:'Segoe UI',sans-serif}
+header{background:#1e1e2f;color:#fff;padding:10px 20px;display:flex;justify-content:space-between;align-items:center}
+button{background:#7c3aed;border:none;color:#fff;padding:6px 12px;border-radius:20px;cursor:pointer}
+.pdf-container{flex:1;overflow:auto;padding:1rem;background:#525659}
+.pdf-page{margin:0 auto 1rem;box-shadow:0 0 10px rgba(0,0,0,0.3);background:#fff}
+canvas{width:100%;height:auto;display:block}
+.watermark{position:fixed;bottom:10px;right:10px;background:#000;color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;z-index:999}
 </style>
 </head>
 <body>
-<header id="rdr-header">
-  <div style="display:flex;align-items:center;gap:.6rem">
-    <button class="back-btn" onclick="goBack()">← Wapas</button>
-    <span id="book-title">Kitab load ho rahi hai...</span>
-  </div>
-  <div>
-    <button class="ctrl-btn" onclick="toggleFullscreen()">⛶ Full</button>
-    <button class="ctrl-btn" id="dl-btn" style="display:none" onclick="downloadPDF()">⬇️ Download</button>
-  </div>
-</header>
-<div class="reader-body" id="reader-body">
-  <div class="loading" id="loading">
-    <div class="spinner"></div>
-    <div style="opacity:.6;font-size:.9rem">Kitab khul rahi hai...</div>
-  </div>
-  <div class="error-box" id="error-box">
-    <div style="font-size:3rem">📭</div>
-    <div id="error-msg" style="opacity:.8;max-width:400px;line-height:1.7"></div>
-    <button class="back-btn" style="margin-top:.5rem" onclick="goBack()">← Wapas Jayein</button>
-  </div>
-  <iframe class="pdf-frame" id="pdf-frame" title="Book Reader"></iframe>
-</div>
+<header><button onclick="location.href='index.html'">← Wapas</button><span id="book-title"></span><div><button onclick="zoomIn()">🔍+</button><button onclick="zoomOut()">🔍−</button></div></header>
+<div class="pdf-container" id="pdf-container"></div>
 <script>
-// FIX: PDF.js hataya — eval() use karta tha jo CSP block karta tha
-// Ab iframe use kar rahe hain — CSP safe, works everywhere
-var supabase = window.supabaseClient; // FIX: var — no redeclaration error
-
-var book = null, pdfUrl = null;
-
-async function init() {
-  var id = new URLSearchParams(location.search).get('id');
-  if (!id) { showError('Kitab ID nahi mili'); return; }
-  if (!supabase) { showError('Database connect nahi hua'); return; }
-
-  try {
-    var res = await supabase.from('books').select('*').eq('id', id).single();
-    if (res.error || !res.data) { showError('Kitab nahi mili'); return; }
-    book = res.data;
-  } catch(e) { showError('Database error: ' + e.message); return; }
-
-  document.title = (book.title || 'Kitab') + ' — KitabGhar';
-  document.getElementById('book-title').textContent = book.title || 'Kitab';
-  document.body.style.background = book.bg_color || '#1a1a2e';
-  document.getElementById('loading').style.background = book.bg_color || '#1a1a2e';
-  document.getElementById('rdr-header').style.color = book.text_color || '#eee';
-
-  if (!book.allow_access) { showError('Yeh kitab abhi dastiyab nahi hai'); return; }
-
-  if (book.allow_download) {
-    document.getElementById('dl-btn').style.display = 'inline-block';
-  } else {
-    var wm = document.createElement('div');
-    wm.className = 'watermark';
-    wm.textContent = '📖 Sirf parhne ke liye — Download allowed nahi';
+let pdfDoc=null, scale=1.2;
+async function init(){
+  let id=new URLSearchParams(location.search).get('id');
+  if(!id) return;
+  let {data:book}=await supabase.from('books').select('*').eq('id',id).single();
+  if(!book) return;
+  document.getElementById('book-title').innerText=book.title||'Kitab';
+  if(!book.allow_access) { document.querySelector('.pdf-container').innerHTML='<div style="text-align:center">Yeh kitab dastiyab nahi hai</div>'; return; }
+  if(!book.allow_download) {
+    let wm=document.createElement('div');
+    wm.className='watermark';
+    wm.innerText='📖 Sirf parhne ke liye – Download allowed nahi';
     document.body.appendChild(wm);
-    document.addEventListener('contextmenu', function(e){ e.preventDefault(); });
-    document.addEventListener('keydown', function(e){
-      if (e.ctrlKey && ['s','S','p','P','u','U'].includes(e.key)) e.preventDefault();
-    });
+    document.addEventListener('contextmenu',e=>e.preventDefault());
+    document.addEventListener('keydown',e=>{ if(e.ctrlKey && (e.key==='s'||e.key==='S'||e.key==='p'||e.key==='P')) e.preventDefault(); });
   }
-
-  try { await window.incrementBookViews(parseInt(id)); } catch(e) {}
-  pdfUrl = book.pdf_url;
-  loadPDF(pdfUrl);
-}
-
-function loadPDF(url) {
-  if (!url) { showError('Is kitab ka PDF link maujood nahi hai'); return; }
-  var frame = document.getElementById('pdf-frame');
-
-  if (url.startsWith('data:application/pdf')) {
-    try {
-      var b64 = url.split(',')[1];
-      var bin = atob(b64);
-      var bytes = new Uint8Array(bin.length);
-      for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-      frame.src = URL.createObjectURL(new Blob([bytes], {type:'application/pdf'}));
-    } catch(e) { showError('PDF parse error — file corrupt ho sakti hai'); return; }
-  } else {
-    frame.src = url;
+  await window.incrementBookDownloads(parseInt(id));
+  let pdfSrc=book.pdf_url;
+  if(!pdfSrc) { document.querySelector('.pdf-container').innerHTML='<div>PDF link nahi hai</div>'; return; }
+  if(pdfSrc.startsWith('data:application/pdf')){
+    let base64=pdfSrc.split(',')[1];
+    let binary=atob(base64); let bytes=new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+    let blob=new Blob([bytes],{type:'application/pdf'});
+    pdfSrc=URL.createObjectURL(blob);
   }
-
-  frame.onload = function() {
-    document.getElementById('loading').style.display = 'none';
-    frame.style.display = 'block';
-  };
-  // 15 sec timeout fallback
-  setTimeout(function() {
-    if (frame.style.display === 'none') {
-      document.getElementById('loading').style.display = 'none';
-      frame.style.display = 'block';
-    }
-  }, 15000);
+  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+  let loadingTask=pdfjsLib.getDocument(pdfSrc);
+  pdfDoc=await loadingTask.promise;
+  renderAllPages();
 }
-
-function showError(msg) {
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('pdf-frame').style.display = 'none';
-  var box = document.getElementById('error-box');
-  box.style.display = 'flex';
-  document.getElementById('error-msg').textContent = msg;
+async function renderAllPages(){
+  let container=document.getElementById('pdf-container');
+  container.innerHTML='';
+  for(let i=1;i<=pdfDoc.numPages;i++){
+    let page=await pdfDoc.getPage(i);
+    let viewport=page.getViewport({scale});
+    let canvas=document.createElement('canvas');
+    canvas.height=viewport.height;
+    canvas.width=viewport.width;
+    canvas.style.width='100%';
+    canvas.style.height='auto';
+    let ctx=canvas.getContext('2d');
+    await page.render({canvasContext:ctx,viewport}).promise;
+    let div=document.createElement('div');
+    div.className='pdf-page';
+    div.appendChild(canvas);
+    container.appendChild(div);
+  }
 }
-function downloadPDF() {
-  if (!pdfUrl || !book) return;
-  var a = document.createElement('a');
-  a.href = pdfUrl; a.download = (book.title || 'kitab') + '.pdf'; a.click();
-  try { window.incrementBookDownloads(parseInt(book.id)); } catch(e) {}
-}
-function goBack() { if (document.referrer) history.back(); else location.href = 'index.html'; }
-function toggleFullscreen() {
-  if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(function(){});
-  else document.exitFullscreen();
-}
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape' && !document.fullscreenElement) goBack();
-});
+function zoomIn(){ scale=Math.min(scale+0.2,3); if(pdfDoc) renderAllPages(); }
+function zoomOut(){ scale=Math.max(scale-0.2,0.6); if(pdfDoc) renderAllPages(); }
 init();
 </script>
 </body>

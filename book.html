@@ -17,7 +17,7 @@ button{background:#7c3aed;color:#fff;border:none;border-radius:30px;padding:12px
 <body>
 <div id="book-container" class="container">Loading...</div>
 <script>
-var supabase = window.supabaseClient; // FIX: was "const"
+var supabase = window.supabaseClient;
 async function loadBook(){
   const params=new URLSearchParams(location.search);
   const id=params.get('id');
