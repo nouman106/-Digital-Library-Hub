@@ -3,25 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="Kitab - KitabGhar par muft parhen">
 <title>Kitab — KitabGhar</title>
-<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="config.js"></script>
 <style>
 body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0a0a1a;color:#e8e8f8;margin:0;padding:0}
 .container{max-width:800px;margin:2rem auto;padding:1rem}
-.cover{width:180px;border-radius:12px;margin-bottom:1rem}
+.cover{width:180px;border-radius:12px;margin-bottom:1rem;background:#1a1a2e}
 button{background:#7c3aed;color:#fff;border:none;border-radius:30px;padding:12px 28px;font-size:1rem;cursor:pointer}
 .error-page{text-align:center;padding:3rem}
+a{color:#7c3aed;text-decoration:none}
+a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
 <div id="book-container" class="container">Loading...</div>
+<script async src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
 <script>
-var supabase = window.supabaseClient;
+function waitForSupabase() {
+  return new Promise((resolve) => {
+    if (window.supabaseClient) {
+      resolve(window.supabaseClient);
+    } else {
+      const checkInterval = setInterval(() => {
+        if (window.supabaseClient) {
+          clearInterval(checkInterval);
+          resolve(window.supabaseClient);
+        }
+      }, 100);
+      setTimeout(() => clearInterval(checkInterval), 5000);
+    }
+  });
+}
+
 async function loadBook(){
   const params=new URLSearchParams(location.search);
   const id=params.get('id');
   if(!id){ document.getElementById('book-container').innerHTML='<div class="error-page">Kitab ID nahi mili</div>'; return; }
+  
+  const supabase = await waitForSupabase();
   const {data:book}=await supabase.from('books').select('*').eq('id',id).single();
   if(!book) { document.getElementById('book-container').innerHTML='<div class="error-page">Kitab nahi mili</div>'; return; }
   await window.incrementBookViews(parseInt(id));
@@ -29,17 +49,18 @@ async function loadBook(){
   document.body.style.background=book.bg_color||'#0a0a1a';
   document.body.style.color=book.text_color||'#eeeeee';
   document.getElementById('book-container').innerHTML=`
-    ${book.cover_url ? `<img class="cover" src="${book.cover_url}" onerror="this.style.display='none'">` : '<div style="font-size:4rem">📖</div>'}
+    ${book.cover_url ? `<img class="cover" src="${book.cover_url}" alt="${book.title}" loading="lazy">` : '<div style="font-size:4rem">📖</div>'}
     <h1>${book.title}</h1>
     <h3>✍️ ${book.author || 'Unknown'}</h3>
     <p>${book.description || ''}</p>
     <div><strong>Category:</strong> ${book.category}</div>
     <div><strong>Price:</strong> ${book.price==0||book.price=='0'?'🆓 Muft':'Rs.'+book.price}</div>
     ${book.allow_access? `<button onclick="location.href='reader.html?id=${book.id}'">📖 Abhi Parhen</button>` : '<div style="color:#f44336">Yeh kitab abhi dastiyab nahi hai.</div>'}
-    <br><br><a href="index.html" style="color:#7c3aed">← Home Wapas</a>
+    <br><br><a href="index.html">← Home Wapas</a>
   `;
 }
-loadBook();
+
+waitForSupabase().then(() => loadBook());
 </script>
 </body>
 </html>

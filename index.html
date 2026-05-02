@@ -3,16 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="KitabGhar - Ilm ki Duniya. Muft Urdu kitabein parhen.">
 <title>KitabGhar — Ilm ki Duniya</title>
-<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="config.js"></script>
 <style>
 /* === DARK MODE (default) === */
 :root{--bg:#0a0a1a;--bg2:#0f0f2a;--bg3:#13132e;--text:#e8e8f8;--text2:#a0a0c8;--text3:#6060a0;--primary:#7c3aed;--primary2:#9f5bff;--secondary:#06b6d4;--border:#1e1e4a;--border2:#1a1a3e;--card:#0f0f2a;--radius:14px;--radius-sm:8px;--font:'Segoe UI',sans-serif}
 /* === LIGHT MODE === */
-/* BUG FIX: pehle light mode CSS nahi tha, theme toggle kaam nahi karta tha */
 [data-theme="light"]{--bg:#f0f0f8;--bg2:#ffffff;--bg3:#e8e8f5;--text:#1a1a2e;--text2:#444466;--text3:#888899;--border:#ccccee;--border2:#ddddee;--card:#ffffff}
 *{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
 body{font-family:var(--font);background:var(--bg);color:var(--text);transition:all .3s}
 nav{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
 .nav-inner{max-width:1200px;margin:0 auto;padding:0 1rem;display:flex;align-items:center;gap:1rem;height:60px;flex-wrap:wrap}
@@ -24,8 +23,7 @@ nav{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;
 .nav-links a{color:var(--text2);text-decoration:none;padding:5px 8px}
 .theme-btn{background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;color:var(--text2);cursor:pointer}
 .announcement-bar{background:var(--primary);color:#fff;text-align:center;padding:8px;font-size:.85rem}
-.hero-slider{position:relative;height:400px;overflow:hidden}
-/* BUG FIX: slider-container mein slides directly honge, nested div nahi */
+.hero-slider{position:relative;height:400px;overflow:hidden;background:var(--bg2)}
 .slider-container{display:flex;transition:transform .5s ease;height:100%}
 .slide{min-width:100%;height:100%;background-size:cover;background-position:center;position:relative;flex-shrink:0}
 .slide::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.4)}
@@ -38,9 +36,9 @@ nav{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;
 .books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1.2rem}
 .book-card{background:var(--card);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:transform .2s;border:1px solid var(--border2)}
 .book-card:hover{transform:translateY(-4px)}
-.book-cover-img{width:100%;aspect-ratio:3/4;object-fit:cover}
+.book-cover-img{width:100%;aspect-ratio:3/4;object-fit:cover;background:var(--bg3)}
 .book-info{padding:.8rem}
-.book-title{font-weight:600;margin-bottom:.2rem;color:var(--text)}
+.book-title{font-weight:600;margin-bottom:.2rem;color:var(--text);word-break:break-word}
 .book-author{font-size:.75rem;color:var(--text3)}
 .price-tag{font-size:.8rem;color:var(--secondary)}
 .section{max-width:1200px;margin:2rem auto;padding:0 1rem}
@@ -53,7 +51,9 @@ nav{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;
 .contact-form button{background:var(--primary);border:none;padding:10px;border-radius:30px;color:#fff;cursor:pointer}
 footer{background:var(--bg2);text-align:center;padding:1rem;margin-top:2rem;color:var(--text3)}
 .no-books{text-align:center;padding:3rem;color:var(--text3);font-size:1.1rem}
-@media(max-width:600px){.hero-slider{height:250px}.slide-content h1{font-size:1.5rem}}
+.loading-spinner{display:inline-block;width:20px;height:20px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:600px){.hero-slider{height:250px}.slide-content h1{font-size:1.5rem}.nav-inner{height:auto;padding:0.5rem 1rem}}
 </style>
 </head>
 <body>
@@ -109,51 +109,111 @@ footer{background:var(--bg2);text-align:center;padding:1rem;margin-top:2rem;colo
   </form>
 </div>
 <footer><span id="footer-text">© 2025 KitabGhar</span></footer>
+
+<!-- Supabase library loaded asynchronously -->
+<script async src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
 <script>
   let allBooks = [], currentFilter = 'all', currentSearch = '';
-  var supabase = window.supabaseClient;
+  const CACHE_KEY = 'kitabghar_cache';
+  const CACHE_TTL = 3600000; // 1 hour
+  var supabase = null;
+
+  // Wait for Supabase to be ready
+  function waitForSupabase() {
+    return new Promise((resolve) => {
+      if (window.supabaseClient) {
+        resolve(window.supabaseClient);
+      } else {
+        const checkInterval = setInterval(() => {
+          if (window.supabaseClient) {
+            clearInterval(checkInterval);
+            resolve(window.supabaseClient);
+          }
+        }, 100);
+        setTimeout(() => clearInterval(checkInterval), 5000);
+      }
+    });
+  }
+
+  // Cache management
+  function getFromCache(key) {
+    try {
+      const cached = localStorage.getItem(key);
+      if (!cached) return null;
+      const { data, timestamp } = JSON.parse(cached);
+      if (Date.now() - timestamp > CACHE_TTL) {
+        localStorage.removeItem(key);
+        return null;
+      }
+      return data;
+    } catch(e) { return null; }
+  }
+
+  function saveToCache(key, data) {
+    try {
+      localStorage.setItem(key, JSON.stringify({ data, timestamp: Date.now() }));
+    } catch(e) {}
+  }
 
   async function loadSettings() {
     try {
+      const cached = getFromCache('settings_cache');
+      if (cached) {
+        applySettings(cached);
+        return;
+      }
+      
       const { data } = await supabase.from('settings').select('*');
       if (data) {
-        for (let s of data) {
-          if (s.key === 'site_name') document.getElementById('site-name').innerText = s.value;
-          else if (s.key === 'announcement') document.getElementById('announcement-bar').innerText = s.value;
-          else if (s.key === 'about_text') document.getElementById('about-text').innerText = s.value;
-          else if (s.key === 'footer_text') document.getElementById('footer-text').innerText = s.value;
-          else if (s.key === 'slider_images') {
-            try {
-              let imgs = JSON.parse(s.value);
-              if (!imgs || imgs.length === 0) return;
-              /* BUG FIX: pehle innerHTML mein dobara <div class="slider-container"> wrap kiya ja raha tha
-                 jis se nested slider banta tha aur slider kaam nahi karta tha.
-                 Ab sirf slides directly slider-container mein insert ho rahi hain. */
-              let container = document.getElementById('slider-container');
-              container.innerHTML = imgs.map(img =>
-                `<div class="slide" style="background-image:url(${img})">
-                  <div class="slide-content"><h1>KitabGhar</h1><p>Ilm ki Duniya</p></div>
-                </div>`
-              ).join('');
-              if (imgs.length > 1) {
-                let idx = 0;
-                setInterval(() => {
-                  idx = (idx + 1) % imgs.length;
-                  container.style.transform = `translateX(-${idx * 100}%)`;
-                }, 4000);
-              }
-            } catch(e) { console.warn('Slider error:', e); }
-          }
-        }
+        saveToCache('settings_cache', data);
+        applySettings(data);
       }
     } catch(e) { console.error('Settings load error:', e); }
   }
 
+  function applySettings(data) {
+    for (let s of data) {
+      if (s.key === 'site_name') document.getElementById('site-name').innerText = s.value;
+      else if (s.key === 'announcement') document.getElementById('announcement-bar').innerText = s.value;
+      else if (s.key === 'about_text') document.getElementById('about-text').innerText = s.value;
+      else if (s.key === 'footer_text') document.getElementById('footer-text').innerText = s.value;
+      else if (s.key === 'slider_images') {
+        try {
+          let imgs = JSON.parse(s.value);
+          if (!imgs || imgs.length === 0) return;
+          let container = document.getElementById('slider-container');
+          container.innerHTML = imgs.map(img =>
+            `<div class="slide" style="background-image:url(${img})">
+              <div class="slide-content"><h1>KitabGhar</h1><p>Ilm ki Duniya</p></div>
+            </div>`
+          ).join('');
+          if (imgs.length > 1) {
+            let idx = 0;
+            const rotateSlide = () => {
+              idx = (idx + 1) % imgs.length;
+              container.style.transform = `translateX(-${idx * 100}%)`;
+            };
+            setInterval(rotateSlide, 4000);
+          }
+        } catch(e) { console.warn('Slider error:', e); }
+      }
+    }
+  }
+
   async function loadBooks() {
     try {
+      const cached = getFromCache('books_cache');
+      if (cached) {
+        allBooks = cached;
+        renderBooks();
+        return;
+      }
+
       const { data, error } = await supabase.from('books').select('*').eq('allow_access', true);
       if (error) throw error;
       allBooks = data || [];
+      saveToCache('books_cache', allBooks);
       renderBooks();
     } catch(e) {
       console.error('Books load error:', e);
@@ -173,8 +233,8 @@ footer{background:var(--bg2);text-align:center;padding:1rem;margin-top:2rem;colo
     }
     document.getElementById('books-grid').innerHTML = filtered.map(b =>
       `<div class="book-card" onclick="location.href='book.html?id=${b.id}'">
-        <img class="book-cover-img" src="${b.cover_url || 'https://via.placeholder.com/180x240?text=No+Cover'}"
-          onerror="this.src='https://via.placeholder.com/180x240?text=No+Cover'">
+        <img class="book-cover-img" src="${b.cover_url || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22180%22 height=%22240%22%3E%3Crect fill=%22%23333%22 width=%22180%22 height=%22240%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2214%22 fill=%22%23999%22 text-anchor=%22middle%22 dy=%22.3em%22%3ENo Cover%3C/text%3E%3C/svg%3E'}"
+          alt="${b.title}" loading="lazy">
         <div class="book-info">
           <div class="book-title">${b.title}</div>
           <div class="book-author">${b.author || ''}</div>
@@ -209,8 +269,6 @@ footer{background:var(--bg2);text-align:center;padding:1rem;margin-top:2rem;colo
     e.target.reset();
   });
 
-  /* BUG FIX: pehle light mode ka koi CSS nahi tha, theme toggle kuch nahi karta tha.
-     Ab [data-theme="light"] CSS variables add kiye hain jo properly light mode show karte hain. */
   function applyTheme(t) {
     document.documentElement.setAttribute('data-theme', t);
     document.getElementById('theme-toggle').innerText = t === 'dark' ? '☀️ Light' : '🌙 Dark';
@@ -223,9 +281,13 @@ footer{background:var(--bg2);text-align:center;padding:1rem;margin-top:2rem;colo
     applyTheme(cur === 'dark' ? 'light' : 'dark');
   });
 
-  try { window.trackSiteVisit('home'); } catch(e) {}
-  loadSettings();
-  loadBooks();
+  // Initialize
+  waitForSupabase().then(client => {
+    supabase = client;
+    try { window.trackSiteVisit('home'); } catch(e) {}
+    loadSettings();
+    loadBooks();
+  });
 </script>
 </body>
 </html>

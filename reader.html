@@ -3,10 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="PDF Reader - KitabGhar">
 <title>Reader — KitabGhar</title>
-<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="config.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <style>
 body{display:flex;flex-direction:column;height:100vh;margin:0;font-family:'Segoe UI',sans-serif;background:#1a1a2e;color:#eee}
 header{background:#1e1e2f;color:#fff;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
@@ -31,10 +29,28 @@ canvas{width:100%;height:auto;display:block}
 <div class="pdf-container" id="pdf-container">
   <div class="msg">📖 Kitab load ho rahi hai...</div>
 </div>
+
+<script async src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <script>
-/* BUG FIX: pehle 'supabase' variable declare hi nahi tha — reader page bilkul kaam nahi karta tha */
-var supabase = window.supabaseClient;
-let pdfDoc = null, scale = 1.2;
+function waitForSupabase() {
+  return new Promise((resolve) => {
+    if (window.supabaseClient) {
+      resolve(window.supabaseClient);
+    } else {
+      const checkInterval = setInterval(() => {
+        if (window.supabaseClient) {
+          clearInterval(checkInterval);
+          resolve(window.supabaseClient);
+        }
+      }, 100);
+      setTimeout(() => clearInterval(checkInterval), 5000);
+    }
+  });
+}
+
+let pdfDoc = null, scale = 1.2, renderTimeout = null;
 
 async function init() {
   let id = new URLSearchParams(location.search).get('id');
@@ -43,6 +59,7 @@ async function init() {
     return;
   }
   try {
+    const supabase = await waitForSupabase();
     let { data: book, error } = await supabase.from('books').select('*').eq('id', id).single();
     if (error || !book) {
       document.getElementById('pdf-container').innerHTML = '<div class="msg">❌ Kitab nahi mili</div>';
@@ -108,8 +125,22 @@ async function renderAllPages() {
   }
 }
 
-function zoomIn() { scale = Math.min(scale + 0.2, 3); if (pdfDoc) renderAllPages(); }
-function zoomOut() { scale = Math.max(scale - 0.2, 0.6); if (pdfDoc) renderAllPages(); }
+function zoomIn() { 
+  scale = Math.min(scale + 0.2, 3); 
+  if (pdfDoc) {
+    clearTimeout(renderTimeout);
+    renderTimeout = setTimeout(renderAllPages, 300);
+  }
+}
+
+function zoomOut() { 
+  scale = Math.max(scale - 0.2, 0.6); 
+  if (pdfDoc) {
+    clearTimeout(renderTimeout);
+    renderTimeout = setTimeout(renderAllPages, 300);
+  }
+}
+
 init();
 </script>
 </body>
