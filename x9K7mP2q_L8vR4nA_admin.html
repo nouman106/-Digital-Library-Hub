@@ -1,449 +1,126 @@
 <!DOCTYPE html>
 <html lang="ur" dir="ltr">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>KitabGhar Admin Panel</title>
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
 <style>
-:root{
-  --bg:#0a0a1a;--bg2:#0f0f2a;--bg3:#13132e;
-  --text:#e8e8f8;--text2:#a0a0c8;--text3:#6060a0;
-  --primary:#7c3aed;--primary2:#9f5bff;--primary-light:#1e1040;
-  --secondary:#06b6d4;--secondary-light:#0e2a3a;
-  --border:#1e1e4a;--border2:#1a1a3e;
-  --card:#0f0f2a;--card-shadow:0 4px 24px rgba(124,58,237,.18);
-  --radius:14px;--radius-sm:8px;
-  --font:'Segoe UI',Tahoma,sans-serif;
-  --glow-p:rgba(124,58,237,.5);--glow-s:rgba(6,182,212,.4);
-}
-[data-theme="dark"]{
-  --bg:#060612;--bg2:#0a0a1e;--bg3:#0d0d24;
-  --text:#f0f0ff;--text2:#9090c0;--text3:#5050a0;
-  --primary:#8b5cf6;--primary2:#a78bfa;--primary-light:#1a0e40;
-  --secondary:#22d3ee;--secondary-light:#0a2535;
-  --border:#1a1a40;--border2:#141438;
-  --card:#0a0a1e;--card-shadow:0 4px 24px rgba(139,92,246,.2);
-  --glow-p:rgba(139,92,246,.6);
-}
-*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a1a;--bg2:#0f0f2a;--bg3:#13132e;--text:#e8e8f8;--text2:#a0a0c8;--text3:#6060a0;--primary:#7c3aed;--primary2:#9f5bff;--secondary:#06b6d4;--border:#1e1e4a;--border2:#1a1a3e;--card:#0f0f2a;--radius:14px;--radius-sm:8px;--font:'Segoe UI',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
-button{cursor:pointer;font-family:var(--font)}
-input,select,textarea{font-family:var(--font);color:var(--text)}
-
-/* LOGIN SCREEN */
+button{cursor:pointer}
+input,select,textarea{font-family:var(--font);background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px;color:var(--text)}
 #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#0d0928,#1a1050)}
-.login-card{background:var(--bg2);border-radius:var(--radius);padding:2.5rem;width:340px;box-shadow:0 8px 32px rgba(0,0,0,0.2)}
-.login-title{font-size:1.5rem;font-weight:700;color:var(--primary);text-align:center;margin-bottom:.4rem}
-.login-sub{font-size:.85rem;color:var(--text3);text-align:center;margin-bottom:1.5rem}
-.login-field{margin-bottom:1rem}
-.login-field label{font-size:.85rem;color:var(--text2);display:block;margin-bottom:.3rem}
-.login-field input{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg3);font-size:.95rem;outline:none;color:var(--text)}
-.login-field input:focus{border-background:linear-gradient(135deg,var(--primary2),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.login-btn{width:100%;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);padding:11px;font-size:1rem;font-weight:600;margin-top:.5rem;transition:background .2s}
-.login-btn:hover{background:var(--primary2)}
-.login-err{color:var(--danger);font-size:.82rem;text-align:center;margin-top:.5rem;display:none}
-
-/* ADMIN LAYOUT */
-#admin-panel{display:none}
-.admin-nav{background:linear-gradient(135deg,#0d0928,var(--primary));color:#fff;padding:.8rem 1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;border-bottom:1px solid rgba(124,58,237,.4);}
-.admin-nav-title{font-size:1.1rem;font-weight:700}
-.admin-nav-actions{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
-.nav-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:20px;padding:5px 14px;font-size:.83rem;transition:background .2s}
-.nav-btn:hover{background:rgba(255,255,255,.35)}
-.nav-btn.danger{background:rgba(220,53,69,.3);border-color:rgba(220,53,69,.5)}
-.nav-btn.danger:hover{background:rgba(220,53,69,.5)}
-
-.admin-body{max-width:1100px;margin:0 auto;padding:1.5rem 1rem}
-.tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.5rem;border-bottom:2px solid var(--border);padding-bottom:.6rem}
-.tab-btn{padding:7px 18px;border:none;background:none;color:var(--text2);font-size:.9rem;border-radius:var(--radius-sm) var(--radius-sm) 0 0;transition:all .2s;font-weight:500}
-.tab-btn:hover{background:var(--primary-light);background:linear-gradient(135deg,var(--primary2),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.tab-btn.active{background:var(--primary);color:#fff}
+.login-card{background:var(--bg2);border-radius:14px;padding:2rem;width:320px}
+.login-title{font-size:1.5rem;font-weight:700;color:var(--primary);text-align:center;margin-bottom:1rem}
+.login-field{margin:1rem 0}
+.login-field input{width:100%}
+.login-btn{width:100%;background:var(--primary);color:#fff;border:none;border-radius:8px;padding:10px;margin-top:.5rem}
+.admin-nav{background:linear-gradient(135deg,#0d0928,var(--primary));color:#fff;padding:.8rem 1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem}
+.admin-body{max-width:1200px;margin:0 auto;padding:1rem}
+.tabs{display:flex;gap:.5rem;border-bottom:2px solid var(--border);margin-bottom:1rem;flex-wrap:wrap}
+.tab-btn{padding:8px 20px;background:none;border:none;color:var(--text2);cursor:pointer}
+.tab-btn.active{background:var(--primary);color:#fff;border-radius:8px 8px 0 0}
 .tab-pane{display:none}
 .tab-pane.active{display:block}
-
-/* CARDS */
-.card{background:var(--card);border:1px solid var(--border2);border-radius:var(--radius);padding:1.2rem;box-shadow:var(--card-shadow);margin-bottom:1rem}
-.card-title{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
-.card-title .icon{font-size:1.2rem}
-
-/* FORM */
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:.8rem}
+.card{background:var(--card);border:1px solid var(--border2);border-radius:14px;padding:1.2rem;margin-bottom:1rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
 .form-row.single{grid-template-columns:1fr}
-.form-row.triple{grid-template-columns:1fr 1fr 1fr}
 .field{display:flex;flex-direction:column;gap:.3rem}
-.field label{font-size:.82rem;font-weight:600;color:var(--text2)}
-.field input,.field select,.field textarea{padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);font-size:.9rem;outline:none;transition:border .2s;color:var(--text)}
-.field input:focus,.field select:focus,.field textarea:focus{border-background:linear-gradient(135deg,var(--primary2),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.field textarea{resize:vertical;min-height:80px}
-.upload-group{display:flex;gap:.5rem;align-items:flex-end;flex-wrap:wrap}
-.upload-group input[type=text]{flex:1}
-.upload-group label.upload-label{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-size:.83rem;color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .2s}
-.upload-group label.upload-label:hover{border-color:var(--primary);background:linear-gradient(135deg,var(--primary2),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.upload-group input[type=file]{display:none}
-.or-divider{font-size:.78rem;color:var(--text3);align-self:center;padding:0 4px}
-
-/* BTNS */
-.btn{border:none;border-radius:var(--radius-sm);padding:9px 20px;font-size:.88rem;font-weight:600;transition:all .2s;display:inline-flex;align-items:center;gap:.4rem}
-.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary2)}
-.btn-danger{background:var(--danger-light);color:var(--danger);border:1px solid var(--danger)}.btn-danger:hover{background:var(--danger);color:#fff}
-.btn-warn{background:var(--warn-light);color:var(--warn);border:1px solid var(--warn)}.btn-warn:hover{background:var(--warn);color:#fff}
-.btn-outline{background:none;border:1px solid var(--border);color:var(--text2)}.btn-outline:hover{border-color:var(--primary);background:linear-gradient(135deg,var(--primary2),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-
-/* BOOKS TABLE */
-.books-table{width:100%;border-collapse:collapse;font-size:.85rem}
-.books-table th{text-align:left;padding:8px 10px;background:var(--bg3);color:var(--text2);font-weight:600;border-bottom:2px solid var(--border)}
-.books-table td{padding:8px 10px;border-bottom:1px solid var(--border2);vertical-align:middle;color:var(--text)}
-.books-table tr:hover td{background:var(--bg3)}
-.cover-thumb{width:36px;height:48px;object-fit:cover;border-radius:4px;background:var(--bg3)}
-.cat-badge{font-size:.72rem;padding:2px 8px;border-radius:10px;font-weight:600}
-.cat-islamic{background:#e8f5e9;color:#2e7d32}
-.cat-educational{background:#e3f2fd;color:#1565c0}
-.cat-motivational{background:#fff3e0;color:#e65100}
-.cat-kids{background:#fce4ec;color:#c62828}
-.cat-other{background:#f3e5f5;color:#6a1b9a}
-[data-theme="dark"] .cat-islamic{background:#1a3020;color:#81c784}
-[data-theme="dark"] .cat-educational{background:#0d2035;color:#64b5f6}
-[data-theme="dark"] .cat-motivational{background:#2a1800;color:#ffb74d}
-[data-theme="dark"] .cat-kids{background:#2a0d15;color:#f48fb1}
-[data-theme="dark"] .cat-other{background:#1f0f2a;color:#ce93d8}
-.action-btns{display:flex;gap:.4rem;flex-wrap:wrap}
-
-/* STATS CARDS */
-.stats-mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.8rem;margin-bottom:1rem}
-.stat-mini-card{background:var(--card);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:1rem;box-shadow:var(--card-shadow);text-align:center}
-.stat-mini-num{font-size:1.6rem;font-weight:700;background:linear-gradient(135deg,var(--primary2),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.stat-mini-label{font-size:.78rem;color:var(--text3);margin-top:.2rem}
-
-/* SETTINGS COLORS */
-.color-row{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
-.color-swatch{width:40px;height:40px;border-radius:8px;border:2px solid var(--border);cursor:pointer}
-
-/* THEME CUSTOMIZER */
-.theme-presets{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.2rem}
-.preset-btn{
-  padding:8px 14px;border-radius:20px;border:2px solid transparent;
-  font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;
-  display:flex;align-items:center;gap:.4rem;
-}
-.preset-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
-.preset-btn.selected{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-light)}
-.color-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.8rem}
-.theme-preview-box{
-  background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);
-  padding:1rem;margin:1rem 0;
-}
-.theme-preview-title{font-size:.82rem;font-weight:600;color:var(--text3);margin-bottom:.7rem;text-transform:uppercase;letter-spacing:.5px}
-.preview-mockup{border-radius:8px;overflow:hidden;border:1px solid var(--border);box-shadow:0 4px 16px rgba(0,0,0,.1)}
-.preview-nav{height:36px;display:flex;align-items:center;padding:0 12px;gap:8px}
-.preview-nav-dot{width:8px;height:8px;border-radius:50%;opacity:.7}
-.preview-hero{height:60px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600;opacity:.9}
-.preview-cards{display:flex;gap:6px;padding:8px}
-.preview-card{flex:1;height:36px;border-radius:4px;border:1px solid rgba(0,0,0,.1)}
-.hero-gradient-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:.5rem}
-.gradient-swatch{width:80px;height:32px;border-radius:6px;border:2px solid var(--border);cursor:pointer;transition:all .2s}
-.gradient-swatch:hover{transform:scale(1.05)}
-.gradient-swatch.selected{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-light)}
-
-/* TOAST */
-.toast{position:fixed;bottom:20px;right:20px;background:var(--primary);color:#fff;padding:10px 18px;border-radius:8px;font-size:.88rem;z-index:999;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;max-width:300px}
-.toast.show{opacity:1;transform:translateY(0)}
-.toast.err{background:var(--danger)}
-
-/* MODAL */
-.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;padding:1rem}
-.modal-bg.show{display:flex}
-.modal{background:var(--bg2);border-radius:var(--radius);padding:1.5rem;width:100%;max-width:600px;max-height:90vh;overflow-y:auto}
-.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem}
-.modal-title{font-size:1.1rem;font-weight:700;color:var(--text)}
-.modal-close{background:none;border:none;font-size:1.3rem;color:var(--text3);cursor:pointer}
-
-/* RESPONSIVE */
-@media(max-width:600px){
-  .form-row{grid-template-columns:1fr}
-  .form-row.triple{grid-template-columns:1fr}
-  .books-table{font-size:.78rem}
-}
-
-/* ===== ADVANCED ANIMATIONS & GLOW EFFECTS ===== */
-
-/* Login card entrance */
-.login-card{
-  animation:loginPop .7s cubic-bezier(.34,1.56,.64,1) both;
-}
-@keyframes loginPop{
-  from{opacity:0;transform:translateY(30px) scale(.95)}
-  to{opacity:1;transform:translateY(0) scale(1)}
-}
-
-/* Login screen animated background */
-#login-screen{
-  position:relative;overflow:hidden;
-}
-#login-screen::before{
-  content:'';position:absolute;width:400px;height:400px;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,255,255,.12),transparent 70%);
-  top:-100px;left:-100px;
-  animation:loginOrb 8s ease-in-out infinite;pointer-events:none;
-}
-#login-screen::after{
-  content:'';position:absolute;width:300px;height:300px;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,255,255,.08),transparent 70%);
-  bottom:-80px;right:-60px;
-  animation:loginOrb 6s ease-in-out infinite reverse;pointer-events:none;
-}
-@keyframes loginOrb{
-  0%,100%{transform:translate(0,0)}
-  50%{transform:translate(20px,-25px)}
-}
-
-/* Login button glow */
-.login-btn{
-  position:relative;overflow:hidden;
-  transition:background .2s,box-shadow .2s,transform .15s;
-}
-.login-btn::after{
-  content:'';position:absolute;top:-50%;left:-60%;width:35%;height:200%;
-  background:rgba(255,255,255,.2);transform:skewX(-20deg);
-  transition:left .5s;
-}
-.login-btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 24px rgba(0,0,0,.2);
-}
-.login-btn:hover::after{left:130%}
-
-/* Admin nav entrance */
-.admin-nav{
-  animation:navSlide .5s both;
-}
-@keyframes navSlide{
-  from{opacity:0;transform:translateY(-100%)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-/* Nav buttons */
-.nav-btn{
-  transition:background .2s,box-shadow .2s,transform .15s;
-}
-.nav-btn:hover{
-  transform:translateY(-1px);
-  box-shadow:0 4px 12px rgba(0,0,0,.2);
-}
-
-/* Tabs animation */
-.tab-btn{
-  transition:all .2s;position:relative;
-}
-.tab-btn.active{
-  box-shadow:0 4px 16px rgba(124,58,237,.3);
-}
-.tab-btn::after{
-  content:'';position:absolute;bottom:-2px;left:50%;width:0;height:2px;
-  background:var(--primary);transform:translateX(-50%);transition:width .3s;
-}
-.tab-btn:not(.active):hover::after{width:60%}
-
-/* Stat cards pop */
-.stat-mini-card{
-  transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s;
-}
-.stat-mini-card:hover{
-  transform:translateY(-4px) scale(1.02);
-  box-shadow:0 12px 32px rgba(124,58,237,.15);
-}
-.stat-mini-num{
-  animation:numPop .6s cubic-bezier(.34,1.56,.64,1) both;
-}
-@keyframes numPop{
-  from{transform:scale(.5);opacity:0}
-  to{transform:scale(1);opacity:1}
-}
-
-/* Cards entrance */
-.card{
-  opacity:0;transform:translateY(16px);
-  transition:opacity .4s,transform .4s,box-shadow .2s;
-}
-.card.visible{opacity:1;transform:translateY(0)}
-.card:hover{
-  box-shadow:0 8px 32px rgba(0,0,0,.1);
-}
-
-/* Primary button glow */
-.btn-primary{
-  position:relative;overflow:hidden;
-  transition:background .2s,box-shadow .2s,transform .15s;
-}
-.btn-primary::after{
-  content:'';position:absolute;top:-50%;left:-60%;width:35%;height:200%;
-  background:rgba(255,255,255,.2);transform:skewX(-20deg);
-  transition:left .5s;
-}
-.btn-primary:hover{
-  box-shadow:0 6px 20px rgba(124,58,237,.4);
-  transform:translateY(-1px);
-}
-.btn-primary:hover::after{left:130%}
-
-/* Input focus glow */
-.field input:focus,.field select:focus,.field textarea:focus{
-  box-shadow:0 0 0 3px rgba(124,58,237,.15);
-}
-.login-field input:focus{
-  box-shadow:0 0 0 3px rgba(124,58,237,.15);
-}
-
-/* Table row hover glow */
-.books-table tr:hover td{
-  background:var(--primary-light);
-}
-
-/* Preset buttons glow */
-.preset-btn{
-  transition:all .25s;
-}
-.preset-btn:hover{
-  box-shadow:0 6px 20px rgba(0,0,0,.15);
-}
-.preset-btn.selected{
-  box-shadow:0 0 0 3px rgba(124,58,237,.3),0 4px 16px rgba(124,58,237,.2);
-}
-
-/* Toast glow */
-.toast.show{
-  box-shadow:0 8px 24px rgba(0,0,0,.2);
-  animation:toastPop .4s cubic-bezier(.34,1.56,.64,1) both;
-}
-@keyframes toastPop{
-  from{opacity:0;transform:translateY(20px) scale(.9)}
-  to{opacity:1;transform:translateY(0) scale(1)}
-}
-
-/* Modal entrance */
-.modal-bg.show .modal{
-  animation:modalIn .4s cubic-bezier(.34,1.56,.64,1) both;
-}
-@keyframes modalIn{
-  from{opacity:0;transform:scale(.92) translateY(20px)}
-  to{opacity:1;transform:scale(1) translateY(0)}
-}
-
-/* Dark mode glows */
-[data-theme="dark"] .btn-primary:hover{
-  box-shadow:0 6px 24px rgba(139,92,246,.45);
-}
-[data-theme="dark"] .tab-btn.active{
-  box-shadow:0 4px 16px rgba(139,92,246,.3);
-}
-[data-theme="dark"] .stat-mini-card:hover{
-  box-shadow:0 12px 32px rgba(0,0,0,.4),0 0 16px rgba(139,92,246,.1);
-}
-
-/* ===== NEON PURPLE THEME EXTRAS ===== */
-body{background:var(--bg);background-image:radial-gradient(ellipse at 20% 20%,rgba(124,58,237,.06) 0%,transparent 50%)}
-#login-screen{background:radial-gradient(ellipse at 50% 40%,#1a0d40 0%,#060612 70%) !important}
-.login-card{background:rgba(15,15,42,.95);border:1px solid rgba(124,58,237,.3);box-shadow:0 0 48px rgba(124,58,237,.2)}
-.login-btn{background:linear-gradient(135deg,#7c3aed,#9f5bff) !important;box-shadow:0 0 20px rgba(124,58,237,.4)}
-.admin-nav{background:linear-gradient(135deg,#0d0928,rgba(124,58,237,.8)) !important;border-bottom:1px solid rgba(124,58,237,.3)}
-.card{background:rgba(15,15,42,.9);border-color:rgba(30,30,74,.8)}
-.card:hover{box-shadow:0 8px 32px rgba(124,58,237,.15) !important}
-.btn-primary{background:linear-gradient(135deg,#7c3aed,#9f5bff) !important;box-shadow:0 0 16px rgba(124,58,237,.3)}
-.btn-primary:hover{box-shadow:0 0 28px rgba(124,58,237,.6) !important}
-.tab-btn.active{background:linear-gradient(135deg,#7c3aed,#9f5bff) !important;box-shadow:0 0 16px rgba(124,58,237,.3)}
-.stat-mini-card{background:rgba(15,15,42,.9);border-color:rgba(30,30,74,.8)}
-.stat-mini-card:hover{box-shadow:0 0 24px rgba(124,58,237,.2) !important}
-.toast{background:linear-gradient(135deg,#7c3aed,#9f5bff);box-shadow:0 0 24px rgba(124,58,237,.5)}
-
+.field label{font-size:.85rem;color:var(--text2)}
+.btn{background:var(--primary);color:#fff;border:none;border-radius:8px;padding:8px 16px;cursor:pointer}
+.btn-outline{background:none;border:1px solid var(--border);color:var(--text2)}
+.btn-danger{background:#f44336}
+.btn-success{background:#22c55e}
+.stats-mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:1rem}
+.stat-mini-card{background:var(--card);border-radius:12px;padding:1rem;text-align:center;border:1px solid var(--border2)}
+.stat-mini-num{font-size:1.8rem;font-weight:700;background:linear-gradient(135deg,var(--primary2),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+table{width:100%;border-collapse:collapse}
+th,td{padding:8px;text-align:left;border-bottom:1px solid var(--border2);font-size:.9rem}
+th{color:var(--text2);font-weight:600}
+.cover-thumb{width:36px;height:48px;object-fit:cover;border-radius:4px}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--primary);color:#fff;padding:10px 18px;border-radius:8px;opacity:0;transition:all .3s;pointer-events:none;z-index:9999}
+.toast.show{opacity:1}
+.pass-field{position:relative}
+.pass-field input{width:100%}
+@media(max-width:600px){.form-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- Login Screen -->
 <div id="login-screen">
   <div class="login-card">
     <div class="login-title">🔐 Admin Login</div>
-    <div class="login-sub">KitabGhar Control Panel</div>
+    <p style="text-align:center;color:var(--text3);font-size:.85rem;margin-bottom:1rem">KitabGhar Control Panel</p>
     <div class="login-field">
-      <label>Password</label>
-      <input type="password" id="login-pass" placeholder="Password daalen..." onkeydown="if(event.key==='Enter')doLogin()"/>
+      <input type="password" id="login-pass" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
     <button class="login-btn" onclick="doLogin()">Login Karein</button>
-    <div class="login-err" id="login-err">❌ Galat password!</div>
+    <div id="login-err" style="color:#f44336;text-align:center;margin-top:.5rem;display:none">❌ Galat password!</div>
   </div>
 </div>
 
-<!-- ADMIN PANEL -->
-<div id="admin-panel">
+<!-- Admin Panel -->
+<div id="admin-panel" style="display:none">
   <div class="admin-nav">
-    <div class="admin-nav-title">⚙️ KitabGhar Admin Panel</div>
-    <div class="admin-nav-actions">
-      <button class="nav-btn" onclick="window.open('index.html','_blank')">🌐 Website Dekhein</button>
-      <button class="nav-btn" id="admin-theme-btn" onclick="toggleAdminTheme()">🌙 Dark</button>
-      <button class="nav-btn danger" onclick="logout()">🚪 Logout</button>
+    <div style="font-weight:700;font-size:1.1rem">⚙️ KitabGhar Admin Panel</div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+      <button class="btn" onclick="location.href='index.html'">🌐 Website Dekhein</button>
+      <button class="btn btn-outline" onclick="logout()">🚪 Logout</button>
     </div>
   </div>
-
   <div class="admin-body">
     <div class="tabs">
       <button class="tab-btn active" data-tab="dashboard">📊 Dashboard</button>
       <button class="tab-btn" data-tab="books">📚 Kitabein</button>
       <button class="tab-btn" data-tab="add-book">➕ Kitab Add</button>
       <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
+      <button class="tab-btn" data-tab="analytics">📈 Analytics</button>
+      <button class="tab-btn" data-tab="messages">💬 Messages</button>
+      <button class="tab-btn" data-tab="backup">💾 Backup</button>
       <button class="tab-btn" data-tab="password">🔑 Password</button>
     </div>
 
-    <!-- DASHBOARD -->
-    <div class="tab-pane active" id="tab-dashboard">
+    <!-- Dashboard -->
+    <div id="tab-dashboard" class="tab-pane active">
       <div class="stats-mini">
-        <div class="stat-mini-card"><div class="stat-mini-num" id="d-total">0</div><div class="stat-mini-label">Kul Kitabein</div></div>
-        <div class="stat-mini-card"><div class="stat-mini-num" id="d-free">0</div><div class="stat-mini-label">Muft Kitabein</div></div>
-        <div class="stat-mini-card"><div class="stat-mini-num" id="d-paid">0</div><div class="stat-mini-label">Paid Kitabein</div></div>
-        <div class="stat-mini-card"><div class="stat-mini-num" id="d-cats">-</div><div class="stat-mini-label">Categories</div></div>
+        <div class="stat-mini-card"><div class="stat-mini-num" id="d-total">0</div><div>Kul Kitabein</div></div>
+        <div class="stat-mini-card"><div class="stat-mini-num" id="d-free">0</div><div>Muft Kitabein</div></div>
+        <div class="stat-mini-card"><div class="stat-mini-num" id="d-paid">0</div><div>Paid Kitabein</div></div>
+        <div class="stat-mini-card"><div class="stat-mini-num" id="d-cats">-</div><div>Categories</div></div>
       </div>
-      <div class="card">
-        <div class="card-title"><span class="icon">📈</span> Haali Kitabein</div>
-        <div id="dashboard-recent">Loading...</div>
+      <div class="card"><h3 style="margin-bottom:.8rem">📈 Haali Kitabein</h3><div id="dashboard-recent"></div></div>
+    </div>
+
+    <!-- Books Table -->
+    <div id="tab-books" class="tab-pane">
+      <div class="card" style="overflow-x:auto">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+          <h3>📚 Tamam Kitabein</h3>
+          <button class="btn" onclick="switchTab('add-book')">➕ Nai Kitab</button>
+        </div>
+        <table>
+          <thead><tr><th>Cover</th><th>Naam</th><th>Musannif</th><th>Category</th><th>Qeemat</th><th>Access</th><th>Download</th><th>Views</th><th>Actions</th></tr></thead>
+          <tbody id="books-tbody"></tbody>
+        </table>
       </div>
     </div>
 
-    <!-- BOOKS LIST -->
-    <div class="tab-pane" id="tab-books">
+    <!-- Add/Edit Book -->
+    <div id="tab-add-book" class="tab-pane">
       <div class="card">
-        <div class="card-title" style="justify-content:space-between">
-          <span><span class="icon">📚</span> Tamam Kitabein</span>
-          <button class="btn btn-primary" onclick="switchTab('add-book')">➕ Nai Kitab</button>
-        </div>
-        <div style="overflow-x:auto">
-          <table class="books-table" id="books-table">
-            <thead><tr><th>Cover</th><th>Naam</th><th>Musannif</th><th>Category</th><th>Qeemat</th><th>Actions</th></tr></thead>
-            <tbody id="books-tbody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ADD BOOK -->
-    <div class="tab-pane" id="tab-add-book">
-      <div class="card">
-        <div class="card-title"><span class="icon">➕</span> <span id="add-book-title">Nai Kitab Add Karein</span></div>
-        <input type="hidden" id="edit-book-id"/>
-
+        <h3 style="margin-bottom:1rem" id="add-book-title">➕ Nai Kitab Add Karein</h3>
+        <input type="hidden" id="edit-id">
         <div class="form-row">
-          <div class="field">
-            <label>Kitab Ka Naam *</label>
-            <input type="text" id="b-title" placeholder="Kitab ka naam..."/>
-          </div>
-          <div class="field">
-            <label>Musannif (Author)</label>
-            <input type="text" id="b-author" placeholder="Author ka naam..."/>
-          </div>
+          <div class="field"><label>Kitab Ka Naam *</label><input id="b-title" placeholder="Kitab ka naam"></div>
+          <div class="field"><label>Musannif (Author)</label><input id="b-author" placeholder="Author ka naam"></div>
         </div>
-
         <div class="form-row">
-          <div class="field">
-            <label>Category *</label>
+          <div class="field"><label>Category *</label>
             <select id="b-category">
-              <option value="">-- Category Chunein --</option>
               <option value="islamic">☪️ Islami</option>
               <option value="educational">🎓 Talimi</option>
               <option value="motivational">🔥 Hosla Afzai</option>
@@ -451,638 +128,402 @@ body{background:var(--bg);background-image:radial-gradient(ellipse at 20% 20%,rg
               <option value="other">📖 Aur</option>
             </select>
           </div>
-          <div class="field">
-            <label>Qeemat (0 = Muft)</label>
-            <input type="text" id="b-price" placeholder="0 ya Rs. 250..."/>
-          </div>
+          <div class="field"><label>Qeemat (0 = Muft)</label><input id="b-price" value="0" type="number" min="0"></div>
         </div>
-
         <div class="form-row single">
           <div class="field">
-            <label>📄 PDF File ya URL <small style="font-weight:400;color:var(--text3)">(Google Drive: Share → "Anyone with link" → Copy direct link)</small></label>
-            <div class="upload-group">
-              <input type="text" id="b-pdf-url" placeholder="https://drive.google.com/... ya PDF URL..."/>
-              <span class="or-divider">ya</span>
-              <label class="upload-label">📤 Upload<input type="file" accept=".pdf" onchange="handleFileUpload(this,'b-pdf-url','pdf')"/></label>
-            </div>
+            <label>📄 PDF File ya URL</label>
+            <input id="b-pdf-url" placeholder="https://... ya Google Drive link">
+            <input type="file" id="pdf-file" accept=".pdf" onchange="uploadFile(this,'b-pdf-url')" style="margin-top:4px">
           </div>
         </div>
-
         <div class="form-row single">
           <div class="field">
             <label>🖼️ Cover Image ya URL</label>
-            <div class="upload-group">
-              <input type="text" id="b-cover-url" placeholder="Cover image URL..."/>
-              <span class="or-divider">ya</span>
-              <label class="upload-label">📤 Upload<input type="file" accept="image/*" onchange="handleFileUpload(this,'b-cover-url','image')"/></label>
-            </div>
+            <input id="b-cover-url" placeholder="https://... ya image upload karein">
+            <input type="file" id="cover-file" accept="image/*" onchange="uploadFile(this,'b-cover-url')" style="margin-top:4px">
           </div>
         </div>
-
-        <div class="card" style="background:var(--bg3);margin-top:.5rem">
-          <div class="card-title" style="font-size:.9rem">🎨 Reader Theme (Kitab kholne par background)</div>
-          <div class="form-row triple">
-            <div class="field">
-              <label>Background Color</label>
-              <div class="color-row">
-                <input type="color" id="b-bg-color" value="#0a0a1a" class="color-swatch"/>
-                <input type="text" id="b-bg-color-text" value="#0a0a1a" style="flex:1"/>
-              </div>
-            </div>
-            <div class="field">
-              <label>Text Color</label>
-              <div class="color-row">
-                <input type="color" id="b-text-color" value="#eeeeee" class="color-swatch"/>
-                <input type="text" id="b-text-color-text" value="#eeeeee" style="flex:1"/>
-              </div>
-            </div>
-            <div class="field">
-              <label>Reader Font</label>
-              <select id="b-reader-font">
-                <option value="serif">Serif (Classical)</option>
-                <option value="sans-serif">Sans Serif (Modern)</option>
-                <option value="monospace">Monospace (Code)</option>
-                <option value="'Noto Nastaliq Urdu',serif">Urdu Font</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-row single">
-            <div class="field">
-              <label>🌅 Wallpaper (Optional)</label>
-              <div class="upload-group">
-                <input type="text" id="b-wallpaper-url" placeholder="Wallpaper image URL (optional)..."/>
-                <span class="or-divider">ya</span>
-                <label class="upload-label">📤 Upload<input type="file" accept="image/*" onchange="handleFileUpload(this,'b-wallpaper-url','image')"/></label>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-row single">
-          <div class="field">
-            <label>Mukhtasar Taaruf</label>
-            <textarea id="b-desc" placeholder="Kitab ka chhota sa taaruf..."></textarea>
-          </div>
-        </div>
-
-        <div style="display:flex;gap:.6rem;margin-top:.5rem;flex-wrap:wrap">
-          <button class="btn btn-primary" onclick="saveBook()">💾 Save Karein</button>
-          <button class="btn btn-outline" onclick="clearBookForm()">🔄 Reset</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- SETTINGS -->
-    <div class="tab-pane" id="tab-settings">
-
-      <!-- WEBSITE INFO -->
-      <div class="card">
-        <div class="card-title"><span class="icon">🏷️</span> Website Info</div>
         <div class="form-row">
-          <div class="field">
-            <label>Website Ka Naam</label>
-            <input type="text" id="s-site-name" placeholder="KitabGhar..."/>
-          </div>
-          <div class="field">
-            <label>Tagline</label>
-            <input type="text" id="s-tagline" placeholder="Ilm ki Duniya..."/>
-          </div>
-        </div>
-        <div class="form-row single">
-          <div class="field">
-            <label>Description (Hero mein dikhega)</label>
-            <input type="text" id="s-desc" placeholder="Chhota sa taaruf..."/>
+          <div class="field"><label>Background Color</label><input type="color" id="b-bg-color" value="#0a0a1a"></div>
+          <div class="field"><label>Text Color</label><input type="color" id="b-text-color" value="#eeeeee"></div>
+          <div class="field"><label>Reader Font</label>
+            <select id="b-reader-font">
+              <option value="serif">Serif (Classical)</option>
+              <option value="sans-serif">Sans Serif (Modern)</option>
+              <option value="monospace">Monospace</option>
+            </select>
           </div>
         </div>
         <div class="form-row single">
-          <div class="field">
-            <label>Footer Text</label>
-            <input type="text" id="s-footer" placeholder="© 2024 KitabGhar..."/>
-          </div>
+          <div class="field"><label>Mukhtasar Taaruf</label><textarea id="b-desc" rows="3" placeholder="Kitab ke baare mein likhen..."></textarea></div>
         </div>
-        <div class="form-row single">
-          <div class="field">
-            <label>About Section Text</label>
-            <textarea id="s-about" placeholder="Apni kahani yahan likhein..."></textarea>
-          </div>
+        <div class="form-row">
+          <div class="field"><label><input type="checkbox" id="b-allow-access" checked> ✅ Allow Access (website par dikhe)</label></div>
+          <div class="field"><label><input type="checkbox" id="b-allow-download" checked> 📥 Allow Download</label></div>
         </div>
-        <div class="form-row single">
-          <div class="field">
-            <label>🖼️ Site Logo</label>
-            <div class="upload-group">
-              <input type="text" id="s-logo-url" placeholder="Logo URL ya upload karein..."/>
-              <span class="or-divider">ya</span>
-              <label class="upload-label">📤 Upload<input type="file" accept="image/*" onchange="handleFileUpload(this,'s-logo-url','image')"/></label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- FULL WEBSITE COLOR THEME CUSTOMIZER -->
-      <div class="card">
-        <div class="card-title"><span class="icon">🎨</span> Website Ka Poora Color Theme — Direct Change Karein</div>
-        <p style="font-size:.85rem;color:var(--text2);margin-bottom:1rem">Yahan se aap pori website ka rang badal sakte hain — index, book, reader, terms — sab pages par apply hoga.</p>
-
-        <!-- PRESET THEMES -->
-        <div style="font-size:.82rem;font-weight:600;color:var(--text3);margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.5px">⚡ Taiyar Themes (Ek Click Mein Lagayein)</div>
-        <div class="theme-presets" id="theme-presets">
-          <button class="preset-btn" style="background:#d8f3dc;color:#7c3aed" onclick="applyPreset('green')" data-preset="green">🌿 Sabz (Default)</button>
-          <button class="preset-btn" style="background:#dbeafe;color:#1e40af" onclick="applyPreset('blue')" data-preset="blue">💙 Neela</button>
-          <button class="preset-btn" style="background:#ede9fe;color:#6d28d9" onclick="applyPreset('purple')" data-preset="purple">💜 Baingani</button>
-          <button class="preset-btn" style="background:#fce7f3;color:#be185d" onclick="applyPreset('pink')" data-preset="pink">🌸 Gulabi</button>
-          <button class="preset-btn" style="background:#ffedd5;color:#c2410c" onclick="applyPreset('orange')" data-preset="orange">🔥 Narangi</button>
-          <button class="preset-btn" style="background:#f1f5f9;color:#334155" onclick="applyPreset('slate')" data-preset="slate">🩶 Slate</button>
-          <button class="preset-btn" style="background:#ecfdf5;color:#065f46" onclick="applyPreset('teal')" data-preset="teal">🌊 Ferozi</button>
-          <button class="preset-btn" style="background:#1e1e2e;color:#cdd6f4" onclick="applyPreset('dark')" data-preset="dark">🌙 Dark Mode</button>
-        </div>
-
-        <!-- LIVE PREVIEW -->
-        <div class="theme-preview-box">
-          <div class="theme-preview-title">👁️ Live Preview</div>
-          <div class="preview-mockup" id="theme-preview-mockup">
-            <div class="preview-nav" id="prev-nav">
-              <div class="preview-nav-dot" id="prev-dot1"></div>
-              <div style="flex:1;height:8px;border-radius:4px;opacity:.3" id="prev-bar"></div>
-              <div style="width:40px;height:18px;border-radius:10px" id="prev-btn"></div>
-            </div>
-            <div class="preview-hero" id="prev-hero">📚 Website Ka Hero Section</div>
-            <div class="preview-cards">
-              <div class="preview-card" id="prev-card1"></div>
-              <div class="preview-card" id="prev-card2"></div>
-              <div class="preview-card" id="prev-card3"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- MANUAL COLORS -->
-        <div style="font-size:.82rem;font-weight:600;color:var(--text3);margin-bottom:.8rem;text-transform:uppercase;letter-spacing:.5px">🖌️ Manual Color Control</div>
-        <div class="color-grid">
-          <div class="field">
-            <label>🟢 Primary Color (Buttons, Links)</label>
-            <div class="color-row">
-              <input type="color" id="s-primary" value="#2d6a4f" class="color-swatch" oninput="syncColor('s-primary')"/>
-              <input type="text" id="s-primary-text" value="#2d6a4f" style="flex:1" oninput="syncColorText('s-primary')"/>
-            </div>
-          </div>
-          <div class="field">
-            <label>🟡 Secondary Color (Prices, Accents)</label>
-            <div class="color-row">
-              <input type="color" id="s-secondary" value="#b7791f" class="color-swatch" oninput="syncColor('s-secondary')"/>
-              <input type="text" id="s-secondary-text" value="#b7791f" style="flex:1" oninput="syncColorText('s-secondary')"/>
-            </div>
-          </div>
-          <div class="field">
-            <label>🌅 Background Color (Main BG)</label>
-            <div class="color-row">
-              <input type="color" id="s-bg" value="#f8f6f1" class="color-swatch" oninput="syncColor('s-bg')"/>
-              <input type="text" id="s-bg-text" value="#f8f6f1" style="flex:1" oninput="syncColorText('s-bg')"/>
-            </div>
-          </div>
-          <div class="field">
-            <label>📄 Card/Surface Color</label>
-            <div class="color-row">
-              <input type="color" id="s-card" value="#ffffff" class="color-swatch" oninput="syncColor('s-card')"/>
-              <input type="text" id="s-card-text" value="#ffffff" style="flex:1" oninput="syncColorText('s-card')"/>
-            </div>
-          </div>
-          <div class="field">
-            <label>✍️ Text Color (Main)</label>
-            <div class="color-row">
-              <input type="color" id="s-text" value="#1a1a1a" class="color-swatch" oninput="syncColor('s-text')"/>
-              <input type="text" id="s-text-text" value="#1a1a1a" style="flex:1" oninput="syncColorText('s-text')"/>
-            </div>
-          </div>
-          <div class="field">
-            <label>🔲 Border Color</label>
-            <div class="color-row">
-              <input type="color" id="s-border" value="#dddddd" class="color-swatch" oninput="syncColor('s-border')"/>
-              <input type="text" id="s-border-text" value="#dddddd" style="flex:1" oninput="syncColorText('s-border')"/>
-            </div>
-          </div>
-        </div>
-
-        <!-- HERO GRADIENT -->
-        <div style="margin-top:1rem">
-          <div class="field">
-            <label>🦸 Hero Section Gradient (Website ka top banner)</label>
-            <div class="hero-gradient-row" id="gradient-presets">
-              <div class="gradient-swatch selected" style="background:linear-gradient(135deg,#2d6a4f,#40916c)" data-g="linear-gradient(135deg,#2d6a4f,#40916c)" onclick="selectGradient(this)" title="Sabz"></div>
-              <div class="gradient-swatch" style="background:linear-gradient(135deg,#1e3a5f,#2563eb)" data-g="linear-gradient(135deg,#1e3a5f,#2563eb)" onclick="selectGradient(this)" title="Neela"></div>
-              <div class="gradient-swatch" style="background:linear-gradient(135deg,#4c1d95,#7c3aed)" data-g="linear-gradient(135deg,#4c1d95,#7c3aed)" onclick="selectGradient(this)" title="Baingani"></div>
-              <div class="gradient-swatch" style="background:linear-gradient(135deg,#be185d,#f472b6)" data-g="linear-gradient(135deg,#be185d,#f472b6)" onclick="selectGradient(this)" title="Gulabi"></div>
-              <div class="gradient-swatch" style="background:linear-gradient(135deg,#c2410c,#f97316)" data-g="linear-gradient(135deg,#c2410c,#f97316)" onclick="selectGradient(this)" title="Narangi"></div>
-              <div class="gradient-swatch" style="background:linear-gradient(135deg,#0f172a,#334155)" data-g="linear-gradient(135deg,#0f172a,#334155)" onclick="selectGradient(this)" title="Dark"></div>
-              <div class="gradient-swatch" style="background:linear-gradient(135deg,#0A0F2C,#5B2EFF)" data-g="linear-gradient(135deg,#0A0F2C,#5B2EFF)" onclick="selectGradient(this)" title="Neon"></div>
-              <div class="gradient-swatch" style="background:linear-gradient(135deg,#065f46,#0d9488)" data-g="linear-gradient(135deg,#065f46,#0d9488)" onclick="selectGradient(this)" title="Ferozi"></div>
-            </div>
-            <div style="margin-top:.5rem;display:flex;gap:.5rem;align-items:center">
-              <input type="text" id="s-hero-gradient" value="linear-gradient(135deg,#2d6a4f,#40916c)" style="flex:1;font-size:.82rem" placeholder="CSS gradient..."/>
-              <small style="color:var(--text3);font-size:.75rem;white-space:nowrap">Ya manual likhein</small>
-            </div>
-          </div>
-        </div>
-
-        <div style="display:flex;gap:.6rem;margin-top:1.2rem;flex-wrap:wrap;align-items:center">
-          <button class="btn btn-primary" onclick="saveSettings()">💾 Sab Save Karein</button>
-          <button class="btn btn-outline" onclick="resetTheme()">↩️ Default Par Wapas</button>
-          <span style="font-size:.8rem;color:var(--text3)">💡 Save karne ke baad index.html refresh karein</span>
+        <div style="display:flex;gap:.5rem;margin-top:.5rem">
+          <button class="btn" onclick="saveBook()">💾 Save Karein</button>
+          <button class="btn btn-outline" onclick="clearForm()">🔄 Reset</button>
         </div>
       </div>
     </div>
 
-    <!-- PASSWORD -->
-    <div class="tab-pane" id="tab-password">
+    <!-- Settings -->
+    <div id="tab-settings" class="tab-pane">
+      <div class="card">
+        <h3 style="margin-bottom:1rem">🏷️ Website Info</h3>
+        <div class="form-row">
+          <div class="field"><label>Website Ka Naam</label><input id="s-site-name"></div>
+          <div class="field"><label>Tagline</label><input id="s-tagline"></div>
+        </div>
+        <div class="form-row single"><div class="field"><label>Footer Text</label><input id="s-footer"></div></div>
+        <div class="form-row single"><div class="field"><label>About Section Text</label><textarea id="s-about" rows="3"></textarea></div></div>
+        <div class="form-row single"><div class="field"><label>Announcement Bar</label><input id="s-announcement"></div></div>
+        <div class="form-row single"><div class="field"><label>Slider Images (JSON array of URLs)</label><textarea id="s-slider" rows="2" placeholder='["https://img1.jpg","https://img2.jpg"]'></textarea></div></div>
+        <div class="form-row single"><div class="field"><label>Site Logo URL</label><input id="s-logo"></div></div>
+        <h3 style="margin:1rem 0 .5rem">🎨 Colors</h3>
+        <div class="form-row">
+          <div class="field"><label>Primary Color</label><input type="color" id="s-primary"></div>
+          <div class="field"><label>Secondary Color</label><input type="color" id="s-secondary"></div>
+          <div class="field"><label>Background</label><input type="color" id="s-bg"></div>
+          <div class="field"><label>Card BG</label><input type="color" id="s-card"></div>
+        </div>
+        <div class="form-row">
+          <div class="field"><label>Text Color</label><input type="color" id="s-text"></div>
+          <div class="field"><label>Border Color</label><input type="color" id="s-border"></div>
+        </div>
+        <div class="form-row single"><div class="field"><label>Hero Gradient (CSS)</label><input id="s-hero-gradient" placeholder="linear-gradient(135deg, #0d0928, #1a1050)"></div></div>
+        <button class="btn" onclick="saveSettings()" style="margin-top:.5rem">💾 Sab Save Karein</button>
+      </div>
+    </div>
+
+    <!-- Analytics -->
+    <div id="tab-analytics" class="tab-pane">
+      <div class="stats-mini">
+        <div class="stat-mini-card"><div class="stat-mini-num" id="total-views">0</div><div>Total Site Views</div></div>
+        <div class="stat-mini-card"><div class="stat-mini-num" id="active-users">0</div><div>Live Users (5 min)</div></div>
+      </div>
+      <div class="card"><h3 style="margin-bottom:.8rem">📈 Top 10 Books by Views</h3><div id="top-views"></div></div>
+      <div class="card"><h3 style="margin-bottom:.8rem">⬇️ Top 10 Books by Downloads</h3><div id="top-downloads"></div></div>
+    </div>
+
+    <!-- Messages -->
+    <div id="tab-messages" class="tab-pane">
+      <div class="card"><h3 style="margin-bottom:.8rem">💬 Contact Messages</h3><div id="messages-list"></div></div>
+    </div>
+
+    <!-- Backup -->
+    <div id="tab-backup" class="tab-pane">
+      <div class="card">
+        <h3 style="margin-bottom:1rem">💾 Data Backup</h3>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button class="btn" onclick="exportData()">📤 Export All Books (JSON)</button>
+          <button class="btn btn-outline" onclick="document.getElementById('import-file').click()">📥 Import Books from JSON</button>
+        </div>
+        <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)">
+      </div>
+    </div>
+
+    <!-- BUG FIX: Password change tab aur JS pehle missing tha -->
+    <div id="tab-password" class="tab-pane">
       <div class="card" style="max-width:400px">
-        <div class="card-title"><span class="icon">🔑</span> Password Tabdeel Karein</div>
+        <h3 style="margin-bottom:1rem">🔑 Password Tabdeel Karein</h3>
         <div class="field" style="margin-bottom:.8rem">
           <label>Purana Password</label>
-          <input type="password" id="old-pass" placeholder="Purana password..."/>
+          <input type="password" id="old-pass" placeholder="Purana password">
         </div>
         <div class="field" style="margin-bottom:.8rem">
           <label>Naya Password</label>
-          <input type="password" id="new-pass" placeholder="Naya password..."/>
+          <input type="password" id="new-pass" placeholder="Naya password (kam az kam 6 haroof)">
         </div>
         <div class="field" style="margin-bottom:1rem">
           <label>Naya Password Dobara</label>
-          <input type="password" id="confirm-pass" placeholder="Dobara likhein..."/>
+          <input type="password" id="new-pass2" placeholder="Dobara likhein">
         </div>
-        <button class="btn btn-primary" onclick="changePassword()">🔒 Password Tabdeel Karein</button>
+        <button class="btn btn-success" onclick="changePassword()">🔒 Password Tabdeel Karein</button>
+        <div id="pass-msg" style="margin-top:.5rem;font-size:.9rem"></div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- EDIT MODAL (same as add form, reuse tab) -->
+  </div><!-- admin-body -->
+</div><!-- admin-panel -->
+
 <div class="toast" id="toast"></div>
 
 <script>
-// ========== AUTH ==========
-const DEFAULT_PASS='admin123';
-let adminPass=localStorage.getItem('admin_pass')||DEFAULT_PASS;
-let isLoggedIn=false;
+var supabase = window.supabaseClient;
+let adminPass = localStorage.getItem('admin_pass') || 'admin123';
 
-function doLogin(){
-  const p=document.getElementById('login-pass').value;
-  if(p===adminPass){
-    isLoggedIn=true;
-    document.getElementById('login-screen').style.display='none';
-    document.getElementById('admin-panel').style.display='block';
-    initAdmin();
+function doLogin() {
+  let p = document.getElementById('login-pass').value;
+  if (p === adminPass) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-panel').style.display = 'block';
+    loadAdminData();
   } else {
-    const err=document.getElementById('login-err');
-    err.style.display='block';
-    setTimeout(()=>err.style.display='none',2500);
+    document.getElementById('login-err').style.display = 'block';
+    setTimeout(() => document.getElementById('login-err').style.display = 'none', 2000);
   }
 }
-document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
 
-function logout(){
-  isLoggedIn=false;
-  document.getElementById('admin-panel').style.display='none';
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('login-pass').value='';
+function logout() {
+  document.getElementById('admin-panel').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-pass').value = '';
 }
 
-function changePassword(){
-  const old=document.getElementById('old-pass').value;
-  const nw=document.getElementById('new-pass').value;
-  const conf=document.getElementById('confirm-pass').value;
-  if(old!==adminPass){showToast('Purana password galat hai!',true);return;}
-  if(nw.length<4){showToast('Password kam az kam 4 characters ka hona chahiye!',true);return;}
-  if(nw!==conf){showToast('Naya password match nahi kar raha!',true);return;}
-  adminPass=nw;
-  localStorage.setItem('admin_pass',nw);
-  document.getElementById('old-pass').value='';
-  document.getElementById('new-pass').value='';
-  document.getElementById('confirm-pass').value='';
-  showToast('✅ Password tabdeel ho gaya!');
-}
-
-// ========== DB ==========
-let db;
-const DB_NAME='kitabghar_db',DB_VER=2;
-function openDB(){
-  return new Promise((res,rej)=>{
-    const req=indexedDB.open(DB_NAME,DB_VER);
-    req.onupgradeneeded=e=>{
-      const d=e.target.result;
-      if(!d.objectStoreNames.contains('books'))d.createObjectStore('books',{keyPath:'id',autoIncrement:true});
-      if(!d.objectStoreNames.contains('settings'))d.createObjectStore('settings',{keyPath:'key'});
-    };
-    req.onsuccess=e=>{db=e.target.result;res(db)};
-    req.onerror=rej;
-  });
-}
-function dbPut(store,val){return new Promise((res,rej)=>{const tx=db.transaction(store,'readwrite');tx.objectStore(store).put(val).onsuccess=e=>res(e.target.result);tx.onerror=rej})}
-function dbGet(store,key){return new Promise((res,rej)=>{const tx=db.transaction(store,'readonly');const req=tx.objectStore(store).get(key);req.onsuccess=e=>res(e.target.result);req.onerror=rej})}
-function dbGetAll(store){return new Promise((res,rej)=>{const tx=db.transaction(store,'readonly');const req=tx.objectStore(store).getAll();req.onsuccess=e=>res(e.target.result||[]);req.onerror=rej})}
-function dbDelete(store,key){return new Promise((res,rej)=>{const tx=db.transaction(store,'readwrite');tx.objectStore(store).delete(key).onsuccess=()=>res();tx.onerror=rej})}
-
-// ========== INIT ==========
-let allBooks=[];
-async function initAdmin(){
-  await openDB();
-  await loadAdminSettings();
+async function loadAdminData() {
   await loadBooksAdmin();
+  await loadSettingsForm();
+  await loadAnalytics();
+  await loadMessages();
+}
+
+let allBooks = [];
+async function loadBooksAdmin() {
+  let { data } = await supabase.from('books').select('*').order('id', { ascending: false });
+  allBooks = data || [];
+  renderBooksTable();
   renderDashboard();
 }
 
-// ========== TABS ==========
-document.querySelectorAll('.tab-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>switchTab(btn.dataset.tab));
-});
-function switchTab(tab){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
-  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.toggle('active',p.id==='tab-'+tab));
-  if(tab==='books')renderBooksTable();
-  if(tab==='dashboard')renderDashboard();
+function renderBooksTable() {
+  let tbody = document.getElementById('books-tbody');
+  tbody.innerHTML = allBooks.map(b => `
+    <tr>
+      <td>${b.cover_url ? `<img src="${b.cover_url}" class="cover-thumb" onerror="this.style.display='none'">` : '📖'}</td>
+      <td>${b.title}</td>
+      <td>${b.author || '-'}</td>
+      <td>${b.category}</td>
+      <td>${b.price == 0 || b.price == '0' ? '🆓 Muft' : 'Rs.' + b.price}</td>
+      <td>${b.allow_access ? '✅' : '❌'}</td>
+      <td>${b.allow_download ? '✅' : '❌'}</td>
+      <td>${b.views || 0}</td>
+      <td style="white-space:nowrap">
+        <button class="btn btn-outline" onclick="editBook(${b.id})" style="margin-right:4px">✏️</button>
+        <button class="btn btn-danger" onclick="deleteBook(${b.id})">🗑️</button>
+      </td>
+    </tr>`).join('');
 }
 
-// ========== BOOKS ==========
-async function loadBooksAdmin(){
-  allBooks=await dbGetAll('books');
+function renderDashboard() {
+  let free = allBooks.filter(b => b.price == 0 || b.price == '0').length;
+  let cats = [...new Set(allBooks.map(b => b.category))].length;
+  document.getElementById('d-total').innerText = allBooks.length;
+  document.getElementById('d-free').innerText = free;
+  document.getElementById('d-paid').innerText = allBooks.length - free;
+  document.getElementById('d-cats').innerText = cats;
+  let recent = allBooks.slice(0, 5);
+  document.getElementById('dashboard-recent').innerHTML = recent.length
+    ? recent.map(b => `<div style="padding:6px 0;border-bottom:1px solid var(--border2)">📖 <strong>${b.title}</strong> — ${b.author || '?'} <span style="color:var(--text3);font-size:.8rem">(${b.category})</span></div>`).join('')
+    : '<div style="color:var(--text3)">Koi kitab nahi</div>';
 }
-function renderDashboard(){
-  const free=allBooks.filter(b=>isFree(b)).length;
-  const paid=allBooks.length-free;
-  const cats=[...new Set(allBooks.map(b=>b.category).filter(Boolean))];
-  document.getElementById('d-total').textContent=allBooks.length;
-  document.getElementById('d-free').textContent=free;
-  document.getElementById('d-paid').textContent=paid;
-  document.getElementById('d-cats').textContent=cats.length||'0';
-  const recent=allBooks.slice(-5).reverse();
-  document.getElementById('dashboard-recent').innerHTML=recent.length
-    ?recent.map(b=>`<div style="display:flex;align-items:center;gap:.8rem;padding:.5rem 0;border-bottom:1px solid var(--border2)">
-        <span style="font-size:1.4rem">${b.cover_url?`<img src="${b.cover_url}" style="width:32px;height:42px;object-fit:cover;border-radius:4px" onerror="this.style.display='none'">`:'📖'}</span>
-        <div style="flex:1"><div style="font-weight:600;font-size:.9rem;color:var(--text)">${b.title}</div><div style="font-size:.78rem;color:var(--text3)">${catLabel(b.category)} — ${isFree(b)?'Muft':'Rs.'+b.price}</div></div>
-        <button class="btn btn-warn" style="font-size:.75rem;padding:4px 10px" onclick="editBook(${b.id})">✏️ Edit</button>
-      </div>`).join('')
-    :'<div style="color:var(--text3);text-align:center;padding:1rem">Abhi koi kitab nahi hai</div>';
-}
-function renderBooksTable(){
-  const tbody=document.getElementById('books-tbody');
-  if(!allBooks.length){tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text3)">Koi kitab nahi hai</td></tr>`;return;}
-  tbody.innerHTML=allBooks.map(b=>`<tr>
-    <td>${b.cover_url?`<img src="${b.cover_url}" class="cover-thumb" onerror="this.style.display='none'">`:'<div class="cover-thumb" style="display:flex;align-items:center;justify-content:center;font-size:1.5rem">📖</div>'}</td>
-    <td style="font-weight:600;max-width:160px;word-break:break-word">${b.title||'—'}</td>
-    <td style="color:var(--text2)">${b.author||'—'}</td>
-    <td><span class="cat-badge cat-${b.category||'other'}">${catLabel(b.category)}</span></td>
-    <td>${isFree(b)?'<span style="color:var(--primary);font-weight:600">Muft</span>':`<span style="color:var(--secondary);font-weight:600">Rs.${b.price}</span>`}</td>
-    <td><div class="action-btns">
-      <button class="btn btn-warn" style="font-size:.75rem;padding:4px 10px" onclick="editBook(${b.id})">✏️</button>
-      <button class="btn btn-danger" style="font-size:.75rem;padding:4px 10px" onclick="deleteBook(${b.id})">🗑️</button>
-    </div></td>
-  </tr>`).join('');
-}
-function isFree(b){return !b.price||b.price==0||String(b.price).toLowerCase()==='free'||String(b.price).toLowerCase()==='muft';}
-function catLabel(c){return{islamic:'☪️ Islami',educational:'🎓 Talimi',motivational:'🔥 Hosla Afzai',kids:'🧒 Bachon Ki',other:'📖 Aur'}[c]||'📚';}
 
-async function saveBook(){
-  const id=document.getElementById('edit-book-id').value;
-  const title=document.getElementById('b-title').value.trim();
-  const category=document.getElementById('b-category').value;
-  if(!title){showToast('Kitab ka naam lazmi hai!',true);return;}
-  if(!category){showToast('Category chunna lazmi hai!',true);return;}
-  const book={
-    title,author:document.getElementById('b-author').value.trim(),
-    category,price:document.getElementById('b-price').value.trim(),
-    pdf_url:document.getElementById('b-pdf-url').value.trim(),
-    cover_url:document.getElementById('b-cover-url').value.trim(),
-    wallpaper_url:document.getElementById('b-wallpaper-url').value.trim(),
-    bg_color:document.getElementById('b-bg-color').value,
-    text_color:document.getElementById('b-text-color').value,
-    reader_font:document.getElementById('b-reader-font').value,
-    desc:document.getElementById('b-desc').value.trim()
+async function saveBook() {
+  let id = document.getElementById('edit-id').value;
+  let title = document.getElementById('b-title').value.trim();
+  if (!title) { alert('Kitab ka naam zaroor likhein!'); return; }
+  let book = {
+    title,
+    author: document.getElementById('b-author').value,
+    category: document.getElementById('b-category').value,
+    price: document.getElementById('b-price').value,
+    pdf_url: document.getElementById('b-pdf-url').value,
+    cover_url: document.getElementById('b-cover-url').value,
+    bg_color: document.getElementById('b-bg-color').value,
+    text_color: document.getElementById('b-text-color').value,
+    reader_font: document.getElementById('b-reader-font').value,
+    description: document.getElementById('b-desc').value,
+    allow_access: document.getElementById('b-allow-access').checked,
+    allow_download: document.getElementById('b-allow-download').checked
   };
-  if(id)book.id=parseInt(id);
-  await dbPut('books',book);
-  showToast(id?'✅ Kitab update ho gayi!':'✅ Kitab add ho gayi!');
-  await loadBooksAdmin();
-  clearBookForm();
-  notifyWebsite();
+  let { error } = id
+    ? await supabase.from('books').update(book).eq('id', id)
+    : await supabase.from('books').insert([book]);
+  if (error) { alert('Error: ' + error.message); return; }
+  showToast(id ? '✅ Kitab update ho gayi!' : '✅ Nai kitab add ho gayi!');
+  clearForm();
+  loadBooksAdmin();
   switchTab('books');
 }
 
-function editBook(id){
-  const book=allBooks.find(b=>b.id===id);
-  if(!book)return;
+function editBook(id) {
+  let b = allBooks.find(b => b.id == id);
+  if (!b) return;
+  document.getElementById('edit-id').value = b.id;
+  document.getElementById('b-title').value = b.title || '';
+  document.getElementById('b-author').value = b.author || '';
+  document.getElementById('b-category').value = b.category || 'other';
+  document.getElementById('b-price').value = b.price;
+  document.getElementById('b-pdf-url').value = b.pdf_url || '';
+  document.getElementById('b-cover-url').value = b.cover_url || '';
+  document.getElementById('b-bg-color').value = b.bg_color || '#0a0a1a';
+  document.getElementById('b-text-color').value = b.text_color || '#eeeeee';
+  document.getElementById('b-reader-font').value = b.reader_font || 'serif';
+  document.getElementById('b-desc').value = b.description || '';
+  document.getElementById('b-allow-access').checked = b.allow_access !== false;
+  document.getElementById('b-allow-download').checked = b.allow_download !== false;
+  document.getElementById('add-book-title').innerText = '✏️ Kitab Edit Karein';
   switchTab('add-book');
-  document.getElementById('add-book-title').textContent='Kitab Edit Karein';
-  document.getElementById('edit-book-id').value=book.id;
-  document.getElementById('b-title').value=book.title||'';
-  document.getElementById('b-author').value=book.author||'';
-  document.getElementById('b-category').value=book.category||'';
-  document.getElementById('b-price').value=book.price||'';
-  document.getElementById('b-pdf-url').value=book.pdf_url||'';
-  document.getElementById('b-cover-url').value=book.cover_url||'';
-  document.getElementById('b-wallpaper-url').value=book.wallpaper_url||'';
-  document.getElementById('b-bg-color').value=book.bg_color||'#0a0a1a';
-  document.getElementById('b-bg-color-text').value=book.bg_color||'#0a0a1a';
-  document.getElementById('b-text-color').value=book.text_color||'#eeeeee';
-  document.getElementById('b-text-color-text').value=book.text_color||'#eeeeee';
-  document.getElementById('b-reader-font').value=book.reader_font||'serif';
-  document.getElementById('b-desc').value=book.desc||'';
-}
-async function deleteBook(id){
-  if(!confirm('Kya aap sach mein ye kitab mitana chahte hain?'))return;
-  await dbDelete('books',id);
-  await loadBooksAdmin();
-  renderBooksTable();
-  renderDashboard();
-  showToast('🗑️ Kitab mit gayi!');
-  notifyWebsite();
-}
-function clearBookForm(){
-  document.getElementById('edit-book-id').value='';
-  document.getElementById('add-book-title').textContent='Nai Kitab Add Karein';
-  ['b-title','b-author','b-price','b-pdf-url','b-cover-url','b-wallpaper-url','b-desc'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('b-category').value='';
-  document.getElementById('b-bg-color').value='#0a0a1a';
-  document.getElementById('b-bg-color-text').value='#0a0a1a';
-  document.getElementById('b-text-color').value='#eeeeee';
-  document.getElementById('b-text-color-text').value='#eeeeee';
 }
 
-// ========== FILE UPLOAD ==========
-function handleFileUpload(input,targetId,type){
-  const file=input.files[0];
-  if(!file)return;
-  if(type==='pdf'&&file.size>20*1024*1024){showToast('PDF bahut bari hai! 20MB se choti honi chahiye.',true);return;}
-  const reader=new FileReader();
-  reader.onload=e=>{
-    document.getElementById(targetId).value=e.target.result;
-    showToast('✅ File upload ho gayi!');
-  };
+async function deleteBook(id) {
+  if (!confirm('Kya aap yeh kitab delete karna chahte hain?')) return;
+  await supabase.from('books').delete().eq('id', id);
+  showToast('🗑️ Kitab delete ho gayi');
+  loadBooksAdmin();
+}
+
+function clearForm() {
+  document.getElementById('edit-id').value = '';
+  document.getElementById('add-book-title').innerText = '➕ Nai Kitab Add Karein';
+  ['b-title','b-author','b-price','b-pdf-url','b-cover-url','b-desc'].forEach(id => {
+    let el = document.getElementById(id);
+    if (el) el.value = id === 'b-price' ? '0' : '';
+  });
+  document.getElementById('b-category').value = 'islamic';
+  document.getElementById('b-bg-color').value = '#0a0a1a';
+  document.getElementById('b-text-color').value = '#eeeeee';
+  document.getElementById('b-reader-font').value = 'serif';
+  document.getElementById('b-allow-access').checked = true;
+  document.getElementById('b-allow-download').checked = true;
+}
+
+const SETTINGS_MAP = {
+  'site_name': 's-site-name', 'site_tagline': 's-tagline', 'site_desc': 's-desc',
+  'about_text': 's-about', 'footer_text': 's-footer', 'announcement': 's-announcement',
+  'slider_images': 's-slider', 'logo_url': 's-logo', 'primary_color': 's-primary',
+  'secondary_color': 's-secondary', 'bg_color': 's-bg', 'card_color': 's-card',
+  'text_color': 's-text', 'border_color': 's-border', 'hero_gradient': 's-hero-gradient'
+};
+
+async function loadSettingsForm() {
+  const { data, error } = await supabase.from('settings').select('*');
+  if (error) { console.error('Settings load error:', error); return; }
+  if (data) data.forEach(s => {
+    const elId = SETTINGS_MAP[s.key];
+    if (elId) { const el = document.getElementById(elId); if (el) el.value = s.value; }
+  });
+}
+
+async function saveSettings() {
+  let saved = 0, errors = 0;
+  for (const [key, elId] of Object.entries(SETTINGS_MAP)) {
+    const el = document.getElementById(elId);
+    const val = el ? el.value : null;
+    if (val !== null && val !== '') {
+      const { error } = await supabase.from('settings').upsert({ key, value: val });
+      if (error) { console.error('Save error:', key, error); errors++; } else saved++;
+    }
+  }
+  showToast(errors ? `⚠️ ${saved} saved, ${errors} errors` : `✅ ${saved} settings save ho gayi!`);
+}
+
+async function loadAnalytics() {
+  let { data: visits } = await supabase.from('site_visits').select('id', { count: 'exact' });
+  document.getElementById('total-views').innerText = visits?.length || 0;
+  let fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+  let { count } = await supabase.from('active_sessions').select('*', { count: 'exact', head: true }).gte('last_seen', fiveMinsAgo);
+  document.getElementById('active-users').innerText = count || 0;
+  let { data: topViews } = await supabase.from('books').select('title,views').order('views', { ascending: false }).limit(10);
+  document.getElementById('top-views').innerHTML = topViews?.map(b => `<div style="padding:4px 0;border-bottom:1px solid var(--border2)">${b.title} — <strong>${b.views || 0}</strong> views</div>`).join('') || '<div style="color:var(--text3)">No data</div>';
+  let { data: topDls } = await supabase.from('books').select('title,downloads').order('downloads', { ascending: false }).limit(10);
+  document.getElementById('top-downloads').innerHTML = topDls?.map(b => `<div style="padding:4px 0;border-bottom:1px solid var(--border2)">${b.title} — <strong>${b.downloads || 0}</strong> downloads</div>`).join('') || '<div style="color:var(--text3)">No data</div>';
+}
+
+async function loadMessages() {
+  let { data } = await supabase.from('contact_messages').select('*').order('created_at', { ascending: false });
+  document.getElementById('messages-list').innerHTML = data?.map(m =>
+    `<div style="border-bottom:1px solid var(--border2);padding:10px 0">
+      <strong>${m.name}</strong> <span style="color:var(--text3);font-size:.85rem">(${m.email})</span>
+      <div style="margin:.3rem 0">${m.message}</div>
+      <small style="color:var(--text3)">${new Date(m.created_at).toLocaleString()}</small>
+    </div>`).join('') || '<div style="color:var(--text3)">Koi message nahi</div>';
+}
+
+function uploadFile(input, targetId) {
+  let file = input.files[0];
+  if (!file) return;
+  let reader = new FileReader();
+  reader.onload = e => { document.getElementById(targetId).value = e.target.result; showToast('📁 File upload ho gayi (base64)'); };
   reader.readAsDataURL(file);
 }
 
-// ========== SETTINGS ==========
-const ALL_THEME_KEYS=['site_name','site_tagline','site_desc','primary_color','secondary_color','bg_color','card_color','text_color','border_color','hero_gradient','about_text','footer_text','logo_url'];
-const FIELD_MAP={
-  site_name:'s-site-name',site_tagline:'s-tagline',site_desc:'s-desc',
-  primary_color:'s-primary',secondary_color:'s-secondary',
-  bg_color:'s-bg',card_color:'s-card',text_color:'s-text',border_color:'s-border',
-  hero_gradient:'s-hero-gradient',
-  about_text:'s-about',footer_text:'s-footer',logo_url:'s-logo-url'
-};
+async function exportData() {
+  let { data } = await supabase.from('books').select('*');
+  let blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  let a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'kitabghar_backup.json';
+  a.click();
+  showToast('✅ Export complete!');
+}
 
-async function loadAdminSettings(){
-  for(const k of ALL_THEME_KEYS){
-    const r=await dbGet('settings',k).catch(()=>null);
-    if(r&&r.value){
-      const el=document.getElementById(FIELD_MAP[k]);
-      if(el)el.value=r.value;
-      // sync color pickers
-      const textEl=document.getElementById(FIELD_MAP[k]+'-text');
-      if(textEl)textEl.value=r.value;
-    }
+function importData(e) {
+  let file = e.target.files[0];
+  if (!file) return;
+  file.text().then(async text => {
+    let books = JSON.parse(text);
+    for (let b of books) { delete b.id; delete b.created_at; await supabase.from('books').insert([b]); }
+    showToast('✅ Import complete! ' + books.length + ' kitabein add ho gayi');
+    loadBooksAdmin();
+  }).catch(err => alert('Import error: ' + err.message));
+}
+
+/* BUG FIX: Password change karne ka koi JS nahi tha */
+function changePassword() {
+  let oldPass = document.getElementById('old-pass').value;
+  let newPass = document.getElementById('new-pass').value;
+  let newPass2 = document.getElementById('new-pass2').value;
+  let msg = document.getElementById('pass-msg');
+  if (oldPass !== adminPass) {
+    msg.style.color = '#f44336';
+    msg.innerText = '❌ Purana password galat hai!';
+    return;
   }
-  updatePreview();
-}
-
-async function saveSettings(){
-  for(const[k,id]of Object.entries(FIELD_MAP)){
-    const el=document.getElementById(id);
-    if(el)await dbPut('settings',{key:k,value:el.value});
+  if (newPass.length < 6) {
+    msg.style.color = '#f44336';
+    msg.innerText = '❌ Naya password kam az kam 6 haroof ka hona chahiye';
+    return;
   }
-  showToast('✅ Theme & Settings save ho gayi!');
-  notifyWebsite();
+  if (newPass !== newPass2) {
+    msg.style.color = '#f44336';
+    msg.innerText = '❌ Dono passwords match nahi karte';
+    return;
+  }
+  adminPass = newPass;
+  localStorage.setItem('admin_pass', newPass);
+  msg.style.color = '#22c55e';
+  msg.innerText = '✅ Password tabdeel ho gaya!';
+  document.getElementById('old-pass').value = '';
+  document.getElementById('new-pass').value = '';
+  document.getElementById('new-pass2').value = '';
 }
 
-// ========== COLOR SYNC ==========
-function syncColor(id){
-  const el=document.getElementById(id);
-  const textEl=document.getElementById(id+'-text');
-  if(el&&textEl)textEl.value=el.value;
-  updatePreview();
-}
-function syncColorText(id){
-  const textEl=document.getElementById(id+'-text');
-  const el=document.getElementById(id);
-  if(el&&textEl&&/^#[0-9a-fA-F]{6}$/.test(textEl.value))el.value=textEl.value;
-  updatePreview();
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  t.innerText = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ========== LIVE PREVIEW ==========
-function updatePreview(){
-  const primary=document.getElementById('s-primary')?.value||'#2d6a4f';
-  const bg=document.getElementById('s-bg')?.value||'#f8f6f1';
-  const card=document.getElementById('s-card')?.value||'#ffffff';
-  const border=document.getElementById('s-border')?.value||'#dddddd';
-  const gradient=document.getElementById('s-hero-gradient')?.value||'linear-gradient(135deg,#2d6a4f,#40916c)';
-  const prevNav=document.getElementById('prev-nav');
-  const prevHero=document.getElementById('prev-hero');
-  const prevCards=['prev-card1','prev-card2','prev-card3'];
-  const prevBtn=document.getElementById('prev-btn');
-  const prevBar=document.getElementById('prev-bar');
-  if(prevNav)prevNav.style.background=card;
-  if(prevHero){prevHero.style.background=gradient;}
-  prevCards.forEach(id=>{const el=document.getElementById(id);if(el){el.style.background=card;el.style.borderColor=border;}});
-  if(prevBtn)prevBtn.style.background=primary;
-  if(prevBar)prevBar.style.background=primary;
-  const mockup=document.getElementById('theme-preview-mockup');
-  if(mockup)mockup.style.border='2px solid '+border;
-}
-
-// ========== PRESET THEMES ==========
-const PRESETS={
-  green:{primary:'#2d6a4f',secondary:'#b7791f',bg:'#f8f6f1',card:'#ffffff',text:'#1a1a1a',border:'#dddddd',gradient:'linear-gradient(135deg,#2d6a4f,#40916c)'},
-  blue:{primary:'#1d4ed8',secondary:'#0ea5e9',bg:'#f0f4ff',card:'#ffffff',text:'#1e293b',border:'#c7d2fe',gradient:'linear-gradient(135deg,#1e3a5f,#2563eb)'},
-  purple:{primary:'#7c3aed',secondary:'#a855f7',bg:'#faf5ff',card:'#ffffff',text:'#1e1b4b',border:'#ddd6fe',gradient:'linear-gradient(135deg,#4c1d95,#7c3aed)'},
-  pink:{primary:'#be185d',secondary:'#f43f5e',bg:'#fff0f6',card:'#ffffff',text:'#1a1a1a',border:'#fbcfe8',gradient:'linear-gradient(135deg,#be185d,#f472b6)'},
-  orange:{primary:'#c2410c',secondary:'#ea580c',bg:'#fff7ed',card:'#ffffff',text:'#1a1a1a',border:'#fed7aa',gradient:'linear-gradient(135deg,#c2410c,#f97316)'},
-  slate:{primary:'#475569',secondary:'#64748b',bg:'#f8fafc',card:'#ffffff',text:'#1e293b',border:'#cbd5e1',gradient:'linear-gradient(135deg,#334155,#64748b)'},
-  teal:{primary:'#0d9488',secondary:'#14b8a6',bg:'#f0fdfa',card:'#ffffff',text:'#134e4a',border:'#99f6e4',gradient:'linear-gradient(135deg,#065f46,#0d9488)'},
-  dark:{primary:'#52b788',secondary:'#f6ad55',bg:'#0f1412',card:'#1e2b25',text:'#f0ede6',border:'#2a3530',gradient:'linear-gradient(135deg,#0d1f17,#1a3326)'}
-};
-
-function applyPreset(name){
-  const p=PRESETS[name];
-  if(!p)return;
-  const setVal=(id,val)=>{
-    const el=document.getElementById(id);
-    const textEl=document.getElementById(id+'-text');
-    if(el)el.value=val;
-    if(textEl)textEl.value=val;
-  };
-  setVal('s-primary',p.primary);
-  setVal('s-secondary',p.secondary);
-  setVal('s-bg',p.bg);
-  setVal('s-card',p.card);
-  setVal('s-text',p.text);
-  setVal('s-border',p.border);
-  const gradEl=document.getElementById('s-hero-gradient');
-  if(gradEl)gradEl.value=p.gradient;
-  // update gradient swatches
-  document.querySelectorAll('.gradient-swatch').forEach(s=>{
-    s.classList.toggle('selected',s.dataset.g===p.gradient);
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tabName);
   });
-  // update preset buttons
-  document.querySelectorAll('.preset-btn').forEach(b=>{
-    b.classList.toggle('selected',b.dataset.preset===name);
+  document.querySelectorAll('.tab-pane').forEach(p => {
+    p.classList.toggle('active', p.id === 'tab-' + tabName);
   });
-  updatePreview();
-  showToast('🎨 '+name+' theme laga diya — Save karein!');
 }
 
-function selectGradient(el){
-  document.querySelectorAll('.gradient-swatch').forEach(s=>s.classList.remove('selected'));
-  el.classList.add('selected');
-  const gradEl=document.getElementById('s-hero-gradient');
-  if(gradEl)gradEl.value=el.dataset.g;
-  updatePreview();
-}
-
-function resetTheme(){
-  if(!confirm('Kya aap default theme par wapas jana chahte hain?'))return;
-  applyPreset('green');
-  showToast('↩️ Default theme restore ho gaya!');
-}
-
-// hero gradient text input sync
-document.addEventListener('DOMContentLoaded',()=>{
-  const gradEl=document.getElementById('s-hero-gradient');
-  if(gradEl)gradEl.addEventListener('input',updatePreview);
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    switchTab(btn.dataset.tab);
+    if (btn.dataset.tab === 'analytics') loadAnalytics();
+    if (btn.dataset.tab === 'messages') loadMessages();
+  });
 });
-
-// ========== THEME ==========
-const savedTheme=localStorage.getItem('admin_theme')||'light';
-document.documentElement.setAttribute('data-theme',savedTheme);
-document.getElementById('admin-theme-btn').textContent=savedTheme==='dark'?'☀️ Light':'🌙 Dark';
-function toggleAdminTheme(){
-  const cur=document.documentElement.getAttribute('data-theme');
-  const next=cur==='dark'?'light':'dark';
-  document.documentElement.setAttribute('data-theme',next);
-  document.getElementById('admin-theme-btn').textContent=next==='dark'?'☀️ Light':'🌙 Dark';
-  localStorage.setItem('admin_theme',next);
-}
-
-// ========== NOTIFY MAIN SITE ==========
-function notifyWebsite(){localStorage.setItem('kitabghar_refresh',Date.now());}
-
-// ===== CARD SCROLL ANIMATION =====
-(function(){
-  const obs=new IntersectionObserver(entries=>{
-    entries.forEach((e,i)=>{
-      if(e.isIntersecting){
-        e.target.style.transitionDelay=(i*0.06)+'s';
-        e.target.classList.add('visible');
-        obs.unobserve(e.target);
-      }
-    });
-  },{threshold:.05});
-  // observe after panel loads
-  setTimeout(()=>document.querySelectorAll('.card').forEach(c=>obs.observe(c)),300);
-  setInterval(()=>document.querySelectorAll('.card:not(.visible)').forEach(c=>obs.observe(c)),1000);
-})();
-
-// ========== TOAST ==========
-function showToast(msg,isErr=false){
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.className='toast show'+(isErr?' err':'');
-  setTimeout(()=>t.className='toast',3000);
-}
 </script>
 </body>
 </html>
