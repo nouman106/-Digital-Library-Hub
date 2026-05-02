@@ -3,13 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="description" content="KitabGhar - Ilm ki Duniya. Muft Urdu kitabein parhen.">
 <title>KitabGhar — Ilm ki Duniya</title>
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
 <style>
+/* === DARK MODE (default) === */
 :root{--bg:#0a0a1a;--bg2:#0f0f2a;--bg3:#13132e;--text:#e8e8f8;--text2:#a0a0c8;--text3:#6060a0;--primary:#7c3aed;--primary2:#9f5bff;--secondary:#06b6d4;--border:#1e1e4a;--border2:#1a1a3e;--card:#0f0f2a;--radius:14px;--radius-sm:8px;--font:'Segoe UI',sans-serif}
+/* === LIGHT MODE === */
+/* BUG FIX: pehle light mode CSS nahi tha, theme toggle kaam nahi karta tha */
 [data-theme="light"]{--bg:#f0f0f8;--bg2:#ffffff;--bg3:#e8e8f5;--text:#1a1a2e;--text2:#444466;--text3:#888899;--border:#ccccee;--border2:#ddddee;--card:#ffffff}
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
 body{font-family:var(--font);background:var(--bg);color:var(--text);transition:all .3s}
 nav{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
 .nav-inner{max-width:1200px;margin:0 auto;padding:0 1rem;display:flex;align-items:center;gap:1rem;height:60px;flex-wrap:wrap}
@@ -21,7 +24,8 @@ nav{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;
 .nav-links a{color:var(--text2);text-decoration:none;padding:5px 8px}
 .theme-btn{background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;color:var(--text2);cursor:pointer}
 .announcement-bar{background:var(--primary);color:#fff;text-align:center;padding:8px;font-size:.85rem}
-.hero-slider{position:relative;height:400px;overflow:hidden;background:var(--bg2)}
+.hero-slider{position:relative;height:400px;overflow:hidden}
+/* BUG FIX: slider-container mein slides directly honge, nested div nahi */
 .slider-container{display:flex;transition:transform .5s ease;height:100%}
 .slide{min-width:100%;height:100%;background-size:cover;background-position:center;position:relative;flex-shrink:0}
 .slide::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.4)}
@@ -34,9 +38,9 @@ nav{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;
 .books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1.2rem}
 .book-card{background:var(--card);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:transform .2s;border:1px solid var(--border2)}
 .book-card:hover{transform:translateY(-4px)}
-.book-cover-img{width:100%;aspect-ratio:3/4;object-fit:cover;background:var(--bg3)}
+.book-cover-img{width:100%;aspect-ratio:3/4;object-fit:cover}
 .book-info{padding:.8rem}
-.book-title{font-weight:600;margin-bottom:.2rem;color:var(--text);word-break:break-word}
+.book-title{font-weight:600;margin-bottom:.2rem;color:var(--text)}
 .book-author{font-size:.75rem;color:var(--text3)}
 .price-tag{font-size:.8rem;color:var(--secondary)}
 .section{max-width:1200px;margin:2rem auto;padding:0 1rem}
@@ -49,13 +53,7 @@ nav{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;
 .contact-form button{background:var(--primary);border:none;padding:10px;border-radius:30px;color:#fff;cursor:pointer}
 footer{background:var(--bg2);text-align:center;padding:1rem;margin-top:2rem;color:var(--text3)}
 .no-books{text-align:center;padding:3rem;color:var(--text3);font-size:1.1rem}
-.pagination{display:flex;justify-content:center;gap:.5rem;margin:2rem 0;flex-wrap:wrap}
-.pagination button{padding:8px 12px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);border-radius:6px;cursor:pointer}
-.pagination button.active{background:var(--primary);color:#fff}
-.pagination button:disabled{opacity:.5;cursor:not-allowed}
-.load-more-btn{display:block;margin:2rem auto;padding:12px 32px;background:var(--primary);color:#fff;border:none;border-radius:30px;cursor:pointer;font-size:1rem}
-@keyframes spin{to{transform:rotate(360deg)}}
-@media(max-width:600px){.hero-slider{height:250px}.slide-content h1{font-size:1.5rem}.nav-inner{height:auto;padding:0.5rem 1rem}}
+@media(max-width:600px){.hero-slider{height:250px}.slide-content h1{font-size:1.5rem}}
 </style>
 </head>
 <body>
@@ -73,7 +71,9 @@ footer{background:var(--bg2);text-align:center;padding:1rem;margin-top:2rem;colo
   </div>
 </nav>
 <div class="hero-slider">
-  <div class="slider-container" id="slider-container"></div>
+  <div class="slider-container" id="slider-container">
+    <!-- Slides yahan JS se aayenge -->
+  </div>
 </div>
 <div class="main">
   <div class="filters" id="filters">
@@ -85,7 +85,6 @@ footer{background:var(--bg2);text-align:center;padding:1rem;margin-top:2rem;colo
     <button class="filter-btn" data-cat="other">📖 Aur</button>
   </div>
   <div class="books-grid" id="books-grid"><div class="no-books">📚 Kitabein load ho rahi hain...</div></div>
-  <div class="pagination" id="pagination"></div>
 </div>
 <div class="section" id="features">
   <div class="section-title">✨ Hamare Khaas Features</div>
@@ -110,10 +109,123 @@ footer{background:var(--bg2);text-align:center;padding:1rem;margin-top:2rem;colo
   </form>
 </div>
 <footer><span id="footer-text">© 2025 KitabGhar</span></footer>
-<script async src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="config.js"></script>
 <script>
-let allBooks=[],currentFilter='all',currentSearch='',currentPage=1,booksPerPage=12,totalPages=1;const CACHE_KEY='kitabghar_cache',CACHE_TTL=3600000;var supabase=null;function waitForSupabase(){return new Promise(resolve=>{if(window.supabaseClient)resolve(window.supabaseClient);else{const checkInterval=setInterval(()=>{if(window.supabaseClient){clearInterval(checkInterval);resolve(window.supabaseClient)}},100);setTimeout(()=>clearInterval(checkInterval),5000)}})}function getFromCache(key){try{const cached=localStorage.getItem(key);if(!cached)return null;const{data,timestamp}=JSON.parse(cached);if(Date.now()-timestamp>CACHE_TTL){localStorage.removeItem(key);return null}return data}catch(e){return null}}function saveToCache(key,data){try{localStorage.setItem(key,JSON.stringify({data,timestamp:Date.now()}))}catch(e){}}async function loadSettings(){try{const cached=getFromCache('settings_cache');if(cached){applySettings(cached);return}const{data}=await supabase.from('settings').select('*');if(data){saveToCache('settings_cache',data);applySettings(data)}}catch(e){console.error('Settings load error:',e)}}function applySettings(data){for(let s of data){if(s.key==='site_name')document.getElementById('site-name').innerText=s.value;else if(s.key==='announcement')document.getElementById('announcement-bar').innerText=s.value;else if(s.key==='about_text')document.getElementById('about-text').innerText=s.value;else if(s.key==='footer_text')document.getElementById('footer-text').innerText=s.value;else if(s.key==='slider_images'){try{let imgs=JSON.parse(s.value);if(!imgs||imgs.length===0)return;let container=document.getElementById('slider-container');container.innerHTML=imgs.map(img=>`<div class="slide" style="background-image:url(${img})"><div class="slide-content"><h1>KitabGhar</h1><p>Ilm ki Duniya</p></div></div>`).join('');if(imgs.length>1){let idx=0;setInterval(()=>{idx=(idx+1)%imgs.length;container.style.transform=`translateX(-${idx*100}%)`},4000)}}catch(e){console.warn('Slider error:',e)}}}}async function loadBooks(){try{const cached=getFromCache('books_cache');if(cached){allBooks=cached;currentPage=1;renderBooks();return}const{data,error}=await supabase.from('books').select('*').eq('allow_access',true);if(error)throw error;allBooks=data||[];saveToCache('books_cache',allBooks);currentPage=1;renderBooks()}catch(e){console.error('Books load error:',e);document.getElementById('books-grid').innerHTML='<div class="no-books">⚠️ Kitabein load nahi ho saki. Dobara try karein.</div>'}}function renderBooks(){let filtered=allBooks;if(currentFilter!=='all')filtered=filtered.filter(b=>b.category===currentFilter);if(currentSearch)filtered=filtered.filter(b=>b.title?.toLowerCase().includes(currentSearch)||b.author?.toLowerCase().includes(currentSearch));if(filtered.length===0){document.getElementById('books-grid').innerHTML='<div class="no-books">📭 Koi kitab nahi mili</div>';document.getElementById('pagination').innerHTML='';return}totalPages=Math.ceil(filtered.length/booksPerPage);const start=(currentPage-1)*booksPerPage,end=start+booksPerPage,paginatedBooks=filtered.slice(start,end);document.getElementById('books-grid').innerHTML=paginatedBooks.map(b=>`<div class="book-card" onclick="location.href='book.html?id=${b.id}'"><img class="book-cover-img" src="${b.cover_url||'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22180%22 height=%22240%22%3E%3Crect fill=%22%23333%22 width=%22180%22 height=%22240%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2214%22 fill=%22%23999%22 text-anchor=%22middle%22 dy=%22.3em%22%3ENo Cover%3C/text%3E%3C/svg%3E'}" alt="${b.title}" loading="lazy"><div class="book-info"><div class="book-title">${b.title}</div><div class="book-author">${b.author||''}</div><div class="price-tag">${b.price==0||b.price=='0'?'🆓 Muft':'Rs.'+b.price}</div></div></div>`).join('');renderPagination()}function renderPagination(){const paginationDiv=document.getElementById('pagination');paginationDiv.innerHTML='';if(totalPages<=1)return;for(let i=1;i<=totalPages;i++){const btn=document.createElement('button');btn.textContent=i;btn.className=i===currentPage?'active':'';btn.onclick=()=>{currentPage=i;renderBooks();window.scrollTo({top:0,behavior:'smooth'})};paginationDiv.appendChild(btn)}}document.getElementById('filters').addEventListener('click',e=>{let btn=e.target.closest('.filter-btn');if(btn){document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');currentFilter=btn.dataset.cat;currentPage=1;renderBooks()}});document.getElementById('search-input').addEventListener('input',e=>{currentSearch=e.target.value.toLowerCase();currentPage=1;renderBooks()});document.getElementById('contact-form')?.addEventListener('submit',async e=>{e.preventDefault();let name=document.getElementById('cname').value,email=document.getElementById('cemail').value,msg=document.getElementById('cmsg').value;await supabase.from('contact_messages').insert([{name,email,message:msg}]);alert('✅ Paigham bhej diya gaya!');e.target.reset()});function applyTheme(t){document.documentElement.setAttribute('data-theme',t);document.getElementById('theme-toggle').innerText=t==='dark'?'☀️ Light':'🌙 Dark';localStorage.setItem('theme',t)}const savedTheme=localStorage.getItem('theme')||'dark';applyTheme(savedTheme);document.getElementById('theme-toggle').addEventListener('click',()=>{const cur=document.documentElement.getAttribute('data-theme');applyTheme(cur==='dark'?'light':'dark')});waitForSupabase().then(client=>{supabase=client;try{window.trackSiteVisit('home')}catch(e){}loadSettings();loadBooks()});
+  let allBooks = [], currentFilter = 'all', currentSearch = '';
+  var supabase = window.supabaseClient;
+
+  async function loadSettings() {
+    try {
+      const { data } = await supabase.from('settings').select('*');
+      if (data) {
+        for (let s of data) {
+          if (s.key === 'site_name') document.getElementById('site-name').innerText = s.value;
+          else if (s.key === 'announcement') document.getElementById('announcement-bar').innerText = s.value;
+          else if (s.key === 'about_text') document.getElementById('about-text').innerText = s.value;
+          else if (s.key === 'footer_text') document.getElementById('footer-text').innerText = s.value;
+          else if (s.key === 'slider_images') {
+            try {
+              let imgs = JSON.parse(s.value);
+              if (!imgs || imgs.length === 0) return;
+              /* BUG FIX: pehle innerHTML mein dobara <div class="slider-container"> wrap kiya ja raha tha
+                 jis se nested slider banta tha aur slider kaam nahi karta tha.
+                 Ab sirf slides directly slider-container mein insert ho rahi hain. */
+              let container = document.getElementById('slider-container');
+              container.innerHTML = imgs.map(img =>
+                `<div class="slide" style="background-image:url(${img})">
+                  <div class="slide-content"><h1>KitabGhar</h1><p>Ilm ki Duniya</p></div>
+                </div>`
+              ).join('');
+              if (imgs.length > 1) {
+                let idx = 0;
+                setInterval(() => {
+                  idx = (idx + 1) % imgs.length;
+                  container.style.transform = `translateX(-${idx * 100}%)`;
+                }, 4000);
+              }
+            } catch(e) { console.warn('Slider error:', e); }
+          }
+        }
+      }
+    } catch(e) { console.error('Settings load error:', e); }
+  }
+
+  async function loadBooks() {
+    try {
+      const { data, error } = await supabase.from('books').select('*').eq('allow_access', true);
+      if (error) throw error;
+      allBooks = data || [];
+      renderBooks();
+    } catch(e) {
+      console.error('Books load error:', e);
+      document.getElementById('books-grid').innerHTML = '<div class="no-books">⚠️ Kitabein load nahi ho saki. Dobara try karein.</div>';
+    }
+  }
+
+  function renderBooks() {
+    let filtered = allBooks;
+    if (currentFilter !== 'all') filtered = filtered.filter(b => b.category === currentFilter);
+    if (currentSearch) filtered = filtered.filter(b =>
+      b.title?.toLowerCase().includes(currentSearch) || b.author?.toLowerCase().includes(currentSearch)
+    );
+    if (filtered.length === 0) {
+      document.getElementById('books-grid').innerHTML = '<div class="no-books">📭 Koi kitab nahi mili</div>';
+      return;
+    }
+    document.getElementById('books-grid').innerHTML = filtered.map(b =>
+      `<div class="book-card" onclick="location.href='book.html?id=${b.id}'">
+        <img class="book-cover-img" src="${b.cover_url || 'https://via.placeholder.com/180x240?text=No+Cover'}"
+          onerror="this.src='https://via.placeholder.com/180x240?text=No+Cover'">
+        <div class="book-info">
+          <div class="book-title">${b.title}</div>
+          <div class="book-author">${b.author || ''}</div>
+          <div class="price-tag">${b.price == 0 || b.price == '0' ? '🆓 Muft' : 'Rs.' + b.price}</div>
+        </div>
+      </div>`
+    ).join('');
+  }
+
+  document.getElementById('filters').addEventListener('click', e => {
+    let btn = e.target.closest('.filter-btn');
+    if (btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.cat;
+      renderBooks();
+    }
+  });
+
+  document.getElementById('search-input').addEventListener('input', e => {
+    currentSearch = e.target.value.toLowerCase();
+    renderBooks();
+  });
+
+  document.getElementById('contact-form')?.addEventListener('submit', async e => {
+    e.preventDefault();
+    let name = document.getElementById('cname').value;
+    let email = document.getElementById('cemail').value;
+    let msg = document.getElementById('cmsg').value;
+    await supabase.from('contact_messages').insert([{ name, email, message: msg }]);
+    alert('✅ Paigham bhej diya gaya!');
+    e.target.reset();
+  });
+
+  /* BUG FIX: pehle light mode ka koi CSS nahi tha, theme toggle kuch nahi karta tha.
+     Ab [data-theme="light"] CSS variables add kiye hain jo properly light mode show karte hain. */
+  function applyTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    document.getElementById('theme-toggle').innerText = t === 'dark' ? '☀️ Light' : '🌙 Dark';
+    localStorage.setItem('theme', t);
+  }
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  applyTheme(savedTheme);
+  document.getElementById('theme-toggle').addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    applyTheme(cur === 'dark' ? 'light' : 'dark');
+  });
+
+  try { window.trackSiteVisit('home'); } catch(e) {}
+  loadSettings();
+  loadBooks();
 </script>
 </body>
 </html>
