@@ -3,313 +3,80 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Kitab Parh Rahe Hain — KitabGhar</title>
+<title>Reader — KitabGhar</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <style>
-:root{
-  --bg:#0a0a1a;--bg2:#0f0f2a;--bg3:#13132e;
-  --text:#e8e8f8;--text2:#a0a0c8;--text3:#6060a0;
-  --primary:#7c3aed;--primary2:#9f5bff;
-  --border:#1e1e4a;--font:'Segoe UI',Tahoma,sans-serif;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;overflow:hidden;font-family:var(--font)}
-body{
-  display:flex;
-  flex-direction:column;
-  background:var(--bg);
-  color:var(--text);
-}
-.reader-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:.6rem 1rem;
-  background:rgba(0,0,0,0.45);
-  backdrop-filter:blur(6px);
-  flex-shrink:0;
-  gap:.5rem;
-  flex-wrap:wrap;
-  z-index:10;
-  border-bottom:1px solid rgba(255,255,255,.1);
-}
-.header-left{display:flex;align-items:center;gap:.6rem;flex:1}
-.back-btn{
-  background:rgba(255,255,255,.15);
-  border:1px solid rgba(255,255,255,.3);
-  color:inherit;
-  border-radius:20px;
-  padding:5px 14px;
-  font-size:.82rem;
-  cursor:pointer;
-}
-.back-btn:hover{background:rgba(255,255,255,.28)}
-.book-title-bar{
-  font-size:.95rem;
-  font-weight:600;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  opacity:.9;
-}
-.header-right{
-  display:flex;
-  align-items:center;
-  gap:.5rem;
-}
-.hdr-btn{
-  background:rgba(255,255,255,.12);
-  border:1px solid rgba(255,255,255,.25);
-  color:inherit;
-  border-radius:8px;
-  padding:5px 12px;
-  font-size:.8rem;
-  cursor:pointer;
-}
-.hdr-btn:hover{background:rgba(255,255,255,.25)}
-.reader-body{
-  flex:1;
-  overflow:auto;
-  position:relative;
-}
-.pdf-container{
-  width:100%;
-  max-width:900px;
-  margin:0 auto;
-  padding:1rem;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:1rem;
-}
-.pdf-page{
-  background:#fff;
-  box-shadow:0 4px 20px rgba(0,0,0,0.3);
-  border-radius:4px;
-  overflow:hidden;
-  width:100%;
-}
-.pdf-page canvas{
-  display:block;
-  width:100%;
-  height:auto;
-}
-.loading{
-  position:absolute;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:1rem;
-  background:var(--bg);
-  z-index:5;
-}
-.spinner{
-  width:44px;
-  height:44px;
-  border:4px solid rgba(255,255,255,.2);
-  border-top-color:#fff;
-  border-radius:50%;
-  animation:spin .8s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg)}}
-.error-box{
-  position:absolute;
-  inset:0;
-  display:none;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:1rem;
-  text-align:center;
-}
-.error-icon{font-size:3rem}
-.error-msg{font-size:1rem}
-.error-hint{font-size:.82rem;opacity:.6}
-.wallpaper{
-  position:fixed;
-  inset:0;
-  background-size:cover;
-  background-position:center;
-  z-index:-1;
-  opacity:.18;
-}
-@media(max-width:500px){
-  .book-title-bar{font-size:.75rem}
-  .hdr-btn span{display:none}
-}
+body{display:flex;flex-direction:column;height:100vh;margin:0;font-family:'Segoe UI',sans-serif}
+header{background:#1e1e2f;color:#fff;padding:10px 20px;display:flex;justify-content:space-between;align-items:center}
+button{background:#7c3aed;border:none;color:#fff;padding:6px 12px;border-radius:20px;cursor:pointer}
+.pdf-container{flex:1;overflow:auto;padding:1rem;background:#525659}
+.pdf-page{margin:0 auto 1rem;box-shadow:0 0 10px rgba(0,0,0,0.3);background:#fff}
+canvas{width:100%;height:auto;display:block}
+.watermark{position:fixed;bottom:10px;right:10px;background:#000;color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;z-index:999}
 </style>
 </head>
 <body>
-<div class="wallpaper" id="wallpaper"></div>
-<div class="reader-header">
-  <div class="header-left">
-    <button class="back-btn" onclick="goBack()">← Wapas</button>
-    <div class="book-title-bar" id="book-title">Kitab Load Ho Rahi Hai...</div>
-  </div>
-  <div class="header-right">
-    <button class="hdr-btn" onclick="zoomIn()">🔍+ <span>Bara</span></button>
-    <button class="hdr-btn" onclick="zoomOut()">🔍− <span>Chota</span></button>
-    <button class="hdr-btn" onclick="toggleFullscreen()">⛶ <span>Full</span></button>
-  </div>
-</div>
-<div class="reader-body" id="reader-body">
-  <div class="loading" id="loading">
-    <div class="spinner"></div>
-    <div class="loading-text">Kitab khul rahi hai, thora intezaar karein...</div>
-  </div>
-  <div class="error-box" id="error-box">
-    <div class="error-icon">📭</div>
-    <div class="error-msg" id="error-msg">PDF load nahi ho saka</div>
-    <div class="error-hint" id="error-hint"></div>
-    <button class="back-btn" style="margin-top:.5rem" onclick="goBack()">← Home Wapas Jayein</button>
-  </div>
-  <div class="pdf-container" id="pdf-container" style="display:none"></div>
-</div>
-
+<header><button onclick="location.href='index.html'">← Wapas</button><span id="book-title"></span><div><button onclick="zoomIn()">🔍+</button><button onclick="zoomOut()">🔍−</button></div></header>
+<div class="pdf-container" id="pdf-container"></div>
 <script>
-// ========== SECURITY ==========
-(function() {
-  document.addEventListener('contextmenu', e => e.preventDefault());
-  document.addEventListener('keydown', e => {
-    if (e.ctrlKey && (e.key === 's' || e.key === 'S' || e.key === 'p' || e.key === 'P' || e.key === 'u' || e.key === 'U')) {
-      e.preventDefault();
-      return false;
-    }
-    if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) { e.preventDefault(); return false; }
-    if (e.key === 'F12') { e.preventDefault(); return false; }
-  });
-})();
-
-// ========== DATABASE ==========
-let db;
-function openDB() {
-  return new Promise((res,rej)=>{
-    const req = indexedDB.open('kitabghar_db',2);
-    req.onupgradeneeded = e => {
-      const d = e.target.result;
-      if (!d.objectStoreNames.contains('books')) d.createObjectStore('books',{keyPath:'id',autoIncrement:true});
-      if (!d.objectStoreNames.contains('settings')) d.createObjectStore('settings',{keyPath:'key'});
-    };
-    req.onsuccess = e => { db = e.target.result; res(db); };
-    req.onerror = rej;
-  });
-}
-function dbGet(store,key) {
-  return new Promise((res,rej)=>{
-    const tx = db.transaction(store,'readonly');
-    const req = tx.objectStore(store).get(key);
-    req.onsuccess = e => res(e.target.result);
-    req.onerror = rej;
-  });
-}
-
-// ========== PDF.JS SETUP ==========
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-
-let pdfDoc = null;
-let currentScale = 1.2;
-const container = document.getElementById('pdf-container');
-
-async function renderAllPages() {
-  if (!pdfDoc) return;
-  container.innerHTML = ''; // clear old
-  const totalPages = pdfDoc.numPages;
-  for (let i = 1; i <= totalPages; i++) {
-    const page = await pdfDoc.getPage(i);
-    const viewport = page.getViewport({ scale: currentScale });
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-    canvas.style.width = '100%';
-    canvas.style.height = 'auto';
-    const pageDiv = document.createElement('div');
-    pageDiv.className = 'pdf-page';
-    pageDiv.appendChild(canvas);
-    container.appendChild(pageDiv);
-    await page.render({ canvasContext: context, viewport: viewport }).promise;
+let pdfDoc=null, scale=1.2;
+async function init(){
+  let id=new URLSearchParams(location.search).get('id');
+  if(!id) return;
+  let {data:book}=await supabase.from('books').select('*').eq('id',id).single();
+  if(!book) return;
+  document.getElementById('book-title').innerText=book.title||'Kitab';
+  if(!book.allow_access) { document.querySelector('.pdf-container').innerHTML='<div style="text-align:center">Yeh kitab dastiyab nahi hai</div>'; return; }
+  if(!book.allow_download) {
+    let wm=document.createElement('div');
+    wm.className='watermark';
+    wm.innerText='📖 Sirf parhne ke liye – Download allowed nahi';
+    document.body.appendChild(wm);
+    // Disable right-click and shortcuts
+    document.addEventListener('contextmenu',e=>e.preventDefault());
+    document.addEventListener('keydown',e=>{
+      if(e.ctrlKey && (e.key==='s'||e.key==='S'||e.key==='p'||e.key==='P'))
+        e.preventDefault();
+    });
   }
-}
-
-function zoomIn() {
-  currentScale = Math.min(currentScale + 0.2, 2.5);
+  await incrementBookDownloads(parseInt(id));
+  let pdfSrc=book.pdf_url;
+  if(!pdfSrc) { document.querySelector('.pdf-container').innerHTML='<div>PDF link nahi hai</div>'; return; }
+  if(pdfSrc.startsWith('data:application/pdf')){
+    let base64=pdfSrc.split(',')[1];
+    let binary=atob(base64); let bytes=new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++) bytes[i]=binary.charCodeAt(i);
+    let blob=new Blob([bytes],{type:'application/pdf'});
+    pdfSrc=URL.createObjectURL(blob);
+  }
+  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+  let loadingTask=pdfjsLib.getDocument(pdfSrc);
+  pdfDoc=await loadingTask.promise;
   renderAllPages();
 }
-function zoomOut() {
-  currentScale = Math.max(currentScale - 0.2, 0.6);
-  renderAllPages();
-}
-
-// ========== LOAD BOOK ==========
-async function init() {
-  const params = new URLSearchParams(window.location.search);
-  const bookId = parseInt(params.get('id'));
-  if (!bookId) { showError('Kitab ID nahi mili',''); return; }
-  try {
-    await openDB();
-    const book = await dbGet('books', bookId);
-    if (!book) { showError('Kitab nahi mili','Shayad kitab delete ho gayi'); return; }
-    loadBook(book);
-  } catch(e) { showError('Database Error: '+e.message,'Refresh karein'); }
-}
-
-function loadBook(book) {
-  const bg = book.bg_color || '#0a0a1a';
-  const tc = book.text_color || '#eeeeee';
-  const wallpaper = book.wallpaper_url || '';
-  document.body.style.background = bg;
-  document.body.style.color = tc;
-  if (wallpaper) document.getElementById('wallpaper').style.backgroundImage = `url('${wallpaper}')`;
-  document.title = (book.title||'Kitab')+' — KitabGhar';
-  document.getElementById('book-title').textContent = book.title||'Kitab';
-
-  let pdfSrc = book.pdf_url;
-  if (!pdfSrc) { showError('PDF link nahi hai','Admin se rabta karein'); return; }
-
-  // Handle base64 upload
-  if (pdfSrc.startsWith('data:application/pdf')) {
-    try {
-      const base64 = pdfSrc.split(',')[1];
-      const binary = atob(base64);
-      const bytes = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-      const blob = new Blob([bytes], {type:'application/pdf'});
-      pdfSrc = URL.createObjectURL(blob);
-    } catch(e) { showError('PDF corrupt hai','Dobara upload karein'); return; }
+async function renderAllPages(){
+  let container=document.getElementById('pdf-container');
+  container.innerHTML='';
+  for(let i=1;i<=pdfDoc.numPages;i++){
+    let page=await pdfDoc.getPage(i);
+    let viewport=page.getViewport({scale});
+    let canvas=document.createElement('canvas');
+    canvas.height=viewport.height;
+    canvas.width=viewport.width;
+    canvas.style.width='100%';
+    canvas.style.height='auto';
+    let ctx=canvas.getContext('2d');
+    await page.render({canvasContext:ctx,viewport}).promise;
+    let div=document.createElement('div');
+    div.className='pdf-page';
+    div.appendChild(canvas);
+    container.appendChild(div);
   }
-
-  document.getElementById('loading').style.display = 'flex';
-  pdfjsLib.getDocument(pdfSrc).promise.then(pdf => {
-    pdfDoc = pdf;
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('pdf-container').style.display = 'block';
-    renderAllPages();
-  }).catch(err => {
-    showError('PDF load nahi ho saka', 'Check URL ya file format');
-  });
 }
-
-function showError(msg, hint) {
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('pdf-container').style.display = 'none';
-  const box = document.getElementById('error-box');
-  box.style.display = 'flex';
-  document.getElementById('error-msg').textContent = msg;
-  document.getElementById('error-hint').textContent = hint || '';
-}
-
-function goBack() {
-  if (document.referrer && document.referrer.includes('index')) history.back();
-  else window.location.href = 'index.html';
-}
-
-function toggleFullscreen() {
-  if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-  else document.exitFullscreen();
-}
-
+function zoomIn(){ scale=Math.min(scale+0.2,3); if(pdfDoc) renderAllPages(); }
+function zoomOut(){ scale=Math.max(scale-0.2,0.6); if(pdfDoc) renderAllPages(); }
 init();
 </script>
 </body>
