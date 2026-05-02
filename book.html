@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Kitab — KitabGhar</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
 <style>
 body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0a0a1a;color:#e8e8f8;margin:0;padding:0}
@@ -17,7 +17,7 @@ button{background:#7c3aed;color:#fff;border:none;border-radius:30px;padding:12px
 <body>
 <div id="book-container" class="container">Loading...</div>
 <script>
-const supabase = window.supabaseClient;
+var supabase = window.supabaseClient; // FIX: was "const"
 async function loadBook(){
   const params=new URLSearchParams(location.search);
   const id=params.get('id');

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>KitabGhar — Ilm ki Duniya</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
 <style>
 :root{--bg:#0a0a1a;--bg2:#0f0f2a;--bg3:#13132e;--text:#e8e8f8;--text2:#a0a0c8;--text3:#6060a0;--primary:#7c3aed;--primary2:#9f5bff;--secondary:#06b6d4;--border:#1e1e4a;--border2:#1a1a3e;--card:#0f0f2a;--radius:14px;--radius-sm:8px;--font:'Segoe UI',sans-serif}
@@ -101,7 +101,7 @@ footer{background:var(--bg2);text-align:center;padding:1rem;margin-top:2rem;colo
 <footer><span id="footer-text">© 2025 KitabGhar</span></footer>
 <script>
   let allBooks = [], currentFilter = 'all', currentSearch = '';
-  const supabase = window.supabaseClient;
+  var supabase = window.supabaseClient; // FIX: was "const" — caused re-declaration error
   async function loadSettings() {
     const { data } = await supabase.from('settings').select('*');
     if (data) {
@@ -148,7 +148,7 @@ footer{background:var(--bg2);text-align:center;padding:1rem;margin-top:2rem;colo
   const savedTheme = localStorage.getItem('theme') || 'light';
   applyTheme(savedTheme);
   document.getElementById('theme-toggle').addEventListener('click', () => { const cur = document.documentElement.getAttribute('data-theme'); applyTheme(cur === 'dark' ? 'light' : 'dark'); });
-  window.trackSiteVisit('home');
+  try { window.trackSiteVisit('home'); } catch(e) {}
   loadSettings();
   loadBooks();
 </script>
