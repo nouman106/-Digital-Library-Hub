@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Kitab — KitabGhar</title>
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+(function() {
+  const SUPABASE_URL = 'https://ykmsizkprilhidqvxaqq.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_UNOPedCOLNaCz878UCdo3w_5dnM-Gp-';
+  function initSupabase() {
+    if (window.supabase && window.supabase.createClient) {
+      window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } else {
+      setTimeout(initSupabase, 100);
+    }
+  }
+  initSupabase();
+})();
+</script>
+<style>
+body{font-family:'Segoe UI',Tahoma,sans-serif;margin:0;padding:0;transition:0.3s}
+.container{max-width:800px;margin:2rem auto;padding:1rem;text-align:center}
+.cover{width:180px;border-radius:12px;margin-bottom:1rem}
+button{background:#7c3aed;color:#fff;border:none;border-radius:30px;padding:12px 28px;font-size:1rem;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="book-container" class="container">Loading...</div>
+<script>
+var supabase = window.supabaseClient;
+async function loadBook(){
+  const params=new URLSearchParams(location.search);
+  const id=params.get('id');
+  if(!id){ document.getElementById('book-container').innerHTML='<div class="error-page">Kitab ID nahi mili</div>'; return; }
+  const {data:book}=await supabase.from('books').select('*').eq('id',id).single();
+  if(!book) { document.getElementById('book-container').innerHTML='<div class="error-page">Kitab nahi mili</div>'; return; }
+  await window.incrementBookViews(parseInt(id));
+  document.title=book.title+' — KitabGhar';
+  document.body.style.background=book.bg_color||'#0a0a1a';
+  document.body.style.color=book.text_color||'#eeeeee';
+  document.getElementById('book-container').innerHTML=`
+    ${book.cover_url ? `<img class="cover" src="${book.cover_url}" onerror="this.style.display='none'">` : '<div style="font-size:4rem">📖</div>'}
+    <h1>${escapeHtml(book.title)}</h1>
+    <h3>✍️ ${escapeHtml(book.author || 'Unknown')}</h3>
+    <p>${escapeHtml(book.description || '')}</p>
+    <div><strong>Category:</strong> ${book.category}</div>
+    <div><strong>Price:</strong> ${book.price==0||book.price=='0'?'🆓 Muft':'Rs.'+book.price}</div>
+    ${book.allow_access? `<button onclick="location.href='reader.html?id=${book.id}'">📖 Abhi Parhen</button>` : '<div style="color:#f44336">Yeh kitab abhi dastiyab nahi hai.</div>'}
+    <br><br><a href="index.html" style="color:#7c3aed">← Home Wapas</a>
+  `;
+}
+function escapeHtml(str){ if(!str) return ''; return str.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+loadBook();
+</script>
+</body>
+</html>
