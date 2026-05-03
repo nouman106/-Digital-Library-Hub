@@ -1,888 +1,277 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl" id="htmlRoot">
+<html lang="ur" dir="ltr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KitabGhar - کتاب گھر</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        /**
-         * Dark Academic Theme for KitabGhar
-         * Deep Navy Background with Purple & Cyan Neon Accents
-         * Bilingual Support: Urdu (RTL) & English (LTR)
-         * Scholarly, Immersive Atmosphere
-         */
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-primary: #0f1419;
-            --bg-secondary: #1a1f2e;
-            --bg-tertiary: #2d3748;
-            --text-primary: #e8e8f8;
-            --text-secondary: #a0a0c8;
-            --text-tertiary: #6060a0;
-            --accent-purple: #7c3aed;
-            --accent-cyan: #06b6d4;
-            --accent-purple-light: #9f5bff;
-            --border-color: #2d3748;
-            --border-light: #1a1f2e;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            transition: all 0.3s ease;
-        }
-
-        h1, h2, h3, h4, h5, h6 {
-            font-family: 'Space Mono', monospace;
-            font-weight: 700;
-        }
-
-        /* Language Toggle */
-        .language-toggle {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-            background-color: var(--bg-secondary);
-            border: 2px solid var(--accent-cyan);
-            border-radius: 8px;
-            padding: 8px 12px;
-            cursor: pointer;
-            color: var(--accent-cyan);
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .language-toggle:hover {
-            background-color: rgba(6, 182, 212, 0.1);
-            box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
-        }
-
-        /* Navigation */
-        nav {
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-        }
-
-        .nav-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            height: 60px;
-            flex-wrap: wrap;
-        }
-
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-            font-size: 1.2rem;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .nav-search {
-            flex: 1;
-            min-width: 180px;
-            position: relative;
-        }
-
-        .nav-search input {
-            width: 100%;
-            padding: 7px 14px 7px 36px;
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .nav-search input:focus {
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
-        }
-
-        .nav-search .search-icon {
-            position: absolute;
-            left: 11px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            margin-left: auto;
-        }
-
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            padding: 5px 8px;
-            transition: color 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: var(--accent-cyan);
-        }
-
-        .theme-btn {
-            background: none;
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 5px 12px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .theme-btn:hover {
-            border-color: var(--accent-cyan);
-            color: var(--accent-cyan);
-        }
-
-        /* Hero Section */
-        .hero-section {
-            position: relative;
-            padding: 60px 1rem;
-            overflow: hidden;
-            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 10%;
-            right: 10%;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(124, 58, 237, 0.3) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(60px);
-            z-index: 0;
-        }
-
-        .hero-section::after {
-            content: '';
-            position: absolute;
-            bottom: 10%;
-            left: 10%;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(60px);
-            z-index: 0;
-        }
-
-        .hero-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            text-align: center;
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-badge {
-            display: inline-block;
-            padding: 8px 16px;
-            border: 1px solid rgba(6, 182, 212, 0.5);
-            background-color: rgba(6, 182, 212, 0.1);
-            border-radius: 20px;
-            color: var(--accent-cyan);
-            font-size: 0.85rem;
-            font-family: 'Space Mono', monospace;
-            margin-bottom: 1rem;
-        }
-
-        .hero-content h1 {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-            line-height: 1.2;
-        }
-
-        .hero-content .gradient-text {
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-content p {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 10px 24px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-        }
-
-        .btn-primary {
-            background-color: var(--accent-purple);
-            color: white;
-            border: 2px solid var(--accent-purple);
-        }
-
-        .btn-primary:hover {
-            background-color: transparent;
-            box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
-        }
-
-        .btn-secondary {
-            background-color: transparent;
-            color: var(--accent-cyan);
-            border: 2px solid var(--accent-cyan);
-        }
-
-        .btn-secondary:hover {
-            background-color: rgba(6, 182, 212, 0.1);
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
-        }
-
-        /* Categories Section */
-        .categories-section {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 3rem 1rem;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-            font-family: 'Space Mono', monospace;
-        }
-
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-        }
-
-        .category-btn {
-            padding: 1rem;
-            border: 2px solid var(--border-color);
-            background-color: var(--bg-secondary);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-            color: var(--text-primary);
-        }
-
-        .category-btn:hover {
-            border-color: var(--accent-cyan);
-            background-color: rgba(6, 182, 212, 0.1);
-            box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
-        }
-
-        .category-btn .icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .category-btn .name {
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        /* Books Grid */
-        .books-section {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 3rem 1rem;
-        }
-
-        .books-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .books-header a {
-            color: var(--accent-cyan);
-            text-decoration: none;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.9rem;
-            transition: color 0.3s ease;
-        }
-
-        .books-header a:hover {
-            color: var(--accent-purple);
-        }
-
-        .books-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .book-card {
-            background-color: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .book-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 25px rgba(6, 182, 212, 0.4);
-        }
-
-        .book-cover {
-            width: 100%;
-            aspect-ratio: 3/4;
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            overflow: hidden;
-        }
-
-        .book-cover img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .book-info {
-            padding: 1rem;
-        }
-
-        .book-category {
-            font-size: 0.75rem;
-            color: var(--accent-cyan);
-            font-family: 'Space Mono', monospace;
-            margin-bottom: 0.5rem;
-        }
-
-        .book-title {
-            font-weight: 600;
-            margin-bottom: 0.3rem;
-            color: var(--text-primary);
-        }
-
-        .book-author {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .book-price {
-            font-size: 0.9rem;
-            color: var(--accent-cyan);
-            font-weight: 600;
-        }
-
-        /* Features Section */
-        .features-section {
-            background-color: var(--bg-secondary);
-            padding: 3rem 1rem;
-            margin-top: 3rem;
-        }
-
-        .features-grid {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-        }
-
-        .feature-card {
-            background-color: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1.5rem;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover {
-            border-color: var(--accent-purple);
-            box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
-        }
-
-        .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .feature-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .feature-desc {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        /* CTA Section */
-        /* Footer */
-        footer {
-            background-color: var(--bg-secondary);
-            border-top: 1px solid var(--border-color);
-            padding: 2rem 1rem;
-            text-align: center;
-            color: var(--text-secondary);
-            margin-top: 3rem;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .footer-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-links a:hover {
-            color: var(--accent-cyan);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero-content h1 {
-                font-size: 2rem;
-            }
-
-            .nav-search {
-                display: none;
-            }
-
-            .books-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 1rem;
-            }
-
-            .categories-grid {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            }
-
-            .language-toggle {
-                top: 10px;
-                left: 10px;
-                padding: 6px 10px;
-                font-size: 0.85rem;
-            }
-        }
-
-        /* Animations */
-        @keyframes glow-pulse {
-            0%, 100% {
-                box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
-            }
-            50% {
-                box-shadow: 0 0 30px rgba(124, 58, 237, 0.5);
-            }
-        }
-
-        .glow-pulse {
-            animation: glow-pulse 2s ease-in-out infinite;
-        }
-
-        /* Hidden content for language switching */
-        .urdu-only {
-            display: block;
-        }
-
-        .english-only {
-            display: none;
-        }
-
-        html[lang="en"] .urdu-only {
-            display: none;
-        }
-
-        html[lang="en"] .english-only {
-            display: block;
-        }
-
-        html[lang="en"] {
-            direction: ltr;
-        }
-
-        html[lang="ur"] {
-            direction: rtl;
-        }
-
-        /* Day Mode Red Theme */
-        body.light-mode {
-            --bg-primary: #fafafa;
-            --bg-secondary: #ffffff;
-            --bg-tertiary: #f5f5f5;
-            --text-primary: #1a1a1a;
-            --text-secondary: #666666;
-            --text-tertiary: #999999;
-            --accent-purple: #dc2626;
-            --accent-cyan: #991b1b;
-            --accent-purple-light: #ef4444;
-            --border-color: #e5e5e5;
-            --border-light: #f0f0f0;
-        }
-
-        body.light-mode nav {
-            background-color: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        body.light-mode .nav-search input {
-            background-color: var(--bg-tertiary);
-            color: var(--text-primary);
-            border-color: var(--border-color);
-        }
-
-        body.light-mode .theme-btn {
-            border-color: var(--border-color);
-            color: var(--text-secondary);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>KitabGhar — Ilm ki Duniya</title>
+<script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<style>
+:root{--bg:#0a0a1a;--bg2:#0f0f2a;--bg3:#13132e;--text:#e8e8f8;--text2:#a0a0c8;--text3:#6060a0;--primary:#7c3aed;--primary2:#9f5bff;--secondary:#06b6d4;--border:#1e1e4a;--border2:#1a1a3e;--card:#0f0f2a;--radius:14px;--radius-sm:8px;--font:'Segoe UI',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font);background:var(--bg);color:var(--text);transition:all .3s}
+nav{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 1rem;display:flex;align-items:center;gap:1rem;height:60px;flex-wrap:wrap}
+.nav-logo{display:flex;align-items:center;gap:8px;font-weight:700;font-size:1.2rem;background:linear-gradient(135deg,var(--primary2),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-search{flex:1;min-width:180px;position:relative}
+.nav-search input{width:100%;padding:7px 14px 7px 36px;border:1px solid var(--border);border-radius:20px;background:var(--bg3);color:var(--text);outline:none}
+.nav-search .search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%)}
+.nav-links{display:flex;align-items:center;gap:.8rem;margin-left:auto}
+.nav-links a{color:var(--text2);text-decoration:none;padding:5px 8px}
+.nav-links a:hover{color:var(--secondary)}
+.theme-btn{background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;color:var(--text2);cursor:pointer}
+.announcement-bar{background:var(--primary);color:#fff;text-align:center;padding:8px;font-size:.85rem}
+.hero-slider{position:relative;height:400px;overflow:hidden;background:linear-gradient(135deg,#0d0928,#1a1050)}
+.slider-container{display:flex;transition:transform .5s ease;height:100%}
+.slide{min-width:100%;height:100%;background-size:cover;background-position:center;position:relative}
+.slide::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,0.4)}
+.slide-content{position:absolute;bottom:30%;left:10%;color:#fff;z-index:2;max-width:500px}
+.slide-content h1{font-size:2.5rem;margin-bottom:.5rem}
+.main{max-width:1200px;margin:0 auto;padding:1rem}
+.filters{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.filter-btn{padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);cursor:pointer}
+.filter-btn.active{background:var(--primary);color:#fff}
+.books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1.2rem}
+.book-card{background:var(--card);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:transform .2s;border:1px solid var(--border2)}
+.book-card:hover{transform:translateY(-4px);border-color:var(--primary)}
+.book-cover-img{width:100%;aspect-ratio:3/4;object-fit:cover}
+.book-info{padding:.8rem}
+.book-title{font-weight:600;margin-bottom:.2rem}
+.book-author{font-size:.75rem;color:var(--text3)}
+.price-tag{font-size:.8rem;color:var(--secondary);margin-top:.3rem}
+.no-books{text-align:center;padding:3rem;color:var(--text3);font-size:1.1rem;grid-column:1/-1}
+.section{max-width:1200px;margin:2rem auto;padding:0 1rem}
+.section-title{font-size:1.5rem;text-align:center;margin-bottom:1.2rem;background:linear-gradient(135deg,var(--primary2),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+.feature-card{background:var(--bg2);border-radius:var(--radius-sm);padding:1rem;text-align:center;border:1px solid var(--border2)}
+.feature-card .icon{font-size:2rem;margin-bottom:.5rem}
+.about-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:2rem;max-width:800px;margin:0 auto;text-align:center;line-height:1.8;font-size:1rem;color:var(--text2)}
+.contact-form{max-width:600px;margin:1rem auto;display:grid;gap:1rem}
+.contact-form input,.contact-form textarea{padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text);width:100%;font-family:var(--font)}
+.contact-form button{background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;padding:12px;border-radius:30px;color:#fff;cursor:pointer;font-weight:bold;font-size:1rem}
+.contact-form button:hover{transform:scale(1.02)}
+.contact-links{text-align:center;margin-top:1rem}
+.contact-links a{color:var(--secondary);text-decoration:none}
+footer{background:var(--bg2);text-align:center;padding:1rem;margin-top:2rem;color:var(--text3);border-top:1px solid var(--border)}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--primary);color:#fff;padding:10px 18px;border-radius:8px;opacity:0;transition:all .3s;pointer-events:none;z-index:9999}
+.toast.show{opacity:1}
+@media(max-width:600px){.hero-slider{height:250px}.slide-content h1{font-size:1.5rem}}
+</style>
 </head>
 <body>
-    <!-- Language Toggle Button -->
-    <button class="language-toggle" onclick="toggleLanguage()">
-        <span class="urdu-only">English</span>
-        <span class="english-only">اردو</span>
-    </button>
+<div class="announcement-bar" id="announcement-bar">📢 KitabGhar mein aapka khairm maqdam hai!</div>
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">📚 <span id="site-name">KitabGhar</span></div>
+    <div class="nav-search"><span class="search-icon">🔍</span><input type="text" id="search-input" placeholder="Kitab dhundhen..."></div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#about">Hamare Baare Mein</a>
+      <a href="contact.html">رابطہ</a>
+      <a href="terms.html">Rules</a>
+      <button class="theme-btn" id="theme-toggle">🌙 Dark</button>
+    </div>
+  </div>
+</nav>
 
-    <!-- Navigation -->
-    <nav>
-        <div class="nav-inner">
-            <div class="nav-logo">📚 <span>KitabGhar</span></div>
-            <div class="nav-search">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="search-input" class="urdu-only" placeholder="کتابیں تلاش کریں...">
-                <input type="text" id="search-input-en" class="english-only" placeholder="Search books...">
-            </div>
-            <div class="nav-links">
-                <a href="#features" class="urdu-only">خصوصیات</a>
-                <a href="#features" class="english-only">Features</a>
-                <a href="#about" class="urdu-only">بارے میں</a>
-                <a href="#about" class="english-only">About</a>
-                <a href="#contact" class="urdu-only">رابطہ</a>
-                <a href="#contact" class="english-only">Contact</a>
-                <button class="theme-btn" onclick="toggleTheme()">🌙 <span class="urdu-only">ڈارک</span><span class="english-only">Dark</span></button>
-            </div>
-        </div>
-    </nav>
+<div class="hero-slider">
+  <div class="slider-container" id="slider-container">
+    <div class="slide" style="background:linear-gradient(135deg,#1a0050,#0a0a1a)">
+      <div class="slide-content">
+        <h1>📚 KitabGhar</h1>
+        <p>Ilm ki Duniya — Muft Online Library</p>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-content">
+<div class="main">
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-cat="all">📚 Sab</button>
+    <button class="filter-btn" data-cat="islamic">☪️ Islami</button>
+    <button class="filter-btn" data-cat="educational">🎓 Talimi</button>
+    <button class="filter-btn" data-cat="motivational">🔥 Hosla Afzai</button>
+    <button class="filter-btn" data-cat="kids">🧒 Bachon Ki</button>
+    <button class="filter-btn" data-cat="other">📖 Aur</button>
+  </div>
+  <div class="books-grid" id="books-grid">
+    <div class="no-books">📖 Kitabein load ho rahi hain...</div>
+  </div>
+</div>
 
-            <h1 class="urdu-only">دریافت کریں۔ پڑھیں۔<br><span class="gradient-text">اپنے ذہن کو بہتر بنائیں۔</span></h1>
-            <h1 class="english-only">Discover. Read.<br><span class="gradient-text">Enrich Your Mind.</span></h1>
-            
-            <p class="urdu-only">کتاب گھر - ایک عالمی اردو ادب کی سفر جہاں علم، فکر اور روحانی ترقی کا دریا بہتا ہے۔</p>
-            <p class="english-only">KitabGhar - A global journey through Urdu literature where knowledge, thought, and spiritual growth flow abundantly.</p>
-            
-            <div class="hero-buttons">
-                <button class="btn btn-primary urdu-only">📖 لائبریری کو تلاش کریں</button>
-                <button class="btn btn-primary english-only">📖 Explore Library</button>
-                <button class="btn btn-secondary urdu-only">✨ مجموعے دیکھیں</button>
-                <button class="btn btn-secondary english-only">✨ View Collections</button>
-            </div>
-        </div>
-    </section>
+<div class="section" id="features">
+  <div class="section-title">✨ Hamare Khaas Features</div>
+  <div class="features-grid">
+    <div class="feature-card"><div class="icon">📖</div><div><strong>Asaan Mutalia</strong></div><div>Browser mein seedha parhen</div></div>
+    <div class="feature-card"><div class="icon">🆓</div><div><strong>Muft Kitabein</strong></div><div>Kai kitabein muft dastiyab</div></div>
+    <div class="feature-card"><div class="icon">🌙</div><div><strong>Dark Mode</strong></div><div>Aankhon ka sukoon</div></div>
+    <div class="feature-card"><div class="icon">📱</div><div><strong>Mobile Friendly</strong></div><div>Har device par kaam kare</div></div>
+  </div>
+</div>
 
-    <!-- Categories Section -->
-    <section class="categories-section">
-        <h2 class="section-title urdu-only">اقسام (Categories)</h2>
-        <h2 class="section-title english-only">Categories</h2>
-        <div class="categories-grid">
-            <button class="category-btn">
-                <div class="icon">📚</div>
-                <div class="name urdu-only">علم، ادب، فکر</div>
-                <div class="name english-only">Knowledge & Literature</div>
-            </button>
-            <button class="category-btn">
-                <div class="icon">☪️</div>
-                <div class="name urdu-only">روحانی</div>
-                <div class="name english-only">Spiritual</div>
-            </button>
-            <button class="category-btn">
-                <div class="icon">🎓</div>
-                <div class="name urdu-only">تعلیمی</div>
-                <div class="name english-only">Educational</div>
-            </button>
-            <button class="category-btn">
-                <div class="icon">🔥</div>
-                <div class="name urdu-only">حوصلہ افزائی</div>
-                <div class="name english-only">Motivational</div>
-            </button>
-            <button class="category-btn">
-                <div class="icon">🧒</div>
-                <div class="name urdu-only">بچوں کی</div>
-                <div class="name english-only">Kids</div>
-            </button>
-        </div>
-    </section>
+<div class="section" id="about">
+  <div class="section-title">📜 Hamare Baare Mein</div>
+  <div class="about-box" id="about-text">
+    KitabGhar ek muft online Urdu library hai. Yahan aap Islamic, talimi, aur hosla afzai kitabein parh sakte hain. Hamaara maqsad ilm ko sab ke liye aasaan banana hai.
+  </div>
+</div>
 
-    <!-- Books Section -->
-    <section class="books-section">
-        <div class="books-header">
-            <h2 class="section-title urdu-only">منتخب کتابیں</h2>
-            <h2 class="section-title english-only">FEATURED BOOKS</h2>
-            <a href="#" class="urdu-only">تمام دیکھیں →</a>
-            <a href="#" class="english-only">VIEW ALL →</a>
-        </div>
-        <div class="books-grid">
-            <div class="book-card">
-                <div class="book-cover">📖</div>
-                <div class="book-info">
-                    <div class="book-category urdu-only">شاعری</div>
-                    <div class="book-category english-only">Poetry</div>
-                    <div class="book-title urdu-only">بلند خیالات</div>
-                    <div class="book-title english-only">Exalted Thoughts</div>
-                    <div class="book-author urdu-only">علامہ اقبال</div>
-                    <div class="book-author english-only">Allama Iqbal</div>
-                    <div class="book-price">PKR 450</div>
-                </div>
-            </div>
+<div class="section" id="contact">
+  <div class="section-title">📩 Rabta Karein</div>
+  <form id="contact-form" class="contact-form">
+    <input type="text" id="cname" placeholder="Aapka naam" required>
+    <input type="email" id="cemail" placeholder="Email" required>
+    <textarea id="cmsg" rows="4" placeholder="Apna paigham likhein..."></textarea>
+    <button type="submit">📨 Bhejein</button>
+  </form>
+  <div class="contact-links">
+    <a href="contact.html">📬 Mukammal Contact Page dekhein →</a>
+  </div>
+</div>
 
-            <div class="book-card">
-                <div class="book-cover">📚</div>
-                <div class="book-info">
-                    <div class="book-category urdu-only">روحانی</div>
-                    <div class="book-category english-only">Spiritual</div>
-                    <div class="book-title urdu-only">تذکرہ اولیاء</div>
-                    <div class="book-title english-only">Biographies of Saints</div>
-                    <div class="book-author urdu-only">فریدالدین عطار</div>
-                    <div class="book-author english-only">Fariduddin Attar</div>
-                    <div class="book-price">PKR 400</div>
-                </div>
-            </div>
+<footer><span id="footer-text">© 2025 KitabGhar — Tamam Huqooq Mahfooz Hain</span></footer>
+<div class="toast" id="toast"></div>
 
-            <div class="book-card">
-                <div class="book-cover">✍️</div>
-                <div class="book-info">
-                    <div class="book-category urdu-only">ادب</div>
-                    <div class="book-category english-only">Literature</div>
-                    <div class="book-title urdu-only">اردو کی بہترین شاعری</div>
-                    <div class="book-title english-only">Best Urdu Poetry</div>
-                    <div class="book-author urdu-only">مختلف مصنفین</div>
-                    <div class="book-author english-only">Various Authors</div>
-                    <div class="book-price">PKR 350</div>
-                </div>
-            </div>
+<script>
+  let allBooks = [], currentFilter = 'all', currentSearch = '';
+  var supabase = window.supabaseClient;
 
-            <div class="book-card">
-                <div class="book-cover">🏛️</div>
-                <div class="book-info">
-                    <div class="book-category urdu-only">سیاسی</div>
-                    <div class="book-category english-only">Political</div>
-                    <div class="book-title urdu-only">پاکستان کا نظریہ</div>
-                    <div class="book-title english-only">Ideology of Pakistan</div>
-                    <div class="book-author urdu-only">علامہ اقبال</div>
-                    <div class="book-author english-only">Allama Iqbal</div>
-                    <div class="book-price">PKR 550</div>
-                </div>
-            </div>
+  function showToast(msg, isErr){
+    let t=document.getElementById('toast');
+    t.innerText=msg;
+    t.style.background=isErr?'#f44336':'var(--primary)';
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),3000);
+  }
 
-            <div class="book-card">
-                <div class="book-cover">🎭</div>
-                <div class="book-info">
-                    <div class="book-category urdu-only">شاعری</div>
-                    <div class="book-category english-only">Poetry</div>
-                    <div class="book-title urdu-only">کلیات غالب</div>
-                    <div class="book-title english-only">Complete Works of Ghalib</div>
-                    <div class="book-author urdu-only">مرزا غالب</div>
-                    <div class="book-author english-only">Mirza Ghalib</div>
-                    <div class="book-price urdu-only">🆓 مفت</div>
-                    <div class="book-price english-only">🆓 Free</div>
-                </div>
-            </div>
-
-            <div class="book-card">
-                <div class="book-cover">📖</div>
-                <div class="book-info">
-                    <div class="book-category urdu-only">تاریخ</div>
-                    <div class="book-category english-only">History</div>
-                    <div class="book-title urdu-only">تاریخ طبری</div>
-                    <div class="book-title english-only">History of Tabari</div>
-                    <div class="book-author urdu-only">محمد بن جریر طبری</div>
-                    <div class="book-author english-only">Muhammad ibn Jarir Tabari</div>
-                    <div class="book-price">PKR 800</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features-section" id="features">
-        <h2 class="section-title urdu-only" style="text-align: center; margin-bottom: 2rem;">✨ ہمارے خصوصی فیچرز</h2>
-        <h2 class="section-title english-only" style="text-align: center; margin-bottom: 2rem;">✨ Our Special Features</h2>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">📖</div>
-                <div class="feature-title urdu-only">آسان مطالعہ</div>
-                <div class="feature-title english-only">Easy Reading</div>
-                <div class="feature-desc urdu-only">براؤزر میں سیدھا پڑھیں</div>
-                <div class="feature-desc english-only">Read directly in browser</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🆓</div>
-                <div class="feature-title urdu-only">مفت کتابیں</div>
-                <div class="feature-title english-only">Free Books</div>
-                <div class="feature-desc urdu-only">بہت سی کتابیں مفت</div>
-                <div class="feature-desc english-only">Many books available free</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">🌙</div>
-                <div class="feature-title urdu-only">ڈارک موڈ</div>
-                <div class="feature-title english-only">Dark Mode</div>
-                <div class="feature-desc urdu-only">آنکھوں کا سکون</div>
-                <div class="feature-desc english-only">Comfortable for eyes</div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">📱</div>
-                <div class="feature-title urdu-only">موبائل فرینڈلی</div>
-                <div class="feature-title english-only">Mobile Friendly</div>
-                <div class="feature-desc urdu-only">ہر ڈیوائس پر</div>
-                <div class="feature-desc english-only">Works on all devices</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer id="contact">
-        <p class="urdu-only">© 2025 KitabGhar - تمام حقوق محفوظ ہیں</p>
-        <p class="english-only">© 2025 KitabGhar - All Rights Reserved</p>
-        <div class="footer-links">
-            <a href="#" class="urdu-only">شرائط</a>
-            <a href="#" class="english-only">Terms</a>
-            <a href="#" class="urdu-only">رازداری</a>
-            <a href="#" class="english-only">Privacy</a>
-            <a href="#" class="urdu-only">رابطہ</a>
-            <a href="#" class="english-only">Contact</a>
-            <a href="#" class="urdu-only">بلاگ</a>
-            <a href="#" class="english-only">Blog</a>
-        </div>
-    </footer>
-
-    <script>
-        // Language Toggle
-        function toggleLanguage() {
-            const htmlRoot = document.getElementById('htmlRoot');
-            const currentLang = htmlRoot.getAttribute('lang');
-            const newLang = currentLang === 'ur' ? 'en' : 'ur';
-            const newDir = newLang === 'ur' ? 'rtl' : 'ltr';
-            
-            htmlRoot.setAttribute('lang', newLang);
-            htmlRoot.setAttribute('dir', newDir);
-            localStorage.setItem('language', newLang);
-        }
-
-        // Load saved language
-        const savedLanguage = localStorage.getItem('language') || 'ur';
-        const htmlRoot = document.getElementById('htmlRoot');
-        const newDir = savedLanguage === 'ur' ? 'rtl' : 'ltr';
-        htmlRoot.setAttribute('lang', savedLanguage);
-        htmlRoot.setAttribute('dir', newDir);
-
-        // Theme Toggle
-        function toggleTheme() {
-            const body = document.body;
-            body.classList.toggle('light-mode');
-            const isLight = body.classList.contains('light-mode');
-            localStorage.setItem('theme', isLight ? 'light' : 'dark');
-        }
-
-        // Load saved theme
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'light') {
-            document.body.classList.add('light-mode');
-        }
-
-        // Search functionality
-        const searchInputs = ['search-input', 'search-input-en'];
-        searchInputs.forEach(inputId => {
-            const input = document.getElementById(inputId);
-            if (input) {
-                input.addEventListener('input', function(e) {
-                    const query = e.target.value.toLowerCase();
-                    const bookCards = document.querySelectorAll('.book-card');
-                    
-                    bookCards.forEach(card => {
-                        const titles = card.querySelectorAll('.book-title');
-                        const authors = card.querySelectorAll('.book-author');
-                        let found = false;
-                        
-                        titles.forEach(title => {
-                            if (title.textContent.toLowerCase().includes(query)) found = true;
-                        });
-                        
-                        authors.forEach(author => {
-                            if (author.textContent.toLowerCase().includes(query)) found = true;
-                        });
-                        
-                        card.style.display = found ? 'block' : 'none';
-                    });
-                });
+  async function loadSettings() {
+    try {
+      const { data, error } = await supabase.from('settings').select('*');
+      if (error) { console.warn('Settings error:', error.message); return; }
+      if (!data) return;
+      for (let s of data) {
+        if (s.key === 'site_name') {
+          document.getElementById('site-name').innerText = s.value;
+          document.title = s.value + ' — Ilm ki Duniya';
+        } else if (s.key === 'announcement') {
+          document.getElementById('announcement-bar').innerText = '📢 ' + s.value;
+        } else if (s.key === 'about_text') {
+          document.getElementById('about-text').innerText = s.value;
+        } else if (s.key === 'footer_text') {
+          document.getElementById('footer-text').innerText = s.value;
+        } else if (s.key === 'slider_images') {
+          try {
+            let imgs = JSON.parse(s.value);
+            if (imgs && imgs.length > 0) {
+              document.getElementById('slider-container').innerHTML = imgs.map(img =>
+                `<div class="slide" style="background-image:url(${img})">
+                  <div class="slide-content"><h1>KitabGhar</h1><p>Ilm ki Duniya</p></div>
+                </div>`
+              ).join('');
+              if (imgs.length > 1) {
+                let idx = 0, cont = document.getElementById('slider-container');
+                setInterval(() => { idx=(idx+1)%imgs.length; cont.style.transform=`translateX(-${idx*100}%)`; }, 4000);
+              }
             }
-        });
+          } catch(e) {}
+        }
+      }
+    } catch(e) { console.warn('Settings exception:', e); }
+  }
 
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        });
-    </script>
+  async function loadBooks() {
+    try {
+      const { data, error } = await supabase.from('books').select('*').eq('allow_access', true);
+      if (error) {
+        document.getElementById('books-grid').innerHTML =
+          `<div class="no-books">❌ Kitabein load nahi hui. Error: ${error.message}</div>`;
+        return;
+      }
+      allBooks = data || [];
+      renderBooks();
+    } catch(e) {
+      document.getElementById('books-grid').innerHTML =
+        '<div class="no-books">❌ Server se connection nahi hua.</div>';
+    }
+  }
+
+  function renderBooks() {
+    let filtered = allBooks;
+    if (currentFilter !== 'all') filtered = filtered.filter(b => b.category === currentFilter);
+    if (currentSearch) filtered = filtered.filter(b =>
+      b.title?.toLowerCase().includes(currentSearch) ||
+      b.author?.toLowerCase().includes(currentSearch)
+    );
+    if (filtered.length === 0) {
+      document.getElementById('books-grid').innerHTML =
+        '<div class="no-books">📭 Koi kitab nahi mili.</div>';
+      return;
+    }
+    document.getElementById('books-grid').innerHTML = filtered.map(b => `
+      <div class="book-card" onclick="location.href='book.html?id=${b.id}'">
+        <img class="book-cover-img"
+          src="${b.cover_url || 'https://via.placeholder.com/180x240?text=%F0%9F%93%96'}"
+          onerror="this.src='https://via.placeholder.com/180x240?text=%F0%9F%93%96'">
+        <div class="book-info">
+          <div class="book-title">${escapeHtml(b.title)}</div>
+          <div class="book-author">${escapeHtml(b.author || '')}</div>
+          <div class="price-tag">${b.price==0||b.price=='0'?'🆓 Muft':'Rs.'+b.price}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function escapeHtml(str) {
+    if(!str) return '';
+    return str.replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  document.getElementById('filters').addEventListener('click', e => {
+    let btn = e.target.closest('.filter-btn');
+    if (btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.cat;
+      renderBooks();
+    }
+  });
+
+  document.getElementById('search-input').addEventListener('input', e => {
+    currentSearch = e.target.value.toLowerCase();
+    renderBooks();
+  });
+
+  document.getElementById('contact-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    let name = document.getElementById('cname').value.trim();
+    let email = document.getElementById('cemail').value.trim();
+    let msg = document.getElementById('cmsg').value.trim();
+    if (!name || !email || !msg) { showToast('Sab fields bharna zaroori hai', true); return; }
+    try {
+      const { error } = await supabase.from('contact_messages').insert([{
+        name, email, message: msg, created_at: new Date().toISOString()
+      }]);
+      if (error) { showToast('❌ ' + error.message, true); return; }
+      showToast('✅ Paigham bhej diya gaya!');
+      e.target.reset();
+    } catch(err) {
+      showToast('❌ Network masla, dobara try karein', true);
+    }
+  });
+
+  function applyTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    document.getElementById('theme-toggle').innerText = t==='dark' ? '☀️ Light' : '🌙 Dark';
+    localStorage.setItem('theme', t);
+  }
+  applyTheme(localStorage.getItem('theme') || 'dark');
+  document.getElementById('theme-toggle').addEventListener('click', () => {
+    applyTheme(document.documentElement.getAttribute('data-theme')==='dark' ? 'light' : 'dark');
+  });
+
+  try { window.trackSiteVisit('home'); } catch(e) {}
+  loadSettings();
+  loadBooks();
+</script>
 </body>
 </html>
