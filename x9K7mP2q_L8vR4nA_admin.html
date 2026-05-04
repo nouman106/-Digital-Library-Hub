@@ -91,6 +91,7 @@ th{color:var(--text2)}
       <button class="tab-btn" data-tab="add-book">➕ Add Book</button>
       <button class="tab-btn" data-tab="storage">🗂️ Storage</button>
       <button class="tab-btn cust-tab" data-tab="customize" style="border:2px solid #7c3aed;color:#a78bfa">🎨 Customize</button>
+      <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
     </div>
 
     <div id="tab-dashboard" class="tab-pane active">
@@ -151,17 +152,6 @@ th{color:var(--text2)}
             <input type="file" id="cover-file" accept="image/*" onchange="uploadToGithub(this,'b-cover-url','covers')">
             <input id="b-cover-url" placeholder="Ya seedha cover URL paste karein" style="margin-top:.5rem">
             <div id="cover-progress" style="color:var(--secondary);font-size:.85rem;margin-top:.3rem"></div>
-          </div>
-        </div>
-        <div class="form-row single">
-          <div class="field">
-            <label>🖼️ Book Wallpaper <span style="color:var(--secondary);font-size:.82rem">(Sirf Is Kitab Ke Page Ka Background)</span></label>
-            <input type="file" id="wallpaper-file" accept="image/*" onchange="uploadToGithub(this,'b-wallpaper-url','wallpapers')">
-            <input id="b-wallpaper-url" placeholder="Ya seedha wallpaper URL paste karein" style="margin-top:.5rem">
-            <div id="wallpaper-progress" style="color:var(--secondary);font-size:.85rem;margin-top:.3rem"></div>
-            <div id="wallpaper-preview-wrap" style="display:none;margin-top:.5rem">
-              <img id="wallpaper-preview" src="" style="max-width:100%;max-height:120px;border-radius:8px;object-fit:cover;border:1px solid var(--border)">
-            </div>
           </div>
         </div>
         <div class="form-row single">
@@ -474,6 +464,26 @@ th{color:var(--text2)}
     </div>
     <!-- ═══════════════════════════════════════════════ -->
 
+    <div id="tab-settings" class="tab-pane">
+      <div class="card" style="max-width:400px">
+        <h3 style="margin-bottom:1rem;color:var(--secondary)">🔑 Password Change Karein</h3>
+        <div class="field" style="margin-bottom:1rem">
+          <label>Purana Password</label>
+          <input type="password" id="old-pass" placeholder="Purana password">
+        </div>
+        <div class="field" style="margin-bottom:1rem">
+          <label>Naya Password</label>
+          <input type="password" id="new-pass" placeholder="Naya password">
+        </div>
+        <div class="field" style="margin-bottom:1rem">
+          <label>Naya Password Confirm</label>
+          <input type="password" id="confirm-pass" placeholder="Dobara likhein">
+        </div>
+        <button class="btn" onclick="changePassword()">🔐 Password Change Karein</button>
+        <div id="pass-msg" style="margin-top:.8rem;font-size:.9rem"></div>
+      </div>
+    </div>
+
     <div id="tab-storage" class="tab-pane">
       <div class="card">
         <h3>📦 GitHub Storage</h3>
@@ -606,7 +616,6 @@ async function saveBook(){
     description: document.getElementById('b-desc').value.trim(),
     allow_access: document.getElementById('b-allow-access').checked,
     allow_download: document.getElementById('b-allow-download').checked,
-    wallpaper_url: document.getElementById('b-wallpaper-url').value.trim(),
   };
 
   if(id){
@@ -677,7 +686,7 @@ async function saveBooksToGithub(){
 async function uploadToGithub(input, targetId, folder){
   let file = input.files[0];
   if(!file) return;
-  let progressId = targetId === 'b-pdf-url' ? 'pdf-progress' : (targetId === 'b-wallpaper-url' ? 'wallpaper-progress' : 'cover-progress');
+  let progressId = targetId === 'b-pdf-url' ? 'pdf-progress' : 'cover-progress';
   let prog = document.getElementById(progressId);
   prog.innerText = '⏳ Upload ho raha hai...';
 
@@ -694,8 +703,6 @@ async function uploadToGithub(input, targetId, folder){
       document.getElementById(targetId).value = data.publicUrl;
       prog.innerText = '✅ Upload ho gayi!';
       showToast('✅ File upload ho gayi!');
-      // Wallpaper preview
-      if(targetId === 'b-wallpaper-url'){ document.getElementById('wallpaper-preview').src=data.publicUrl; document.getElementById('wallpaper-preview-wrap').style.display='block'; }
       return;
     } catch(e){ console.warn('Supabase upload failed, trying GitHub:', e); }
   }
@@ -747,10 +754,6 @@ function editBook(idx){
   document.getElementById('b-desc').value = b.description||'';
   document.getElementById('b-allow-access').checked = b.allow_access!==false;
   document.getElementById('b-allow-download').checked = b.allow_download!==false;
-  document.getElementById('b-wallpaper-url').value = b.wallpaper_url||'';
-  // Wallpaper preview
-  if(b.wallpaper_url){ document.getElementById('wallpaper-preview').src=b.wallpaper_url; document.getElementById('wallpaper-preview-wrap').style.display='block'; }
-  else { document.getElementById('wallpaper-preview-wrap').style.display='none'; }
   document.getElementById('form-title').innerText = '✏️ Book Edit Karein';
   switchTab('add-book');
 }
@@ -773,9 +776,6 @@ function clearForm(){
   document.getElementById('form-title').innerText = '➕ Nayi Kitab Add Karein';
   document.getElementById('pdf-progress').innerText = '';
   document.getElementById('cover-progress').innerText = '';
-  document.getElementById('wallpaper-progress').innerText = '';
-  document.getElementById('b-wallpaper-url').value = '';
-  document.getElementById('wallpaper-preview-wrap').style.display = 'none';
 }
 
 // =================== EXPORT ===================
@@ -1021,6 +1021,37 @@ function showToast(msg){
   t.innerText=msg;
   t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+function changePassword(){
+  let oldP = document.getElementById('old-pass').value;
+  let newP = document.getElementById('new-pass').value;
+  let conP = document.getElementById('confirm-pass').value;
+  let msg = document.getElementById('pass-msg');
+
+  if(oldP !== ADMIN_PASS){
+    msg.style.color='#f44336';
+    msg.innerText='❌ Purana password galat hai!';
+    return;
+  }
+  if(newP.length < 6){
+    msg.style.color='#f44336';
+    msg.innerText='❌ Naya password kam az kam 6 characters ka hona chahiye!';
+    return;
+  }
+  if(newP !== conP){
+    msg.style.color='#f44336';
+    msg.innerText='❌ Naya password match nahi kiya!';
+    return;
+  }
+  ADMIN_PASS = newP;
+  localStorage.setItem('admin_pass', newP);
+  msg.style.color='#06b6d4';
+  msg.innerText='✅ Password change ho gaya!';
+  document.getElementById('old-pass').value='';
+  document.getElementById('new-pass').value='';
+  document.getElementById('confirm-pass').value='';
+  showToast('✅ Password successfully change ho gaya!');
 }
 
 function esc(s){ if(!s)return''; return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
