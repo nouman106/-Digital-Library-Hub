@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": 1777884227473,
+    "title": "ss",
+    "author": "",
+    "category": "islamic",
+    "price": "0",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777884210856_nkslzz.pdf",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777884217946_qcz444.png",
+    "description": "",
+    "allow_access": true,
+    "allow_download": true
+  }
+]
