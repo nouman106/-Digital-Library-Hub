@@ -1,1 +1,15 @@
-[]
+[
+  {
+    "id": 1777888419456,
+    "title": "The little Bear Whow Lost His Roar",
+    "author": "",
+    "category": "kids",
+    "price": "0",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777888354387_vcqrti.pdf",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777888362846_y9qbmg.png",
+    "description": "",
+    "allow_access": true,
+    "allow_download": true,
+    "wallpaper_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777888370580_26z119.png"
+  }
+]
