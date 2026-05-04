@@ -1,12 +1,36 @@
 [
   {
-    "id": 1777883203443,
-    "title": "gfkgkg",
+    "id": 1777882174101,
+    "title": "ksksks",
     "author": "",
     "category": "islamic",
     "price": "0",
-    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777883185337_jgfoez.pdf",
-    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777883192150_e862bv.png",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777882156062_3ldv8k.pdf",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777882163421_hztixm.png",
+    "description": "",
+    "allow_access": true,
+    "allow_download": true
+  },
+  {
+    "id": 1777882476993,
+    "title": "ksjsjs",
+    "author": "",
+    "category": "islamic",
+    "price": "0",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777882463396_2u5mb3.pdf",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777882470960_y6n80d.png",
+    "description": "",
+    "allow_access": true,
+    "allow_download": false
+  },
+  {
+    "id": 1777883259469,
+    "title": "dkddk",
+    "author": "",
+    "category": "islamic",
+    "price": "0",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777883246035_0w0a5s.pdf",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777883253692_qb234c.png",
     "description": "",
     "allow_access": true,
     "allow_download": true
