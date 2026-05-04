@@ -8,7 +8,7 @@
     "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777874084159_ss0wjk.pdf",
     "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777874090214_gszaq1.png",
     "description": "",
-    "allow_access": false,
+    "allow_access": true,
     "allow_download": false
   }
 ]
