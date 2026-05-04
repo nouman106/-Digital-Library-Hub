@@ -22,5 +22,17 @@
     "description": "",
     "allow_access": true,
     "allow_download": false
+  },
+  {
+    "id": 1777865836437,
+    "title": "Pip And The WHispering Library",
+    "author": "",
+    "category": "islamic",
+    "price": "1000",
+    "pdf_url": "",
+    "cover_url": "https://raw.githubusercontent.com/nouman106/-Digital-Library-Hub/main/covers/1777865789835_b0nruv.png",
+    "description": "",
+    "allow_access": true,
+    "allow_download": true
   }
 ]
