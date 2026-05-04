@@ -1,0 +1,28 @@
+{
+  "name": "digital-library-hub",
+  "version": "1.0.0",
+  "description": "KitabGhar - Digital Library Hub with Urdu books",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"No tests specified\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nouman106/-Digital-Library-Hub.git"
+  },
+  "keywords": [
+    "library",
+    "books",
+    "urdu",
+    "digital-library"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nouman106/-Digital-Library-Hub/issues"
+  },
+  "homepage": "https://github.com/nouman106/-Digital-Library-Hub#readme",
+  "dependencies": {
+    "@vercel/speed-insights": "^2.0.0"
+  }
+}
