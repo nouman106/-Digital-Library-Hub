@@ -1,41 +1,5 @@
 [
   {
-    "id": 1777865504323,
-    "title": "The Little Bear Who Loast hid Eoar",
-    "author": "",
-    "category": "islamic",
-    "price": "1000",
-    "pdf_url": "https://raw.githubusercontent.com/nouman106/-Digital-Library-Hub/main/books-pdf/1777865421466_xofj41.pdf",
-    "cover_url": "https://raw.githubusercontent.com/nouman106/-Digital-Library-Hub/main/covers/1777865433049_nd0sl2.png",
-    "description": "Bear",
-    "allow_access": true,
-    "allow_download": false
-  },
-  {
-    "id": 1777865795486,
-    "title": "Robot",
-    "author": "1000",
-    "category": "islamic",
-    "price": "0",
-    "pdf_url": "",
-    "cover_url": "",
-    "description": "",
-    "allow_access": true,
-    "allow_download": false
-  },
-  {
-    "id": 1777865836437,
-    "title": "Pip And The WHispering Library",
-    "author": "",
-    "category": "islamic",
-    "price": "1000",
-    "pdf_url": "",
-    "cover_url": "https://raw.githubusercontent.com/nouman106/-Digital-Library-Hub/main/covers/1777865789835_b0nruv.png",
-    "description": "",
-    "allow_access": true,
-    "allow_download": true
-  },
-  {
     "id": 1777865905435,
     "title": "Elara Anf The MAgical Pain Brush",
     "author": "",
