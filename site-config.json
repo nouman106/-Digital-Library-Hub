@@ -5,10 +5,10 @@
   "logoHeight": 40,
   "footerText": "© 2025 KitabGhar — Tamam Huqooq Mahfooz Hain",
   "announcement": {
-    "enabled": true,
-    "text": "                                                                                                                                 Beta Version ",
+    "enabled": false,
+    "text": "Beta Version ",
     "icon": "📢",
-    "bgColor": "#ee3aac",
+    "bgColor": "#ee3a3a",
     "textColor": "#ffffff",
     "link": "",
     "linkText": "",
