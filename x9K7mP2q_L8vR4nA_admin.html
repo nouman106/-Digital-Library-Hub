@@ -89,6 +89,7 @@ th{color:var(--text2)}
       <button class="tab-btn active" data-tab="dashboard">📊 Dashboard</button>
       <button class="tab-btn" data-tab="books">📚 Books</button>
       <button class="tab-btn" data-tab="add-book">➕ Add Book</button>
+      <button class="tab-btn" data-tab="messages">📩 Messages</button>
       <button class="tab-btn" data-tab="storage">🗂️ Storage</button>
       <button class="tab-btn cust-tab" data-tab="customize" style="border:2px solid #7c3aed;color:#a78bfa">🎨 Customize</button>
       <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
@@ -463,6 +464,13 @@ th{color:var(--text2)}
       </div>
     </div>
     <!-- ═══════════════════════════════════════════════ -->
+
+    <div id="tab-messages" class="tab-pane">
+      <div class="card">
+        <h3 style="margin-bottom:1rem;color:var(--secondary)">📩 Contact Messages</h3>
+        <div id="messages-list"><div style="color:var(--text2)">⏳ Messages load ho rahi hain...</div></div>
+      </div>
+    </div>
 
     <div id="tab-settings" class="tab-pane">
       <div class="card" style="max-width:400px">
@@ -1003,6 +1011,7 @@ const origSwitchTab = switchTab;
 
 function switchTab(tab) {
   if (tab === 'customize') setTimeout(loadCustomizeSettings, 50);
+  if (tab === 'messages') setTimeout(loadMessages, 50);
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
   const btn = document.querySelector(`[data-tab="${tab}"]`);
@@ -1028,30 +1037,35 @@ function changePassword(){
   let newP = document.getElementById('new-pass').value;
   let conP = document.getElementById('confirm-pass').value;
   let msg = document.getElementById('pass-msg');
-
-  if(oldP !== ADMIN_PASS){
-    msg.style.color='#f44336';
-    msg.innerText='❌ Purana password galat hai!';
-    return;
-  }
-  if(newP.length < 6){
-    msg.style.color='#f44336';
-    msg.innerText='❌ Naya password kam az kam 6 characters ka hona chahiye!';
-    return;
-  }
-  if(newP !== conP){
-    msg.style.color='#f44336';
-    msg.innerText='❌ Naya password match nahi kiya!';
-    return;
-  }
+  if(oldP !== ADMIN_PASS){ msg.style.color='#f44336'; msg.innerText='❌ Purana password galat hai!'; return; }
+  if(newP.length < 6){ msg.style.color='#f44336'; msg.innerText='❌ Naya password 6 characters ka hona chahiye!'; return; }
+  if(newP !== conP){ msg.style.color='#f44336'; msg.innerText='❌ Naya password match nahi kiya!'; return; }
   ADMIN_PASS = newP;
   localStorage.setItem('admin_pass', newP);
-  msg.style.color='#06b6d4';
-  msg.innerText='✅ Password change ho gaya!';
+  msg.style.color='#06b6d4'; msg.innerText='✅ Password change ho gaya!';
   document.getElementById('old-pass').value='';
   document.getElementById('new-pass').value='';
   document.getElementById('confirm-pass').value='';
   showToast('✅ Password successfully change ho gaya!');
+}
+
+async function loadMessages(){
+  let sb = getSB();
+  let el = document.getElementById('messages-list');
+  if(!sb){ el.innerHTML='<div style="color:#f44336">❌ Supabase connect nahi hua</div>'; return; }
+  try {
+    let { data, error } = await sb.from('contacts').select('*').order('created_at',{ascending:false});
+    if(error){ el.innerHTML='<div style="color:#f44336">❌ ' + error.message + '</div>'; return; }
+    if(!data||data.length===0){ el.innerHTML='<div style="color:var(--text2)">📭 Koi message nahi</div>'; return; }
+    el.innerHTML = '<div style="overflow-x:auto"><table><thead><tr><th>Naam</th><th>Email</th><th>Message</th><th>Waqt</th></tr></thead><tbody>' +
+      data.map(m=>`<tr>
+        <td>${esc(m.name||'-')}</td>
+        <td>${esc(m.email||'-')}</td>
+        <td style="max-width:300px">${esc(m.message||'-')}</td>
+        <td style="font-size:.8rem;color:var(--text2)">${m.created_at?new Date(m.created_at).toLocaleString('ur-PK'):'-'}</td>
+      </tr>`).join('') +
+    '</tbody></table></div>';
+  } catch(e){ el.innerHTML='<div style="color:#f44336">❌ ' + e.message + '</div>'; }
 }
 
 function esc(s){ if(!s)return''; return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
