@@ -34,5 +34,17 @@
     "description": "",
     "allow_access": true,
     "allow_download": false
+  },
+  {
+    "id": 1777873219615,
+    "title": "as",
+    "author": "",
+    "category": "islamic",
+    "price": "0",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777873143069_3hi7q6.pdf",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777873152555_h7v4of.png",
+    "description": "",
+    "allow_access": true,
+    "allow_download": false
   }
 ]
