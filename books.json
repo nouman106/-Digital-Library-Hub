@@ -1,17 +1,5 @@
 [
   {
-    "id": 1777875528779,
-    "title": "idjddj",
-    "author": "",
-    "category": "islamic",
-    "price": "0",
-    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777875391682_iriz0o.pdf",
-    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777875399337_g9lv29.png",
-    "description": "",
-    "allow_access": true,
-    "allow_download": false
-  },
-  {
     "id": 1777876102920,
     "title": "ssjjssj",
     "author": "",
@@ -19,18 +7,6 @@
     "price": "0",
     "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777876067272_3x9iti.pdf",
     "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777876073579_omlsm9.png",
-    "description": "",
-    "allow_access": true,
-    "allow_download": false
-  },
-  {
-    "id": 1777876545468,
-    "title": "ccc",
-    "author": "",
-    "category": "islamic",
-    "price": "0",
-    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777876538559_jjby3x.pdf",
-    "cover_url": "",
     "description": "",
     "allow_access": true,
     "allow_download": false
