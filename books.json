@@ -24,5 +24,18 @@
     "allow_access": true,
     "allow_download": true,
     "wallpaper_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777888731969_fgoi5m.jpg"
+  },
+  {
+    "id": 1777888886096,
+    "title": "Robot",
+    "author": "",
+    "category": "islamic",
+    "price": "0",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777888838332_nc00af.pdf",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777888845847_1381xs.png",
+    "description": "",
+    "allow_access": true,
+    "allow_download": false,
+    "wallpaper_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777888857747_g4m5ew.png"
   }
 ]
