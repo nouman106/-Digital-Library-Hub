@@ -24,15 +24,15 @@
     "allow_download": true
   },
   {
-    "id": 1777870188850,
-    "title": "snsnsns",
+    "id": 1777870302611,
+    "title": "beadgsdsd",
     "author": "",
     "category": "islamic",
     "price": "0",
-    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777870143716_4iekty.pdf",
-    "cover_url": "",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777870244270_lshgku.pdf",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777870252133_q2m7jm.png",
     "description": "",
     "allow_access": true,
-    "allow_download": false
+    "allow_download": true
   }
 ]
