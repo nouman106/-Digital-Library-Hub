@@ -1,0 +1,25 @@
+{
+  "name": "digital-library-hub",
+  "version": "1.0.0",
+  "description": "KitabGhar - Digital Library Hub",
+  "type": "module",
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "npm run build:analytics",
+    "build:analytics": "esbuild analytics.js --bundle --format=esm --outfile=analytics.bundle.js",
+    "lint": "echo 'No linter configured'"
+  },
+  "keywords": [
+    "library",
+    "books",
+    "urdu"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/analytics": "^1.4.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0"
+  }
+}
