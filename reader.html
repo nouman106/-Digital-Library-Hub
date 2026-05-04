@@ -19,9 +19,37 @@ canvas{width:100%;height:auto;display:block}
 #progress-bar-wrap{background:#333;height:4px;width:100%;position:sticky;top:0;z-index:10}
 #progress-bar{height:4px;background:#7c3aed;width:0%;transition:width 0.3s}
 #page-counter{text-align:center;color:#aaa;font-size:.8rem;padding:4px;background:#1e1e2f;position:sticky;top:4px;z-index:9}
+
+/* Entry overlay */
+#fs-overlay{
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(135deg,#1e1e2f,#2d1b69);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:1.5rem;
+  color:#fff;cursor:pointer;user-select:none;
+}
+#fs-overlay .start-btn{
+  background:#7c3aed;padding:14px 44px;border-radius:30px;
+  font-size:1.15rem;font-weight:700;
+  box-shadow:0 0 28px #7c3aed99;
+  transition:transform .1s;
+}
+#fs-overlay:active .start-btn{transform:scale(0.96)}
 </style>
 </head>
 <body>
+
+<!-- Entry Screen -->
+<div id="fs-overlay">
+  <div style="font-size:4rem">📖</div>
+  <div style="font-size:1.7rem;font-weight:700;color:#c4b5fd">KitabGhar Reader</div>
+  <div style="font-size:1rem;color:#a78bfa;text-align:center;line-height:1.9">
+    Kitab padhne ke liye<br>screen par tap karein
+  </div>
+  <div class="start-btn">▶ Shuru Karein</div>
+  <div style="font-size:0.72rem;color:#6b7280;margin-top:0.3rem">Full screen mein khulega</div>
+</div>
+
 <header>
   <button class="btn" onclick="location.href='index.html'">← Wapas</button>
   <span id="book-title">KitabGhar Reader</span>
@@ -42,6 +70,59 @@ canvas{width:100%;height:auto;display:block}
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 let pdfDoc = null, scale = 1.2, currentUrl = '', renderedPages = 0;
 
+// ===== FULLSCREEN FUNCTIONS =====
+function enterFullscreen(){
+  let el = document.documentElement;
+  let p = el.requestFullscreen ? el.requestFullscreen()
+        : el.webkitRequestFullscreen ? el.webkitRequestFullscreen()
+        : el.mozRequestFullScreen ? el.mozRequestFullScreen()
+        : el.msRequestFullscreen ? el.msRequestFullscreen()
+        : null;
+  return (p && p.catch) ? p.catch(()=>{}) : Promise.resolve();
+}
+
+function isFullscreen(){
+  return !!(document.fullscreenElement || document.webkitFullscreenElement ||
+            document.mozFullScreenElement || document.msFullscreenElement);
+}
+
+// Fullscreen se nikle to wapas andar
+function onFsChange(){
+  if(!isFullscreen()) setTimeout(()=>enterFullscreen(), 100);
+}
+document.addEventListener('fullscreenchange', onFsChange);
+document.addEventListener('webkitfullscreenchange', onFsChange);
+document.addEventListener('mozfullscreenchange', onFsChange);
+document.addEventListener('msfullscreenchange', onFsChange);
+
+// Keys block karo
+document.addEventListener('keydown', function(e){
+  if(['F11','Escape','F5'].includes(e.key)){
+    e.preventDefault(); e.stopPropagation();
+  }
+  if((e.ctrlKey||e.metaKey) && ['w','W','r','R','t','T'].includes(e.key)){
+    e.preventDefault(); e.stopPropagation();
+  }
+}, true);
+
+// Right click band
+document.addEventListener('contextmenu', e => e.preventDefault());
+
+// ===== ENTRY SCREEN =====
+const overlay = document.getElementById('fs-overlay');
+
+async function startReading(){
+  await enterFullscreen();
+  overlay.style.display = 'none';
+  init();
+}
+overlay.addEventListener('click', startReading);
+overlay.addEventListener('touchstart', function(e){
+  e.preventDefault();
+  startReading();
+}, {passive:false});
+
+// ===== PDF FUNCTIONS =====
 async function init(){
   let id = new URLSearchParams(location.search).get('id');
   if(!id){ showMsg('⚠️ ID nahi mili'); return; }
@@ -77,7 +158,6 @@ async function renderProgressively(){
   renderedPages = 0;
   let total = pdfDoc.numPages;
 
-  // Pehle saare placeholders banao
   let divs = [];
   for(let i = 1; i <= total; i++){
     let div = document.createElement('div');
@@ -94,7 +174,6 @@ async function renderProgressively(){
 
   updateCounter(0, total);
 
-  // IntersectionObserver — sirf visible pages render karo
   let observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if(entry.isIntersecting){
@@ -105,11 +184,10 @@ async function renderProgressively(){
         }
       }
     });
-  }, { rootMargin: '300px' }); // 300px pehle se load shuru
+  }, { rootMargin: '300px' });
 
   divs.forEach(div => observer.observe(div));
 
-  // Page 1 aur 2 turant render karo bina wait ke
   renderPage(1, divs[0], total);
   if(total > 1) renderPage(2, divs[1], total);
 }
@@ -117,7 +195,6 @@ async function renderProgressively(){
 async function renderPage(pageNum, container, total){
   if(container.dataset.rendering) return;
   container.dataset.rendering = 'true';
-
   try{
     let page = await pdfDoc.getPage(pageNum);
     let vp = page.getViewport({scale});
@@ -153,47 +230,6 @@ function showMsg(msg){
 
 async function zoomIn(){ scale = Math.min(scale+0.2, 3); if(pdfDoc) await renderProgressively(); }
 async function zoomOut(){ scale = Math.max(scale-0.2, 0.6); if(pdfDoc) await renderProgressively(); }
-
-// ========== FULLSCREEN LOCK ==========
-function enterFullscreen(){
-  let el = document.documentElement;
-  if(el.requestFullscreen) el.requestFullscreen();
-  else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-  else if(el.mozRequestFullScreen) el.mozRequestFullScreen();
-  else if(el.msRequestFullscreen) el.msRequestFullscreen();
-}
-
-function isFullscreen(){
-  return !!(document.fullscreenElement || document.webkitFullscreenElement ||
-            document.mozFullScreenElement || document.msFullscreenElement);
-}
-
-// Jab bhi fullscreen se bahar jaye, wapas andar kar do
-document.addEventListener('fullscreenchange', () => { if(!isFullscreen()) setTimeout(enterFullscreen, 200); });
-document.addEventListener('webkitfullscreenchange', () => { if(!isFullscreen()) setTimeout(enterFullscreen, 200); });
-document.addEventListener('mozfullscreenchange', () => { if(!isFullscreen()) setTimeout(enterFullscreen, 200); });
-document.addEventListener('msfullscreenchange', () => { if(!isFullscreen()) setTimeout(enterFullscreen, 200); });
-
-// F11 aur Escape block karo
-document.addEventListener('keydown', (e) => {
-  if(e.key === 'F11'){ e.preventDefault(); }
-  if(e.key === 'Escape'){ e.preventDefault(); setTimeout(enterFullscreen, 200); }
-});
-
-// Pehli baar user click karte hi fullscreen shuru
-function startFullscreen(){
-  enterFullscreen();
-  document.removeEventListener('click', startFullscreen);
-  document.removeEventListener('touchstart', startFullscreen);
-}
-document.addEventListener('click', startFullscreen);
-document.addEventListener('touchstart', startFullscreen);
-
-// agar auto allowed ho (kuch browsers mein hota hai)
-window.addEventListener('load', () => { try{ enterFullscreen(); }catch(e){} });
-// ======================================
-
-init();
 </script>
 </body>
 </html>
