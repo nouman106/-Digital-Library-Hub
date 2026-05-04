@@ -34,5 +34,17 @@
     "description": "",
     "allow_access": true,
     "allow_download": true
+  },
+  {
+    "id": 1777865905435,
+    "title": "Elara Anf The MAgical Pain Brush",
+    "author": "",
+    "category": "kids",
+    "price": "1000",
+    "pdf_url": "",
+    "cover_url": "https://raw.githubusercontent.com/nouman106/-Digital-Library-Hub/main/covers/1777865870080_qnb1u7.png",
+    "description": "",
+    "allow_access": true,
+    "allow_download": false
   }
 ]
