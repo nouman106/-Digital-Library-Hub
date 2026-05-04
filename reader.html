@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Reader — KitabGhar</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{display:flex;flex-direction:column;height:100vh;font-family:'Segoe UI',sans-serif;background:#525659}
+header{background:#1e1e2f;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;flex-shrink:0}
+#book-title{font-weight:600;font-size:.95rem;flex:1;text-align:center;color:#fff}
+.btn{background:#7c3aed;border:none;color:#fff;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:.9rem}
+.btn:disabled{background:#444;cursor:not-allowed}
+#pdf-container{flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:1rem}
+#page-canvas{max-width:100%;box-shadow:0 0 20px rgba(0,0,0,0.5);background:#fff}
+.msg{text-align:center;padding:3rem;color:#eee;font-size:1.1rem;line-height:2}
+.controls{background:#1e1e2f;padding:8px 20px;display:flex;justify-content:center;align-items:center;gap:1rem;flex-shrink:0}
+#page-info{color:#ccc;font-size:.9rem;min-width:80px;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <button class="btn" onclick="location.href='index.html'">← Wapas</button>
+  <span id="book-title">KitabGhar Reader</span>
+  <div style="display:flex;gap:6px">
+    <button class="btn" onclick="zoomIn()">🔍+</button>
+    <button class="btn" onclick="zoomOut()">🔍−</button>
+  </div>
+</header>
+
+<div id="pdf-container">
+  <div id="msg" class="msg">📖 Kitab load ho rahi hai...</div>
+  <canvas id="page-canvas" style="display:none"></canvas>
+</div>
+
+<div class="controls" id="controls" style="display:none">
+  <button class="btn" id="prev-btn" onclick="changePage(-1)">◀ Pichla</button>
+  <span id="page-info">1 / 1</span>
+  <button class="btn" id="next-btn" onclick="changePage(1)">Agla ▶</button>
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+let pdfDoc = null, currentPage = 1, scale = 1.5, rendering = false;
+
+async function init(){
+  let id = new URLSearchParams(location.search).get('id');
+  if(!id){ showMsg('⚠️ ID nahi mili'); return; }
+  try{
+    let res = await fetch('books.json?t='+Date.now());
+    let books = await res.json();
+    let book = books.find(b => String(b.id) === String(id));
+    if(!book){ showMsg('❌ Kitab nahi mili'); return; }
+    if(book.allow_access === false){ showMsg('🔒 Yeh kitab dastiyab nahi'); return; }
+    if(!book.pdf_url){ showMsg('⚠️ PDF abhi upload nahi ki gayi'); return; }
+    document.title = (book.title||'Kitab') + ' — KitabGhar';
+    document.getElementById('book-title').innerText = book.title||'Kitab';
+    pdfDoc = await pdfjsLib.getDocument({ url: book.pdf_url, withCredentials: false }).promise;
+    document.getElementById('msg').style.display = 'none';
+    document.getElementById('page-canvas').style.display = 'block';
+    document.getElementById('controls').style.display = 'flex';
+    renderPage(1);
+  } catch(e){
+    showMsg('❌ PDF load nahi hui: ' + e.message);
+  }
+}
+
+async function renderPage(num){
+  if(rendering || !pdfDoc) return;
+  rendering = true;
+  currentPage = num;
+  document.getElementById('page-info').innerText = num + ' / ' + pdfDoc.numPages;
+  document.getElementById('prev-btn').disabled = num <= 1;
+  document.getElementById('next-btn').disabled = num >= pdfDoc.numPages;
+  let page = await pdfDoc.getPage(num);
+  let vp = page.getViewport({scale});
+  let canvas = document.getElementById('page-canvas');
+  canvas.height = vp.height;
+  canvas.width = vp.width;
+  await page.render({canvasContext: canvas.getContext('2d'), viewport: vp}).promise;
+  rendering = false;
+  document.getElementById('pdf-container').scrollTop = 0;
+}
+
+function changePage(dir){
+  let np = currentPage + dir;
+  if(np < 1 || np > pdfDoc.numPages) return;
+  renderPage(np);
+}
+
+function zoomIn(){ scale = Math.min(scale+0.2,3); if(pdfDoc) renderPage(currentPage); }
+function zoomOut(){ scale = Math.max(scale-0.2,0.5); if(pdfDoc) renderPage(currentPage); }
+
+function showMsg(msg){
+  document.getElementById('msg').style.display = 'block';
+  document.getElementById('msg').innerHTML = msg + '<br><a href="index.html" style="color:#9f5bff">← Home Wapas</a>';
+  document.getElementById('page-canvas').style.display = 'none';
+  document.getElementById('controls').style.display = 'none';
+}
+
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') changePage(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') changePage(-1);
+});
+
+init();
+</script>
+</body>
+</html>
