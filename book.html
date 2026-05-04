@@ -38,6 +38,21 @@ async function loadBook() {
 
     document.title = book.title + ' — KitabGhar';
 
+    // ── Book-specific wallpaper (sab se pehle apply karo) ──
+    if (book.wallpaper_url) {
+      document.body.style.backgroundImage = `url(${book.wallpaper_url})`;
+      document.body.style.backgroundSize = 'cover';
+      document.body.style.backgroundPosition = 'center';
+      document.body.style.backgroundAttachment = 'fixed';
+      document.body.style.backgroundRepeat = 'no-repeat';
+      // Halka dark overlay taa ke text parha ja sake
+      const ov = document.createElement('div');
+      ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);pointer-events:none;z-index:0';
+      document.body.insertBefore(ov, document.body.firstChild);
+      document.getElementById('book-container').style.position = 'relative';
+      document.getElementById('book-container').style.zIndex = '1';
+    }
+
     show(`
       ${book.cover_url ? `<img class="cover" src="${book.cover_url}" onerror="this.style.display='none'">` : '<div style="font-size:4rem">📖</div>'}
       <h1>${esc(book.title)}</h1>
