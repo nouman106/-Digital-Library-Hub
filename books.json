@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": 1777865504323,
+    "title": "The Little Bear Who Loast hid Eoar",
+    "author": "",
+    "category": "islamic",
+    "price": "1000",
+    "pdf_url": "https://raw.githubusercontent.com/nouman106/-Digital-Library-Hub/main/books-pdf/1777865421466_xofj41.pdf",
+    "cover_url": "https://raw.githubusercontent.com/nouman106/-Digital-Library-Hub/main/covers/1777865433049_nd0sl2.png",
+    "description": "Bear",
+    "allow_access": true,
+    "allow_download": false
+  }
+]
