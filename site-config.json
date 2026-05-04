@@ -1,0 +1,49 @@
+{
+  "siteName": "KitabGhar",
+  "siteTagline": "Ilm ki Duniya",
+  "logoUrl": "",
+  "logoHeight": 40,
+  "footerText": "© 2025 KitabGhar — Tamam Huqooq Mahfooz Hain",
+  "announcement": {
+    "enabled": false,
+    "text": "       Beta Version ",
+    "icon": "📢",
+    "bgColor": "#7c3aed",
+    "textColor": "#ffffff",
+    "link": "",
+    "linkText": "",
+    "dismissible": true
+  },
+  "homepage": {
+    "bgType": "color",
+    "bgColor": "#0a0a1a",
+    "gradColor1": "#0a0a1a",
+    "gradColor2": "#1a1050",
+    "gradDir": "135deg",
+    "bgImageUrl": "",
+    "bgSize": "cover",
+    "bgPos": "center",
+    "bgOverlay": "0.5",
+    "heroGrad1": "#0d0928",
+    "heroGrad2": "#1a1050"
+  },
+  "reader": {
+    "bgType": "color",
+    "bgColor": "#525659",
+    "gradColor1": "#0a0a1a",
+    "gradColor2": "#1a0a2e",
+    "bgImageUrl": "",
+    "bgOverlay": "0.6"
+  },
+  "bookPage": {
+    "bgType": "color",
+    "bgColor": "#0a0a1a",
+    "gradColor1": "#0a0a1a",
+    "gradColor2": "#1a1050",
+    "bgImageUrl": ""
+  },
+  "colors": {
+    "primary": "#7c3aed",
+    "secondary": "#06b6d4"
+  }
+}
