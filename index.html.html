@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>KitabGhar — Ilm ki Duniya</title>
+<script src="site-config.js"></script>
+<style>
+:root{--bg:#0a0a1a;--bg2:#0f0f2a;--bg3:#13132e;--text:#e8e8f8;--text2:#a0a0c8;--text3:#6060a0;--primary:#7c3aed;--primary2:#9f5bff;--secondary:#06b6d4;--border:#1e1e4a;--border2:#1a1a3e;--card:#0f0f2a;--radius:14px;--radius-sm:8px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text)}
+nav{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 1rem;display:flex;align-items:center;gap:1rem;height:60px;flex-wrap:wrap}
+.nav-logo{font-weight:700;font-size:1.2rem;background:linear-gradient(135deg,var(--primary2),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-search{flex:1;min-width:180px;position:relative}
+.nav-search input{width:100%;padding:7px 14px 7px 36px;border:1px solid var(--border);border-radius:20px;background:var(--bg3);color:var(--text);outline:none}
+.nav-search .si{position:absolute;left:11px;top:50%;transform:translateY(-50%)}
+.nav-links{display:flex;align-items:center;gap:.8rem;margin-left:auto}
+.nav-links a{color:var(--text2);text-decoration:none;padding:5px 8px}
+.nav-links a:hover{color:var(--secondary)}
+.announcement-bar{background:var(--primary);color:#fff;text-align:center;padding:8px;font-size:.85rem}
+.hero{background:linear-gradient(135deg,#0d0928,#1a1050);padding:4rem 1rem;text-align:center}
+.hero h1{font-size:2.5rem;background:linear-gradient(135deg,var(--primary2),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem}
+.hero p{color:var(--text2);font-size:1.1rem}
+.main{max-width:1200px;margin:0 auto;padding:1rem}
+.filters{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;margin-top:1rem}
+.filter-btn{padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);cursor:pointer}
+.filter-btn.active{background:var(--primary);color:#fff}
+.books-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1.2rem}
+.book-card{background:var(--card);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:transform .2s;border:1px solid var(--border2)}
+.book-card:hover{transform:translateY(-4px);border-color:var(--primary)}
+.book-cover-img{width:100%;aspect-ratio:3/4;object-fit:cover}
+.book-info{padding:.8rem}
+.book-title{font-weight:600;margin-bottom:.2rem;font-size:.95rem}
+.book-author{font-size:.75rem;color:var(--text3)}
+.price-tag{font-size:.8rem;color:var(--secondary);margin-top:.3rem}
+.no-books{text-align:center;padding:3rem;color:var(--text3);font-size:1.1rem;grid-column:1/-1}
+.section{max-width:1200px;margin:2rem auto;padding:0 1rem}
+.section-title{font-size:1.5rem;text-align:center;margin-bottom:1.2rem;background:linear-gradient(135deg,var(--primary2),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+.feature-card{background:var(--bg2);border-radius:var(--radius-sm);padding:1rem;text-align:center;border:1px solid var(--border2)}
+.feature-card .icon{font-size:2rem;margin-bottom:.5rem}
+.about-box{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:2rem;max-width:800px;margin:0 auto;text-align:center;line-height:1.8;color:var(--text2)}
+.contact-form{max-width:600px;margin:1rem auto;display:grid;gap:1rem}
+.contact-form input,.contact-form textarea{padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--text);width:100%;font-family:'Segoe UI',sans-serif}
+.contact-form button{background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;padding:12px;border-radius:30px;color:#fff;cursor:pointer;font-weight:bold}
+footer{background:var(--bg2);text-align:center;padding:1rem;margin-top:2rem;color:var(--text3);border-top:1px solid var(--border)}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--primary);color:#fff;padding:10px 18px;border-radius:8px;opacity:0;transition:all .3s;pointer-events:none;z-index:9999}
+.toast.show{opacity:1}
+</style>
+</head>
+<body data-page="index">
+<div class="announcement-bar" id="announcement-bar">📢 KitabGhar mein aapka khairm maqdam hai!</div>
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo kg-logo-text">📚 <span class="kg-site-name">KitabGhar</span></div>
+    <div class="nav-search"><span class="si">🔍</span><input type="text" id="search-input" placeholder="Kitab dhundhen..."></div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#about">About</a>
+      <a href="contact.html">رابطہ</a>
+      <a href="terms.html">Rules</a>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>📚 <span class="kg-site-name">KitabGhar</span></h1>
+  <p class="kg-tagline">Ilm ki Duniya — Muft Online Library</p>
+</div>
+
+<div class="main">
+  <div class="filters" id="filters">
+    <button class="filter-btn active" data-cat="all">📚 Sab</button>
+    <button class="filter-btn" data-cat="islamic">☪️ Islami</button>
+    <button class="filter-btn" data-cat="educational">🎓 Talimi</button>
+    <button class="filter-btn" data-cat="motivational">🔥 Hosla Afzai</button>
+    <button class="filter-btn" data-cat="kids">🧒 Bachon Ki</button>
+    <button class="filter-btn" data-cat="other">📖 Aur</button>
+  </div>
+  <div class="books-grid" id="books-grid">
+    <div class="no-books">📖 Kitabein load ho rahi hain...</div>
+  </div>
+</div>
+
+<div class="section" id="features">
+  <div class="section-title">✨ Hamare Khaas Features</div>
+  <div class="features-grid">
+    <div class="feature-card"><div class="icon">📖</div><strong>Asaan Mutalia</strong><div>Browser mein seedha parhen</div></div>
+    <div class="feature-card"><div class="icon">🆓</div><strong>Muft Kitabein</strong><div>Kai kitabein muft dastiyab</div></div>
+    <div class="feature-card"><div class="icon">🌙</div><strong>Dark Mode</strong><div>Aankhon ka sukoon</div></div>
+    <div class="feature-card"><div class="icon">📱</div><strong>Mobile Friendly</strong><div>Har device par kaam kare</div></div>
+  </div>
+</div>
+
+<div class="section" id="about">
+  <div class="section-title">📜 Hamare Baare Mein</div>
+  <div class="about-box">KitabGhar ek muft online Urdu library hai. Yahan aap Islamic, talimi, aur hosla afzai kitabein parh sakte hain. Hamaara maqsad ilm ko sab ke liye aasaan banana hai.</div>
+</div>
+
+<div class="section" id="contact">
+  <div class="section-title">📩 Rabta Karein</div>
+  <form id="contact-form" class="contact-form">
+    <input type="text" id="cname" placeholder="Aapka naam" required>
+    <input type="email" id="cemail" placeholder="Email" required>
+    <textarea id="cmsg" rows="4" placeholder="Apna paigham likhein..."></textarea>
+    <button type="submit">📨 Bhejein</button>
+  </form>
+  <p style="text-align:center;margin-top:1rem;color:var(--text3)">Ya seedha email karein: <a href="mailto:admin@kitabghar.com" style="color:var(--secondary)">admin@kitabghar.com</a></p>
+</div>
+
+<footer><span class="kg-footer">© 2025 KitabGhar — Tamam Huqooq Mahfooz Hain</span></footer>
+<div class="toast" id="toast"></div>
+
+<script>
+let allBooks = [], currentFilter = 'all', currentSearch = '';
+
+// Books load karo JSON se — koi database nahi!
+async function loadBooks() {
+  try {
+    const res = await fetch('books.json?t=' + Date.now());
+    if (!res.ok) throw new Error('books.json nahi mili');
+    allBooks = await res.json();
+    allBooks = allBooks.filter(b => b.allow_access !== false);
+    renderBooks();
+  } catch(e) {
+    document.getElementById('books-grid').innerHTML =
+      '<div class="no-books">❌ Kitabein load nahi hui: ' + e.message + '</div>';
+  }
+}
+
+function renderBooks() {
+  let filtered = allBooks;
+  if (currentFilter !== 'all') filtered = filtered.filter(b => b.category === currentFilter);
+  if (currentSearch) filtered = filtered.filter(b =>
+    b.title?.toLowerCase().includes(currentSearch) ||
+    b.author?.toLowerCase().includes(currentSearch)
+  );
+  if (filtered.length === 0) {
+    document.getElementById('books-grid').innerHTML = '<div class="no-books">📭 Koi kitab nahi mili.</div>';
+    return;
+  }
+  document.getElementById('books-grid').innerHTML = filtered.map(b => `
+    <div class="book-card" onclick="location.href='book.html?id=${b.id}'">
+      <img class="book-cover-img"
+        src="${b.cover_url || 'https://via.placeholder.com/180x240?text=📖'}"
+        onerror="this.src='https://via.placeholder.com/180x240?text=📖'">
+      <div class="book-info">
+        <div class="book-title">${esc(b.title)}</div>
+        <div class="book-author">${esc(b.author || '')}</div>
+        <div class="price-tag">${b.price==0||b.price=='0'?'🆓 Muft':'Rs.'+b.price}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function esc(s){ if(!s)return''; return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+document.getElementById('filters').addEventListener('click', e => {
+  let btn = e.target.closest('.filter-btn');
+  if (btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.cat;
+    renderBooks();
+  }
+});
+
+document.getElementById('search-input').addEventListener('input', e => {
+  currentSearch = e.target.value.toLowerCase();
+  renderBooks();
+});
+
+// Contact form — EmailJS (free)
+document.getElementById('contact-form').addEventListener('submit', e => {
+  e.preventDefault();
+  showToast('✅ Shukriya! Hum jald rabta karein ge.');
+  e.target.reset();
+});
+
+function showToast(msg){
+  let t=document.getElementById('toast');
+  t.innerText=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+loadBooks();
+</script>
+</body>
+</html>
