@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": 1777883203443,
+    "title": "gfkgkg",
+    "author": "",
+    "category": "islamic",
+    "price": "0",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777883185337_jgfoez.pdf",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777883192150_e862bv.png",
+    "description": "",
+    "allow_access": true,
+    "allow_download": true
+  }
+]
