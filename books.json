@@ -10,5 +10,17 @@
     "description": "",
     "allow_access": true,
     "allow_download": false
+  },
+  {
+    "id": 1777872708148,
+    "title": "gggg",
+    "author": "",
+    "category": "islamic",
+    "price": "0",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777872651834_c2d1gv.pdf",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777872662706_ygvwx7.png",
+    "description": "",
+    "allow_access": true,
+    "allow_download": false
   }
 ]
