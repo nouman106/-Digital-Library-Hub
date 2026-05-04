@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": 1777869684548,
+    "title": "Nouman",
+    "author": "",
+    "category": "islamic",
+    "price": "0",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777869631459_kydr38.pdf",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777869637682_quh7ia.png",
+    "description": "",
+    "allow_access": true,
+    "allow_download": false
+  }
+]
