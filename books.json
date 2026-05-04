@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": 1777878528229,
+    "title": "jjj",
+    "author": "",
+    "category": "islamic",
+    "price": "0",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777878514376_939png.pdf",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777878525164_ntnmni.png",
+    "description": "",
+    "allow_access": true,
+    "allow_download": true
+  }
+]
