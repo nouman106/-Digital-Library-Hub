@@ -6,13 +6,13 @@
   "footerText": "© 2025 KitabGhar — Tamam Huqooq Mahfooz Hain",
   "announcement": {
     "enabled": true,
-    "text": "       Beta Version ",
+    "text": "                                                                                                                                 Beta Version ",
     "icon": "📢",
     "bgColor": "#7c3aed",
     "textColor": "#ffffff",
     "link": "",
     "linkText": "",
-    "dismissible": false
+    "dismissible": true
   },
   "homepage": {
     "bgType": "color",
