@@ -58,5 +58,18 @@
     "description": "",
     "allow_access": true,
     "allow_download": true
+  },
+  {
+    "id": 1777888113799,
+    "title": "The Little Bear Who Loast His Roar",
+    "author": "Nouman iqbal",
+    "category": "islamic",
+    "price": "1000",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777888029066_fiz5ox.pdf",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777888038107_guztmx.png",
+    "description": "",
+    "allow_access": true,
+    "allow_download": false,
+    "wallpaper_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777888045885_5ja4el.png"
   }
 ]
