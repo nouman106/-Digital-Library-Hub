@@ -46,5 +46,17 @@
     "description": "",
     "allow_access": true,
     "allow_download": false
+  },
+  {
+    "id": 1777876545468,
+    "title": "ccc",
+    "author": "",
+    "category": "islamic",
+    "price": "0",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777876538559_jjby3x.pdf",
+    "cover_url": "",
+    "description": "",
+    "allow_access": true,
+    "allow_download": false
   }
 ]
