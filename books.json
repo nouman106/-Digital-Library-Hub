@@ -63,5 +63,18 @@
     "allow_access": true,
     "allow_download": false,
     "wallpaper_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777892535356_foakz1.png"
+  },
+  {
+    "id": 1777900311977,
+    "title": "Luna And Lost Star",
+    "author": "",
+    "category": "kids",
+    "price": "0",
+    "pdf_url": "",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777900300035_ktio8x.webp",
+    "description": "",
+    "allow_access": true,
+    "allow_download": true,
+    "wallpaper_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777900305168_h1gy3s.webp"
   }
 ]
