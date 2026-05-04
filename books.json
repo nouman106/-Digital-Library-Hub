@@ -1,17 +1,5 @@
 [
   {
-    "id": 1777884360462,
-    "title": "sss",
-    "author": "",
-    "category": "islamic",
-    "price": "0",
-    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777884351388_mswgff.pdf",
-    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777884356787_tqufi6.png",
-    "description": "",
-    "allow_access": true,
-    "allow_download": true
-  },
-  {
     "id": 1777885790189,
     "title": "bear",
     "author": "",
