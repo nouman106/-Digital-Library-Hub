@@ -46,5 +46,17 @@
     "description": "",
     "allow_access": true,
     "allow_download": true
+  },
+  {
+    "id": 1777868292876,
+    "title": "Nooma",
+    "author": "",
+    "category": "islamic",
+    "price": "0",
+    "pdf_url": "",
+    "cover_url": "https://raw.githubusercontent.com/nouman106/-Digital-Library-Hub/main/covers/1777868223865_vtkysn.png",
+    "description": "",
+    "allow_access": false,
+    "allow_download": false
   }
 ]
