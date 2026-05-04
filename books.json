@@ -1,29 +1,5 @@
 [
   {
-    "id": 1777874322727,
-    "title": "jcjc",
-    "author": "",
-    "category": "islamic",
-    "price": "0",
-    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777874273223_0ap7jw.pdf",
-    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777874281091_k95dy8.png",
-    "description": "",
-    "allow_access": true,
-    "allow_download": false
-  },
-  {
-    "id": 1777875528779,
-    "title": "idjddj",
-    "author": "",
-    "category": "islamic",
-    "price": "0",
-    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777875391682_iriz0o.pdf",
-    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777875399337_g9lv29.png",
-    "description": "",
-    "allow_access": true,
-    "allow_download": false
-  },
-  {
     "id": 1777875713754,
     "title": "Elara",
     "author": "",
@@ -36,18 +12,6 @@
     "allow_download": true
   },
   {
-    "id": 1777876102920,
-    "title": "ssjjssj",
-    "author": "",
-    "category": "islamic",
-    "price": "0",
-    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777876067272_3x9iti.pdf",
-    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777876073579_omlsm9.png",
-    "description": "",
-    "allow_access": true,
-    "allow_download": false
-  },
-  {
     "id": 1777876545468,
     "title": "ccc",
     "author": "",
@@ -58,17 +22,5 @@
     "description": "",
     "allow_access": true,
     "allow_download": false
-  },
-  {
-    "id": 1777876951232,
-    "title": "sksksk",
-    "author": "",
-    "category": "islamic",
-    "price": "0",
-    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777876944733_oc6kmz.pdf",
-    "cover_url": "",
-    "description": "",
-    "allow_access": true,
-    "allow_download": true
   }
 ]
