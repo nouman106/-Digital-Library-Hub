@@ -11,5 +11,18 @@
     "allow_access": true,
     "allow_download": false,
     "wallpaper_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777888616247_e6imv9.png"
+  },
+  {
+    "id": 1777888809596,
+    "title": "Pip And The Whispering Library",
+    "author": "Nouman iqbal",
+    "category": "islamic",
+    "price": "0",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777888720687_4btmrc.pdf",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777888726362_9154bj.png",
+    "description": "",
+    "allow_access": true,
+    "allow_download": true,
+    "wallpaper_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777888731969_fgoi5m.jpg"
   }
 ]
