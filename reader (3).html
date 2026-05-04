@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Reader — KitabGhar</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;height:100vh;overflow:hidden;cursor:none}
+#canvas-area{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;overflow:auto}
+#page-canvas{max-width:100vw;max-height:100vh;object-fit:contain}
+.msg{color:#eee;font-size:1rem;text-align:center;padding:2rem;line-height:2;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+
+/* UI — mouse hilane par dikhe */
+#ui{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  background:linear-gradient(transparent,rgba(0,0,0,0.85));
+  padding:20px 30px 15px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:1.5rem;
+  opacity:0;
+  transition:opacity .3s;
+  z-index:100;
+}
+#ui.show{opacity:1}
+.btn{background:rgba(124,58,237,0.9);border:none;color:#fff;padding:8px 18px;border-radius:20px;cursor:pointer;font-size:.9rem;backdrop-filter:blur(4px)}
+.btn:disabled{background:rgba(80,80,80,0.7);cursor:not-allowed}
+#page-info{color:#fff;font-size:.9rem;min-width:80px;text-align:center}
+
+/* Top bar — wapas button */
+#top-bar{
+  position:fixed;
+  top:0;left:0;right:0;
+  background:linear-gradient(rgba(0,0,0,0.8),transparent);
+  padding:12px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  opacity:0;
+  transition:opacity .3s;
+  z-index:100;
+}
+#top-bar.show{opacity:1}
+#book-title-top{color:#fff;font-size:.9rem;font-weight:600}
+</style>
+</head>
+<body>
+
+<div id="top-bar">
+  <button class="btn" onclick="location.href='index.html'">← Wapas</button>
+  <span id="book-title-top"></span>
+
+</div>
+
+<div id="canvas-area">
+  <div id="msg" class="msg">📖 Load ho rahi hai...</div>
+  <canvas id="page-canvas" style="display:none"></canvas>
+</div>
+
+<div id="ui">
+  <button class="btn" id="prev-btn" onclick="changePage(-1)" disabled>◀</button>
+  <span id="page-info">- / -</span>
+  <button class="btn" id="next-btn" onclick="changePage(1)" disabled>▶</button>
+  <button class="btn" onclick="zoomOut()">−</button>
+  <button class="btn" onclick="zoomIn()">+</button>
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+let pdfDoc=null,cur=1,scale=1.5,rendering=false,hideTimer=null;
+
+// Mouse hilane par UI show karo
+function showUI(){
+  document.getElementById('ui').classList.add('show');
+  document.getElementById('top-bar').classList.add('show');
+  document.body.style.cursor='default';
+  clearTimeout(hideTimer);
+  hideTimer=setTimeout(()=>{
+    document.getElementById('ui').classList.remove('show');
+    document.getElementById('top-bar').classList.remove('show');
+    document.body.style.cursor='none';
+  },2500);
+}
+document.addEventListener('mousemove',showUI);
+document.addEventListener('touchstart',showUI);
+
+async function init(){
+  let id=new URLSearchParams(location.search).get('id');
+  if(!id){showMsg('⚠️ ID nahi mili');return;}
+  try{
+    let books=await(await fetch('books.json?t='+Date.now())).json();
+    let book=books.find(b=>String(b.id)===String(id));
+    if(!book){showMsg('❌ Kitab nahi mili');return;}
+    if(book.allow_access===false){showMsg('🔒 Dastiyab nahi');return;}
+    if(!book.pdf_url){showMsg('⚠️ PDF upload nahi ki gayi');return;}
+    document.title=(book.title||'Kitab')+' — KitabGhar';
+    document.getElementById('book-title-top').innerText=book.title||'';
+    document.addEventListener('contextmenu',e=>e.preventDefault());
+    document.addEventListener('keydown',e=>{
+      if(e.key==='Escape')e.preventDefault();
+      if(e.ctrlKey&&['s','S','p','P'].includes(e.key))e.preventDefault();
+      if(e.key==='ArrowRight'||e.key==='ArrowDown')changePage(1);
+      if(e.key==='ArrowLeft'||e.key==='ArrowUp')changePage(-1);
+    });
+    // Screen pe click — right side agla, left side pichla
+    document.getElementById('canvas-area').addEventListener('click',e=>{
+      if(e.target.closest('button'))return;
+      if(e.clientX > window.innerWidth/2) changePage(1);
+      else changePage(-1);
+    });
+    showMsg('📖 PDF load ho rahi hai...');
+    pdfDoc=await pdfjsLib.getDocument({url:book.pdf_url,withCredentials:false}).promise;
+    document.getElementById('msg').style.display='none';
+    document.getElementById('page-canvas').style.display='block';
+    document.documentElement.requestFullscreen().catch(()=>{});
+    renderPage(1);
+  }catch(e){showMsg('❌ '+e.message);}
+}
+
+async function renderPage(num){
+  if(rendering||!pdfDoc)return;
+  rendering=true;
+  cur=num;
+  document.getElementById('page-info').innerText=num+' / '+pdfDoc.numPages;
+  document.getElementById('prev-btn').disabled=num<=1;
+  document.getElementById('next-btn').disabled=num>=pdfDoc.numPages;
+  let page=await pdfDoc.getPage(num);
+  let area=document.getElementById('canvas-area');
+  let vp0=page.getViewport({scale:1});
+  let sc=Math.min(area.clientWidth/vp0.width, area.clientHeight/vp0.height)*scale;
+  let viewport=page.getViewport({scale:sc});
+  let canvas=document.getElementById('page-canvas');
+  canvas.width=viewport.width;
+  canvas.height=viewport.height;
+  await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
+  rendering=false;
+}
+
+function changePage(dir){
+  let np=cur+dir;
+  if(!pdfDoc||np<1||np>pdfDoc.numPages)return;
+  renderPage(np);
+}
+function zoomIn(){scale=Math.min(scale+0.2,3);if(pdfDoc)renderPage(cur);}
+function zoomOut(){scale=Math.max(scale-0.2,0.3);if(pdfDoc)renderPage(cur);}
+document.addEventListener("fullscreenchange",()=>{ if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{}); });
+function toggleFS(){
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+  else document.exitFullscreen();
+}
+
+init();
+</script>
+</body>
+</html>
