@@ -1,15 +1,15 @@
 [
   {
-    "id": 1777888419456,
-    "title": "The little Bear Whow Lost His Roar",
+    "id": 1777888687283,
+    "title": "Elara And The Magical Paintbrush",
     "author": "",
-    "category": "kids",
+    "category": "islamic",
     "price": "0",
-    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777888354387_vcqrti.pdf",
-    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777888362846_y9qbmg.png",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777888603864_stt2z9.pdf",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777888610536_csbso1.png",
     "description": "",
     "allow_access": true,
-    "allow_download": true,
-    "wallpaper_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777888370580_26z119.png"
+    "allow_download": false,
+    "wallpaper_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777888616247_e6imv9.png"
   }
 ]
