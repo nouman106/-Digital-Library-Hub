@@ -76,5 +76,18 @@
     "allow_access": true,
     "allow_download": true,
     "wallpaper_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777900305168_h1gy3s.webp"
+  },
+  {
+    "id": 1777902081508,
+    "title": "Draco And the Glass Garden",
+    "author": "",
+    "category": "islamic",
+    "price": "0",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777901651448_3z7bzs.pdf",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777901839547_dz8car.webp",
+    "description": "This story isn't just about the dragon...\n\n👉 This is for everyone who:\n\nAfraid of mistakes\n\nConsiders their abilities as problems\n\nLoses confidence",
+    "allow_access": true,
+    "allow_download": true,
+    "wallpaper_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777902071772_7hmq08.webp"
   }
 ]
