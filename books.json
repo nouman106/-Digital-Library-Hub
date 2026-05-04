@@ -1,29 +1,5 @@
 [
   {
-    "id": 1777867091796,
-    "title": "The Little Beat WHow lost His Roar",
-    "author": "",
-    "category": "islamic",
-    "price": "0",
-    "pdf_url": "",
-    "cover_url": "https://raw.githubusercontent.com/nouman106/-Digital-Library-Hub/main/covers/1777867025261_3ymft1.png",
-    "description": "",
-    "allow_access": true,
-    "allow_download": false
-  },
-  {
-    "id": 1777867413006,
-    "title": "Digital",
-    "author": "",
-    "category": "islamic",
-    "price": "0",
-    "pdf_url": "https://raw.githubusercontent.com/nouman106/-Digital-Library-Hub/main/books-pdf/1777867282786_at5eea.pdf",
-    "cover_url": "https://raw.githubusercontent.com/nouman106/-Digital-Library-Hub/main/covers/1777867025261_3ymft1.png",
-    "description": "",
-    "allow_access": true,
-    "allow_download": true
-  },
-  {
     "id": 1777867456708,
     "title": "Digital",
     "author": "",
