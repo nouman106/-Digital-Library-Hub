@@ -141,14 +141,13 @@ function goBack(){
 
 // ===== ENTRY SCREEN =====
 var overlay = el('fs-overlay');
+var started = false;
 function startReading(){
-  enterFullscreen().then(function(){
-    overlay.style.display = 'none';
-    init();
-  }).catch(function(){
-    overlay.style.display = 'none';
-    init();
-  });
+  if(started) return;
+  started = true;
+  overlay.style.display = 'none';
+  try{ enterFullscreen(); }catch(e){}
+  init();
 }
 overlay.addEventListener('click', startReading);
 overlay.addEventListener('touchstart', function(e){
