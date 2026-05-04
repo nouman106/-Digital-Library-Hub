@@ -70,11 +70,11 @@
     "author": "",
     "category": "kids",
     "price": "0",
-    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777904002533_4pw5ac.pdf",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777904074466_3dkwf7.pdf",
     "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777900300035_ktio8x.webp",
     "description": "",
     "allow_access": true,
-    "allow_download": true,
+    "allow_download": false,
     "wallpaper_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777900305168_h1gy3s.webp"
   },
   {
