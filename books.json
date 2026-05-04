@@ -10,5 +10,17 @@
     "description": "",
     "allow_access": true,
     "allow_download": true
+  },
+  {
+    "id": 1777878695213,
+    "title": "jjdj",
+    "author": "",
+    "category": "islamic",
+    "price": "0",
+    "pdf_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/books-pdf/1777878642173_l647nb.pdf",
+    "cover_url": "https://ykmsizkprilhidqvxaqq.supabase.co/storage/v1/object/public/covers/1777878606467_1l68l8.png",
+    "description": "",
+    "allow_access": true,
+    "allow_download": false
   }
 ]
