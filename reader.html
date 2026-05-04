@@ -7,15 +7,16 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{display:flex;flex-direction:column;height:100vh;font-family:'Segoe UI',sans-serif;background:#525659;color:#eee}
-header{background:#1e1e2f;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;flex-shrink:0}
-#book-title{font-weight:600;font-size:1rem;flex:1;text-align:center;color:#fff}
-.btn{background:#7c3aed;border:none;color:#fff;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:.9rem;text-decoration:none;display:inline-block}
-#pdf-container{flex:1;overflow:auto;padding:1rem}
-.pdf-page{margin:0 auto 1rem;box-shadow:0 0 10px rgba(0,0,0,0.5);max-width:900px;background:#fff}
-canvas{width:100%;height:auto;display:block}
+body{display:flex;flex-direction:column;height:100vh;font-family:'Segoe UI',sans-serif;background:#525659}
+header{background:#1e1e2f;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap;flex-shrink:0}
+#book-title{font-weight:600;font-size:.95rem;flex:1;text-align:center;color:#fff}
+.btn{background:#7c3aed;border:none;color:#fff;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:.9rem}
+.btn:disabled{background:#444;cursor:not-allowed}
+#pdf-container{flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:1rem}
+#page-canvas{max-width:100%;box-shadow:0 0 20px rgba(0,0,0,0.5);background:#fff}
 .msg{text-align:center;padding:3rem;color:#eee;font-size:1.1rem;line-height:2}
-#loading{text-align:center;padding:1rem;color:#ccc;font-size:.9rem}
+.controls{background:#1e1e2f;padding:8px 20px;display:flex;justify-content:center;align-items:center;gap:1rem;flex-shrink:0}
+#page-info{color:#ccc;font-size:.9rem;min-width:80px;text-align:center}
 </style>
 </head>
 <body>
@@ -27,70 +28,81 @@ canvas{width:100%;height:auto;display:block}
     <button class="btn" onclick="zoomOut()">🔍−</button>
   </div>
 </header>
+
 <div id="pdf-container">
-  <div class="msg" id="msg">📖 Kitab load ho rahi hai...</div>
+  <div id="msg" class="msg">📖 Kitab load ho rahi hai...</div>
+  <canvas id="page-canvas" style="display:none"></canvas>
+</div>
+
+<div class="controls" id="controls" style="display:none">
+  <button class="btn" id="prev-btn" onclick="changePage(-1)">◀ Pichla</button>
+  <span id="page-info">1 / 1</span>
+  <button class="btn" id="next-btn" onclick="changePage(1)">Agla ▶</button>
 </div>
 
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-let pdfDoc = null, scale = 1.2, currentUrl = '';
+let pdfDoc = null, currentPage = 1, scale = 1.5, rendering = false;
 
 async function init(){
   let id = new URLSearchParams(location.search).get('id');
   if(!id){ showMsg('⚠️ ID nahi mili'); return; }
   try{
-    let books = await (await fetch('books.json?t='+Date.now())).json();
+    let res = await fetch('books.json?t='+Date.now());
+    let books = await res.json();
     let book = books.find(b => String(b.id) === String(id));
     if(!book){ showMsg('❌ Kitab nahi mili'); return; }
     if(book.allow_access === false){ showMsg('🔒 Yeh kitab dastiyab nahi'); return; }
     if(!book.pdf_url){ showMsg('⚠️ PDF abhi upload nahi ki gayi'); return; }
     document.title = (book.title||'Kitab') + ' — KitabGhar';
     document.getElementById('book-title').innerText = book.title||'Kitab';
-    currentUrl = book.pdf_url;
-    await loadPdf(book.pdf_url);
-  } catch(e){ showMsg('❌ ' + e.message); }
-}
-
-async function loadPdf(url){
-  try {
-    showMsg('📖 PDF load ho rahi hai...');
-    let loadingTask = pdfjsLib.getDocument({ url: url, withCredentials: false });
-    pdfDoc = await loadingTask.promise;
+    pdfDoc = await pdfjsLib.getDocument({ url: book.pdf_url, withCredentials: false }).promise;
     document.getElementById('msg').style.display = 'none';
-    await renderAllPages();
+    document.getElementById('page-canvas').style.display = 'block';
+    document.getElementById('controls').style.display = 'flex';
+    renderPage(1);
   } catch(e){
-    console.error(e);
-    showMsg('❌ PDF load nahi hui: ' + e.message + '<br><br><a href="' + url + '" target="_blank" class="btn" style="display:inline-block;margin-top:1rem">⬇️ PDF Download Karein</a>');
+    showMsg('❌ PDF load nahi hui: ' + e.message);
   }
 }
 
-async function renderAllPages(){
-  let container = document.getElementById('pdf-container');
-  container.innerHTML = '<div id="loading">⏳ Pages render ho rahe hain...</div>';
-  for(let i = 1; i <= pdfDoc.numPages; i++){
-    let page = await pdfDoc.getPage(i);
-    let vp = page.getViewport({scale});
-    let canvas = document.createElement('canvas');
-    canvas.height = vp.height;
-    canvas.width = vp.width;
-    await page.render({canvasContext: canvas.getContext('2d'), viewport: vp}).promise;
-    let div = document.createElement('div');
-    div.className = 'pdf-page';
-    div.appendChild(canvas);
-    container.appendChild(div);
-    // Loading message remove karo pehle page ke baad
-    let loading = document.getElementById('loading');
-    if(loading) loading.remove();
-  }
+async function renderPage(num){
+  if(rendering || !pdfDoc) return;
+  rendering = true;
+  currentPage = num;
+  document.getElementById('page-info').innerText = num + ' / ' + pdfDoc.numPages;
+  document.getElementById('prev-btn').disabled = num <= 1;
+  document.getElementById('next-btn').disabled = num >= pdfDoc.numPages;
+  let page = await pdfDoc.getPage(num);
+  let vp = page.getViewport({scale});
+  let canvas = document.getElementById('page-canvas');
+  canvas.height = vp.height;
+  canvas.width = vp.width;
+  await page.render({canvasContext: canvas.getContext('2d'), viewport: vp}).promise;
+  rendering = false;
+  document.getElementById('pdf-container').scrollTop = 0;
 }
+
+function changePage(dir){
+  let np = currentPage + dir;
+  if(np < 1 || np > pdfDoc.numPages) return;
+  renderPage(np);
+}
+
+function zoomIn(){ scale = Math.min(scale+0.2,3); if(pdfDoc) renderPage(currentPage); }
+function zoomOut(){ scale = Math.max(scale-0.2,0.5); if(pdfDoc) renderPage(currentPage); }
 
 function showMsg(msg){
-  let c = document.getElementById('pdf-container');
-  c.innerHTML = '<div class="msg">' + msg + '<br><br><a href="index.html" style="color:#9f5bff">← Home Wapas</a></div>';
+  document.getElementById('msg').style.display = 'block';
+  document.getElementById('msg').innerHTML = msg + '<br><a href="index.html" style="color:#9f5bff">← Home Wapas</a>';
+  document.getElementById('page-canvas').style.display = 'none';
+  document.getElementById('controls').style.display = 'none';
 }
 
-function zoomIn(){ scale = Math.min(scale+0.2, 3); if(pdfDoc) renderAllPages(); }
-function zoomOut(){ scale = Math.max(scale-0.2, 0.6); if(pdfDoc) renderAllPages(); }
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') changePage(1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') changePage(-1);
+});
 
 init();
 </script>
