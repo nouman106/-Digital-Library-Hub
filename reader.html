@@ -7,151 +7,191 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#000;height:100vh;overflow:hidden;cursor:none}
-#canvas-area{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;overflow:auto}
-#page-canvas{max-width:100vw;max-height:100vh;object-fit:contain}
-.msg{color:#eee;font-size:1rem;text-align:center;padding:2rem;line-height:2;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
-
-/* UI — mouse hilane par dikhe */
-#ui{
-  position:fixed;
-  bottom:0;left:0;right:0;
-  background:linear-gradient(transparent,rgba(0,0,0,0.85));
-  padding:20px 30px 15px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:1.5rem;
-  opacity:0;
-  transition:opacity .3s;
-  z-index:100;
-}
-#ui.show{opacity:1}
-.btn{background:rgba(124,58,237,0.9);border:none;color:#fff;padding:8px 18px;border-radius:20px;cursor:pointer;font-size:.9rem;backdrop-filter:blur(4px)}
-.btn:disabled{background:rgba(80,80,80,0.7);cursor:not-allowed}
-#page-info{color:#fff;font-size:.9rem;min-width:80px;text-align:center}
-
-/* Top bar — wapas button */
-#top-bar{
-  position:fixed;
-  top:0;left:0;right:0;
-  background:linear-gradient(rgba(0,0,0,0.8),transparent);
-  padding:12px 20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  opacity:0;
-  transition:opacity .3s;
-  z-index:100;
-}
-#top-bar.show{opacity:1}
-#book-title-top{color:#fff;font-size:.9rem;font-weight:600}
+body{display:flex;flex-direction:column;height:100vh;font-family:'Segoe UI',sans-serif;background:#525659;color:#eee}
+header{background:#1e1e2f;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;flex-shrink:0}
+#book-title{font-weight:600;font-size:1rem;flex:1;text-align:center;color:#fff}
+.btn{background:#7c3aed;border:none;color:#fff;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:.9rem;text-decoration:none;display:inline-block}
+#pdf-container{flex:1;overflow:auto;padding:1rem}
+.pdf-page{margin:0 auto 1rem;box-shadow:0 0 10px rgba(0,0,0,0.5);max-width:900px;background:#fff;position:relative}
+canvas{width:100%;height:auto;display:block}
+.page-placeholder{background:#2a2a3f;display:flex;align-items:center;justify-content:center;color:#888;font-size:.9rem;min-height:200px}
+.msg{text-align:center;padding:3rem;color:#eee;font-size:1.1rem;line-height:2}
+#progress-bar-wrap{background:#333;height:4px;width:100%;position:sticky;top:0;z-index:10}
+#progress-bar{height:4px;background:#7c3aed;width:0%;transition:width 0.3s}
+#page-counter{text-align:center;color:#aaa;font-size:.8rem;padding:4px;background:#1e1e2f;position:sticky;top:4px;z-index:9}
 </style>
 </head>
 <body>
-
-<div id="top-bar">
+<header>
   <button class="btn" onclick="location.href='index.html'">← Wapas</button>
-  <span id="book-title-top"></span>
+  <span id="book-title">KitabGhar Reader</span>
+  <div style="display:flex;gap:6px">
+    <button class="btn" onclick="zoomIn()">🔍+</button>
+    <button class="btn" onclick="zoomOut()">🔍−</button>
+  </div>
+</header>
 
-</div>
+<div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+<div id="page-counter"></div>
 
-<div id="canvas-area">
-  <div id="msg" class="msg">📖 Load ho rahi hai...</div>
-  <canvas id="page-canvas" style="display:none"></canvas>
-</div>
-
-<div id="ui">
-  <button class="btn" id="prev-btn" onclick="changePage(-1)" disabled>◀</button>
-  <span id="page-info">- / -</span>
-  <button class="btn" id="next-btn" onclick="changePage(1)" disabled>▶</button>
-  <button class="btn" onclick="zoomOut()">−</button>
-  <button class="btn" onclick="zoomIn()">+</button>
+<div id="pdf-container">
+  <div class="msg" id="msg">📖 Kitab load ho rahi hai...</div>
 </div>
 
 <script>
-pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-let pdfDoc=null,cur=1,scale=1.5,rendering=false,hideTimer=null;
-
-// Mouse hilane par UI show karo
-function showUI(){
-  document.getElementById('ui').classList.add('show');
-  document.getElementById('top-bar').classList.add('show');
-  document.body.style.cursor='default';
-  clearTimeout(hideTimer);
-  hideTimer=setTimeout(()=>{
-    document.getElementById('ui').classList.remove('show');
-    document.getElementById('top-bar').classList.remove('show');
-    document.body.style.cursor='none';
-  },2500);
-}
-document.addEventListener('mousemove',showUI);
-document.addEventListener('touchstart',showUI);
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+let pdfDoc = null, scale = 1.2, currentUrl = '', renderedPages = 0;
 
 async function init(){
-  let id=new URLSearchParams(location.search).get('id');
-  if(!id){showMsg('⚠️ ID nahi mili');return;}
+  let id = new URLSearchParams(location.search).get('id');
+  if(!id){ showMsg('⚠️ ID nahi mili'); return; }
   try{
-    let books=await(await fetch('books.json?t='+Date.now())).json();
-    let book=books.find(b=>String(b.id)===String(id));
-    if(!book){showMsg('❌ Kitab nahi mili');return;}
-    if(book.allow_access===false){showMsg('🔒 Dastiyab nahi');return;}
-    if(!book.pdf_url){showMsg('⚠️ PDF upload nahi ki gayi');return;}
-    document.title=(book.title||'Kitab')+' — KitabGhar';
-    document.getElementById('book-title-top').innerText=book.title||'';
-    document.addEventListener('contextmenu',e=>e.preventDefault());
-    document.addEventListener('keydown',e=>{
-      if(e.key==='Escape')e.preventDefault();
-      if(e.ctrlKey&&['s','S','p','P'].includes(e.key))e.preventDefault();
-      if(e.key==='ArrowRight'||e.key==='ArrowDown')changePage(1);
-      if(e.key==='ArrowLeft'||e.key==='ArrowUp')changePage(-1);
-    });
-    // Screen pe click — right side agla, left side pichla
-    document.getElementById('canvas-area').addEventListener('click',e=>{
-      if(e.target.closest('button'))return;
-      if(e.clientX > window.innerWidth/2) changePage(1);
-      else changePage(-1);
-    });
+    let books = await (await fetch('books.json?t='+Date.now())).json();
+    let book = books.find(b => String(b.id) === String(id));
+    if(!book){ showMsg('❌ Kitab nahi mili'); return; }
+    if(book.allow_access === false){ showMsg('🔒 Yeh kitab dastiyab nahi'); return; }
+    if(!book.pdf_url){ showMsg('⚠️ PDF abhi upload nahi ki gayi'); return; }
+    document.title = (book.title||'Kitab') + ' — KitabGhar';
+    document.getElementById('book-title').innerText = book.title||'Kitab';
+    currentUrl = book.pdf_url;
+    await loadPdf(book.pdf_url);
+  } catch(e){ showMsg('❌ ' + e.message); }
+}
+
+async function loadPdf(url){
+  try {
     showMsg('📖 PDF load ho rahi hai...');
-    pdfDoc=await pdfjsLib.getDocument({url:book.pdf_url,withCredentials:false}).promise;
-    document.getElementById('msg').style.display='none';
-    document.getElementById('page-canvas').style.display='block';
-    document.documentElement.requestFullscreen().catch(()=>{});
-    renderPage(1);
-  }catch(e){showMsg('❌ '+e.message);}
+    let loadingTask = pdfjsLib.getDocument({ url, withCredentials: false });
+    pdfDoc = await loadingTask.promise;
+    document.getElementById('msg').style.display = 'none';
+    await renderProgressively();
+  } catch(e){
+    showMsg('❌ PDF load nahi hui: ' + e.message +
+      '<br><br><a href="' + url + '" target="_blank" class="btn" style="display:inline-block;margin-top:1rem">⬇️ PDF Download Karein</a>');
+  }
 }
 
-async function renderPage(num){
-  if(rendering||!pdfDoc)return;
-  rendering=true;
-  cur=num;
-  document.getElementById('page-info').innerText=num+' / '+pdfDoc.numPages;
-  document.getElementById('prev-btn').disabled=num<=1;
-  document.getElementById('next-btn').disabled=num>=pdfDoc.numPages;
-  let page=await pdfDoc.getPage(num);
-  let area=document.getElementById('canvas-area');
-  let vp0=page.getViewport({scale:1});
-  let sc=Math.min(area.clientWidth/vp0.width, area.clientHeight/vp0.height)*scale;
-  let viewport=page.getViewport({scale:sc});
-  let canvas=document.getElementById('page-canvas');
-  canvas.width=viewport.width;
-  canvas.height=viewport.height;
-  await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;
-  rendering=false;
+async function renderProgressively(){
+  let container = document.getElementById('pdf-container');
+  container.innerHTML = '';
+  renderedPages = 0;
+  let total = pdfDoc.numPages;
+
+  // Pehle saare placeholders banao
+  let divs = [];
+  for(let i = 1; i <= total; i++){
+    let div = document.createElement('div');
+    div.className = 'pdf-page';
+    div.id = 'page-' + i;
+    let ph = document.createElement('div');
+    ph.className = 'page-placeholder';
+    ph.style.minHeight = '400px';
+    ph.innerText = 'Page ' + i + ' load ho raha hai...';
+    div.appendChild(ph);
+    container.appendChild(div);
+    divs.push(div);
+  }
+
+  updateCounter(0, total);
+
+  // IntersectionObserver — sirf visible pages render karo
+  let observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        let pageNum = parseInt(entry.target.id.replace('page-',''));
+        if(!entry.target.dataset.rendered){
+          entry.target.dataset.rendered = 'true';
+          renderPage(pageNum, entry.target, total);
+        }
+      }
+    });
+  }, { rootMargin: '300px' }); // 300px pehle se load shuru
+
+  divs.forEach(div => observer.observe(div));
+
+  // Page 1 aur 2 turant render karo bina wait ke
+  renderPage(1, divs[0], total);
+  if(total > 1) renderPage(2, divs[1], total);
 }
 
-function changePage(dir){
-  let np=cur+dir;
-  if(!pdfDoc||np<1||np>pdfDoc.numPages)return;
-  renderPage(np);
+async function renderPage(pageNum, container, total){
+  if(container.dataset.rendering) return;
+  container.dataset.rendering = 'true';
+
+  try{
+    let page = await pdfDoc.getPage(pageNum);
+    let vp = page.getViewport({scale});
+    let canvas = document.createElement('canvas');
+    canvas.height = vp.height;
+    canvas.width = vp.width;
+    await page.render({canvasContext: canvas.getContext('2d'), viewport: vp}).promise;
+    container.innerHTML = '';
+    container.appendChild(canvas);
+    renderedPages++;
+    updateCounter(renderedPages, total);
+    updateProgressBar(renderedPages, total);
+  } catch(e){
+    container.innerHTML = '<div class="page-placeholder">⚠️ Page ' + pageNum + ' error</div>';
+  }
 }
-function zoomIn(){scale=Math.min(scale+0.2,3);if(pdfDoc)renderPage(cur);}
-function zoomOut(){scale=Math.max(scale-0.2,0.3);if(pdfDoc)renderPage(cur);}
-document.addEventListener("fullscreenchange",()=>{ if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{}); });
-function toggleFS(){
-  if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
-  else document.exitFullscreen();
+
+function updateCounter(done, total){
+  let el = document.getElementById('page-counter');
+  if(done === 0) el.innerText = '⏳ Pages load ho rahe hain (0 / ' + total + ')';
+  else if(done < total) el.innerText = '⏳ ' + done + ' / ' + total + ' pages ready';
+  else el.innerText = '✅ Tamam ' + total + ' pages ready!';
 }
+
+function updateProgressBar(done, total){
+  document.getElementById('progress-bar').style.width = Math.round((done/total)*100) + '%';
+}
+
+function showMsg(msg){
+  let c = document.getElementById('pdf-container');
+  c.innerHTML = '<div class="msg">' + msg + '<br><br><a href="index.html" style="color:#9f5bff">← Home Wapas</a></div>';
+}
+
+async function zoomIn(){ scale = Math.min(scale+0.2, 3); if(pdfDoc) await renderProgressively(); }
+async function zoomOut(){ scale = Math.max(scale-0.2, 0.6); if(pdfDoc) await renderProgressively(); }
+
+// ========== FULLSCREEN LOCK ==========
+function enterFullscreen(){
+  let el = document.documentElement;
+  if(el.requestFullscreen) el.requestFullscreen();
+  else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+  else if(el.mozRequestFullScreen) el.mozRequestFullScreen();
+  else if(el.msRequestFullscreen) el.msRequestFullscreen();
+}
+
+function isFullscreen(){
+  return !!(document.fullscreenElement || document.webkitFullscreenElement ||
+            document.mozFullScreenElement || document.msFullscreenElement);
+}
+
+// Jab bhi fullscreen se bahar jaye, wapas andar kar do
+document.addEventListener('fullscreenchange', () => { if(!isFullscreen()) setTimeout(enterFullscreen, 200); });
+document.addEventListener('webkitfullscreenchange', () => { if(!isFullscreen()) setTimeout(enterFullscreen, 200); });
+document.addEventListener('mozfullscreenchange', () => { if(!isFullscreen()) setTimeout(enterFullscreen, 200); });
+document.addEventListener('msfullscreenchange', () => { if(!isFullscreen()) setTimeout(enterFullscreen, 200); });
+
+// F11 aur Escape block karo
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'F11'){ e.preventDefault(); }
+  if(e.key === 'Escape'){ e.preventDefault(); setTimeout(enterFullscreen, 200); }
+});
+
+// Pehli baar user click karte hi fullscreen shuru
+function startFullscreen(){
+  enterFullscreen();
+  document.removeEventListener('click', startFullscreen);
+  document.removeEventListener('touchstart', startFullscreen);
+}
+document.addEventListener('click', startFullscreen);
+document.addEventListener('touchstart', startFullscreen);
+
+// agar auto allowed ho (kuch browsers mein hota hai)
+window.addEventListener('load', () => { try{ enterFullscreen(); }catch(e){} });
+// ======================================
 
 init();
 </script>
